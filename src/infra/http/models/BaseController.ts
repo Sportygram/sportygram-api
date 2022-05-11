@@ -1,6 +1,6 @@
 import * as express from "express";
 import { Pagination } from "../../../@types";
-import logger from "../../../shared/core/Logger";
+import logger from "../../../lib/core/Logger";
 
 export abstract class BaseController {
     protected abstract executeImpl(
