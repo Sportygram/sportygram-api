@@ -2,11 +2,52 @@
 ### Do not make changes to this file directly
 
 
+type AuthPayload {
+  accessToken: String!
+  refreshToken: String!
+  user: User!
+}
+
+"""A country code as defined by ISO 3166-1 alpha-2"""
+scalar CountryCode
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
 
+"""
+A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/.
+"""
+scalar EmailAddress @specifiedBy(url: "https://www.w3.org/Protocols/rfc822/")
+
+type Mutation {
+  login(email: String!, ip: String, password: String!): AuthPayload!
+  signup(email: String!, name: String!, password: String!): AuthPayload!
+}
+
+"""
+A field whose value conforms to the standard E.164 format as specified in: https://en.wikipedia.org/wiki/E.164. Basically this is +17895551234.
+"""
+scalar PhoneNumber
+
 type Query {
   ok: Boolean!
+}
+
+type User {
+  country: String
+  createdAt: DateTime
+  email: EmailAddress!
+  firstname: String
+  lastname: String
+  onboarded: Boolean!
+  phone: PhoneNumber
+  profileImageUrl: String
+  referralCode: String!
+  roles: [String]!
+  updatedAt: DateTime
+  userId: ID!
+  userState: String
+  username: String
 }

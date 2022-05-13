@@ -12,6 +12,18 @@ declare global {
      * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
      */
     dateTime<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "DateTime";
+    /**
+     * A country code as defined by ISO 3166-1 alpha-2
+     */
+    countryCode<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "CountryCode";
+    /**
+     * A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/.
+     */
+    email<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "EmailAddress";
+    /**
+     * A field whose value conforms to the standard E.164 format as specified in: https://en.wikipedia.org/wiki/E.164. Basically this is +17895551234.
+     */
+    phone<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "PhoneNumber";
   }
 }
 declare global {
@@ -20,6 +32,18 @@ declare global {
      * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
      */
     dateTime<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
+    /**
+     * A country code as defined by ISO 3166-1 alpha-2
+     */
+    countryCode<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "CountryCode";
+    /**
+     * A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/.
+     */
+    email<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "EmailAddress";
+    /**
+     * A field whose value conforms to the standard E.164 format as specified in: https://en.wikipedia.org/wiki/E.164. Basically this is +17895551234.
+     */
+    phone<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "PhoneNumber";
   }
 }
 
@@ -40,11 +64,36 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
+  CountryCode: any
   DateTime: any
+  EmailAddress: any
+  PhoneNumber: any
 }
 
 export interface NexusGenObjects {
+  AuthPayload: { // root type
+    accessToken: string; // String!
+    refreshToken: string; // String!
+    user: NexusGenRootTypes['User']; // User!
+  }
+  Mutation: {};
   Query: {};
+  User: { // root type
+    country?: string | null; // String
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    email: NexusGenScalars['EmailAddress']; // EmailAddress!
+    firstname?: string | null; // String
+    lastname?: string | null; // String
+    onboarded: boolean; // Boolean!
+    phone?: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
+    profileImageUrl?: string | null; // String
+    referralCode: string; // String!
+    roles: Array<string | null>; // [String]!
+    updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    userId: string; // ID!
+    userState?: string | null; // String
+    username?: string | null; // String
+  }
 }
 
 export interface NexusGenInterfaces {
@@ -58,18 +107,80 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  AuthPayload: { // field return type
+    accessToken: string; // String!
+    refreshToken: string; // String!
+    user: NexusGenRootTypes['User']; // User!
+  }
+  Mutation: { // field return type
+    login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+  }
   Query: { // field return type
     ok: boolean; // Boolean!
+  }
+  User: { // field return type
+    country: string | null; // String
+    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
+    email: NexusGenScalars['EmailAddress']; // EmailAddress!
+    firstname: string | null; // String
+    lastname: string | null; // String
+    onboarded: boolean; // Boolean!
+    phone: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
+    profileImageUrl: string | null; // String
+    referralCode: string; // String!
+    roles: Array<string | null>; // [String]!
+    updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
+    userId: string; // ID!
+    userState: string | null; // String
+    username: string | null; // String
   }
 }
 
 export interface NexusGenFieldTypeNames {
+  AuthPayload: { // field return type name
+    accessToken: 'String'
+    refreshToken: 'String'
+    user: 'User'
+  }
+  Mutation: { // field return type name
+    login: 'AuthPayload'
+    signup: 'AuthPayload'
+  }
   Query: { // field return type name
     ok: 'Boolean'
+  }
+  User: { // field return type name
+    country: 'String'
+    createdAt: 'DateTime'
+    email: 'EmailAddress'
+    firstname: 'String'
+    lastname: 'String'
+    onboarded: 'Boolean'
+    phone: 'PhoneNumber'
+    profileImageUrl: 'String'
+    referralCode: 'String'
+    roles: 'String'
+    updatedAt: 'DateTime'
+    userId: 'ID'
+    userState: 'String'
+    username: 'String'
   }
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    login: { // args
+      email: string; // String!
+      ip?: string | null; // String
+      password: string; // String!
+    }
+    signup: { // args
+      email: string; // String!
+      name: string; // String!
+      password: string; // String!
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {
