@@ -1,4 +1,5 @@
 import { NexusGenObjects } from "../../nexus-typegen";
+import { getRoomMock } from "./Messaging";
 
 type User = NexusGenObjects["User"];
 let userDefault: User = {
@@ -9,11 +10,20 @@ let userDefault: User = {
     lastname: "Olalere",
     userState: "active",
     referralCode: "TOA-E86",
-    phone: "2348031234567",
+    referralCount: 0,
+    coinBalance: 0.00,
+    phone: "+2348031234567",
     profileImageUrl:
         "https://i.pinimg.com/474x/65/25/a0/6525a08f1df98a2e3a545fe2ace4be47.jpg",
     onboarded: true,
-    country: "NG"
+    country: "NG",
+    createdAt: "2022-05-19T01:45:57.686Z",
+    updatedAt: "2022-05-19T01:45:57.686Z",
+    rooms: [getRoomMock()],
+    settings: {
+        hello: "world",
+        bgColor: "blue"
+    }
 };
 
 export const getUserMock = (p?: Partial<User>): User => ({
