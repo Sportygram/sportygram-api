@@ -6,7 +6,7 @@ import logger from "./lib/core/Logger";
 
 // Infra
 import { app } from "./infra/http/app";
-
+import './infra/socket';
 // Subscriptions
 // import "./modules/iam/subscribers";
 

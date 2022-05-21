@@ -24,6 +24,14 @@ declare global {
      * A field whose value conforms to the standard E.164 format as specified in: https://en.wikipedia.org/wiki/E.164. Basically this is +17895551234.
      */
     phone<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "PhoneNumber";
+    /**
+     * A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
+     */
+    jwt<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "JWT";
+    /**
+     * The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+     */
+    json<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "JSON";
   }
 }
 declare global {
@@ -44,6 +52,14 @@ declare global {
      * A field whose value conforms to the standard E.164 format as specified in: https://en.wikipedia.org/wiki/E.164. Basically this is +17895551234.
      */
     phone<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "PhoneNumber";
+    /**
+     * A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
+     */
+    jwt<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "JWT";
+    /**
+     * The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+     */
+    json<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "JSON";
   }
 }
 
@@ -53,9 +69,29 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  LoginInput: { // input type
+    emailOrUsername: string; // String!
+    ip: string; // String!
+    password: string; // String!
+  }
+  PredictionInput: { // input type
+    fixtureId: string; // String!
+    prediction: NexusGenScalars['JSON']; // JSON!
+    predictionId?: string | null; // String
+    predictionType: string; // String!
+  }
+  UpdateUserProfileInput: { // input type
+    country: string; // String!
+    firstname: string; // String!
+    lastname: string; // String!
+    username: string; // String!
+  }
 }
 
 export interface NexusGenEnums {
+  GameType: "DAILY" | "SEASON" | "WEEKLY"
+  RoomType: "PRIVATE" | "PUBLIC"
+  sort: "ASC" | "DESC"
 }
 
 export interface NexusGenScalars {
@@ -67,29 +103,134 @@ export interface NexusGenScalars {
   CountryCode: any
   DateTime: any
   EmailAddress: any
+  JSON: any
+  JWT: any
   PhoneNumber: any
 }
 
 export interface NexusGenObjects {
-  AuthPayload: { // root type
+  AuthOutput: { // root type
     accessToken: string; // String!
+    message: string; // String!
     refreshToken: string; // String!
     user: NexusGenRootTypes['User']; // User!
   }
-  Mutation: {};
-  Query: {};
-  User: { // root type
-    country?: string | null; // String
+  ChatUser: { // root type
+    token: NexusGenScalars['JWT']; // JWT!
+    username: string; // String!
+  }
+  CheckUsernameOutput: { // root type
+    available: boolean; // Boolean!
+    message: string; // String!
+  }
+  CreateRoomOutput: { // root type
+    message: string; // String!
+    room: NexusGenRootTypes['Room']; // Room!
+  }
+  Cursor: { // root type
+    next?: string | null; // String
+    prev?: string | null; // String
+  }
+  Fixture: { // root type
+    date: NexusGenScalars['DateTime']; // DateTime!
+    fixtureId?: string | null; // ID
+    misc: NexusGenScalars['JSON']; // JSON!
+    periods?: number[] | null; // [Int!]
+    predictions?: Array<NexusGenRootTypes['Prediction'] | null> | null; // [Prediction]
+    scores?: NexusGenScalars['JSON'] | null; // JSON
+    teams: NexusGenRootTypes['TeamData']; // TeamData!
+    venue?: string | null; // String
+  }
+  Game: { // root type
     createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    data: NexusGenScalars['JSON']; // JSON!
+    description?: string | null; // String
+    expiringAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    gameId: string; // ID!
+    gameType: NexusGenEnums['GameType']; // GameType!
+    leaderBoard: Array<NexusGenRootTypes['GamePlayer'] | null>; // [GamePlayer]!
+    name: string; // String!
+    roomId: string; // ID!
+    updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+  }
+  GamePlayer: { // root type
+    playerId: string; // ID!
+    score: number; // Float!
+    username: string; // String!
+  }
+  MatchStatistic: { // root type
+    type?: string | null; // String
+    value?: string | null; // String
+  }
+  MatchStatus: { // root type
+    long?: string | null; // String
+    short?: string | null; // String
+    timeElapsed?: number | null; // Int
+  }
+  Mutation: {};
+  Pagination: { // root type
+    limit?: number | null; // Int
+    page?: number | null; // Int
+    pages?: number | null; // Int
+    total?: number | null; // Int
+  }
+  Prediction: { // root type
+    fixtureId: string; // String!
+    prediction: NexusGenScalars['JSON']; // JSON!
+    predictionId: string; // ID!
+    predictionType: string; // String!
+  }
+  PredictionOutput: { // root type
+    message: string; // String!
+    prediction: NexusGenRootTypes['Prediction']; // Prediction!
+  }
+  Query: {};
+  Room: { // root type
+    admins?: Array<string | null> | null; // [String]
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description?: string | null; // String
+    games?: Array<NexusGenRootTypes['Game'] | null> | null; // [Game]
+    inviteLink: string; // String!
+    joiningFee: number; // Float!
+    name: string; // String!
+    roomId: string; // ID!
+    roomImageUrl?: string | null; // String
+    roomType: NexusGenEnums['RoomType']; // RoomType!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  Team: { // root type
+    code?: string | null; // ID
+    logo?: string | null; // String
+    name?: string | null; // String
+    score?: string | null; // String
+    statistics?: Array<NexusGenRootTypes['MatchStatistic'] | null> | null; // [MatchStatistic]
+    winner?: boolean | null; // Boolean
+  }
+  TeamData: { // root type
+    away?: NexusGenRootTypes['Team'] | null; // Team
+    home?: NexusGenRootTypes['Team'] | null; // Team
+  }
+  UpdateUserProfileOutput: { // root type
+    message: string; // String!
+    user: NexusGenRootTypes['User']; // User!
+  }
+  User: { // root type
+    coinBalance: number; // Float!
+    country?: string | null; // String
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: NexusGenScalars['EmailAddress']; // EmailAddress!
     firstname?: string | null; // String
+    gamesSummary?: NexusGenScalars['JSON'] | null; // JSON
     lastname?: string | null; // String
     onboarded: boolean; // Boolean!
     phone?: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
     profileImageUrl?: string | null; // String
     referralCode: string; // String!
+    referralCount: number; // Int!
     roles: Array<string | null>; // [String]!
-    updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    rooms?: Array<NexusGenRootTypes['Room'] | null> | null; // [Room]
+    settings?: NexusGenScalars['JSON'] | null; // JSON
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userId: string; // ID!
     userState?: string | null; // String
     username?: string | null; // String
@@ -97,105 +238,399 @@ export interface NexusGenObjects {
 }
 
 export interface NexusGenInterfaces {
+  CursorPaginationOutput: any;
+  MutationOutput: NexusGenRootTypes['AuthOutput'] | NexusGenRootTypes['CheckUsernameOutput'] | NexusGenRootTypes['CreateRoomOutput'] | NexusGenRootTypes['PredictionOutput'] | NexusGenRootTypes['UpdateUserProfileOutput'];
+  PaginatedInput: any;
+  PaginationOutput: any;
 }
 
 export interface NexusGenUnions {
 }
 
-export type NexusGenRootTypes = NexusGenObjects
+export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
-  AuthPayload: { // field return type
+  AuthOutput: { // field return type
     accessToken: string; // String!
+    message: string; // String!
     refreshToken: string; // String!
     user: NexusGenRootTypes['User']; // User!
   }
+  ChatUser: { // field return type
+    token: NexusGenScalars['JWT']; // JWT!
+    username: string; // String!
+  }
+  CheckUsernameOutput: { // field return type
+    available: boolean; // Boolean!
+    message: string; // String!
+  }
+  CreateRoomOutput: { // field return type
+    message: string; // String!
+    room: NexusGenRootTypes['Room']; // Room!
+  }
+  Cursor: { // field return type
+    next: string | null; // String
+    prev: string | null; // String
+  }
+  Fixture: { // field return type
+    date: NexusGenScalars['DateTime']; // DateTime!
+    fixtureId: string | null; // ID
+    misc: NexusGenScalars['JSON']; // JSON!
+    periods: number[] | null; // [Int!]
+    predictions: Array<NexusGenRootTypes['Prediction'] | null> | null; // [Prediction]
+    scores: NexusGenScalars['JSON'] | null; // JSON
+    teams: NexusGenRootTypes['TeamData']; // TeamData!
+    venue: string | null; // String
+  }
+  Game: { // field return type
+    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
+    data: NexusGenScalars['JSON']; // JSON!
+    description: string | null; // String
+    expiringAt: NexusGenScalars['DateTime'] | null; // DateTime
+    gameId: string; // ID!
+    gameType: NexusGenEnums['GameType']; // GameType!
+    leaderBoard: Array<NexusGenRootTypes['GamePlayer'] | null>; // [GamePlayer]!
+    name: string; // String!
+    roomId: string; // ID!
+    updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
+  }
+  GamePlayer: { // field return type
+    playerId: string; // ID!
+    score: number; // Float!
+    username: string; // String!
+  }
+  MatchStatistic: { // field return type
+    type: string | null; // String
+    value: string | null; // String
+  }
+  MatchStatus: { // field return type
+    long: string | null; // String
+    short: string | null; // String
+    timeElapsed: number | null; // Int
+  }
   Mutation: { // field return type
-    login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    checkUsername: NexusGenRootTypes['CheckUsernameOutput']; // CheckUsernameOutput!
+    createRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
+    joinRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
+    login: NexusGenRootTypes['AuthOutput']; // AuthOutput!
+    predictMatch: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
+    signup: NexusGenRootTypes['AuthOutput']; // AuthOutput!
+    updatePrediction: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
+    updateRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
+    updateUserProfile: NexusGenRootTypes['UpdateUserProfileOutput']; // UpdateUserProfileOutput!
+  }
+  Pagination: { // field return type
+    limit: number | null; // Int
+    page: number | null; // Int
+    pages: number | null; // Int
+    total: number | null; // Int
+  }
+  Prediction: { // field return type
+    fixtureId: string; // String!
+    prediction: NexusGenScalars['JSON']; // JSON!
+    predictionId: string; // ID!
+    predictionType: string; // String!
+  }
+  PredictionOutput: { // field return type
+    message: string; // String!
+    prediction: NexusGenRootTypes['Prediction']; // Prediction!
   }
   Query: { // field return type
-    ok: boolean; // Boolean!
+    chatToken: string; // String!
+    fixtures: NexusGenRootTypes['Fixture'][]; // [Fixture!]!
+    room: NexusGenRootTypes['Room']; // Room!
+    viewer: NexusGenRootTypes['User']; // User!
+  }
+  Room: { // field return type
+    admins: Array<string | null> | null; // [String]
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description: string | null; // String
+    games: Array<NexusGenRootTypes['Game'] | null> | null; // [Game]
+    inviteLink: string; // String!
+    joiningFee: number; // Float!
+    name: string; // String!
+    roomId: string; // ID!
+    roomImageUrl: string | null; // String
+    roomType: NexusGenEnums['RoomType']; // RoomType!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  Team: { // field return type
+    code: string | null; // ID
+    logo: string | null; // String
+    name: string | null; // String
+    score: string | null; // String
+    statistics: Array<NexusGenRootTypes['MatchStatistic'] | null> | null; // [MatchStatistic]
+    winner: boolean | null; // Boolean
+  }
+  TeamData: { // field return type
+    away: NexusGenRootTypes['Team'] | null; // Team
+    home: NexusGenRootTypes['Team'] | null; // Team
+  }
+  UpdateUserProfileOutput: { // field return type
+    message: string; // String!
+    user: NexusGenRootTypes['User']; // User!
   }
   User: { // field return type
+    coinBalance: number; // Float!
     country: string | null; // String
-    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: NexusGenScalars['EmailAddress']; // EmailAddress!
     firstname: string | null; // String
+    gamesSummary: NexusGenScalars['JSON'] | null; // JSON
     lastname: string | null; // String
     onboarded: boolean; // Boolean!
     phone: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
     profileImageUrl: string | null; // String
     referralCode: string; // String!
+    referralCount: number; // Int!
     roles: Array<string | null>; // [String]!
-    updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
+    rooms: Array<NexusGenRootTypes['Room'] | null> | null; // [Room]
+    settings: NexusGenScalars['JSON'] | null; // JSON
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userId: string; // ID!
     userState: string | null; // String
     username: string | null; // String
   }
+  CursorPaginationOutput: { // field return type
+    cursor: NexusGenRootTypes['Cursor']; // Cursor!
+  }
+  MutationOutput: { // field return type
+    message: string; // String!
+  }
+  PaginatedInput: { // field return type
+    limit: number | null; // Int
+    page: number | null; // Int
+  }
+  PaginationOutput: { // field return type
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
 }
 
 export interface NexusGenFieldTypeNames {
-  AuthPayload: { // field return type name
+  AuthOutput: { // field return type name
     accessToken: 'String'
+    message: 'String'
     refreshToken: 'String'
     user: 'User'
   }
+  ChatUser: { // field return type name
+    token: 'JWT'
+    username: 'String'
+  }
+  CheckUsernameOutput: { // field return type name
+    available: 'Boolean'
+    message: 'String'
+  }
+  CreateRoomOutput: { // field return type name
+    message: 'String'
+    room: 'Room'
+  }
+  Cursor: { // field return type name
+    next: 'String'
+    prev: 'String'
+  }
+  Fixture: { // field return type name
+    date: 'DateTime'
+    fixtureId: 'ID'
+    misc: 'JSON'
+    periods: 'Int'
+    predictions: 'Prediction'
+    scores: 'JSON'
+    teams: 'TeamData'
+    venue: 'String'
+  }
+  Game: { // field return type name
+    createdAt: 'DateTime'
+    data: 'JSON'
+    description: 'String'
+    expiringAt: 'DateTime'
+    gameId: 'ID'
+    gameType: 'GameType'
+    leaderBoard: 'GamePlayer'
+    name: 'String'
+    roomId: 'ID'
+    updatedAt: 'DateTime'
+  }
+  GamePlayer: { // field return type name
+    playerId: 'ID'
+    score: 'Float'
+    username: 'String'
+  }
+  MatchStatistic: { // field return type name
+    type: 'String'
+    value: 'String'
+  }
+  MatchStatus: { // field return type name
+    long: 'String'
+    short: 'String'
+    timeElapsed: 'Int'
+  }
   Mutation: { // field return type name
-    login: 'AuthPayload'
-    signup: 'AuthPayload'
+    checkUsername: 'CheckUsernameOutput'
+    createRoom: 'CreateRoomOutput'
+    joinRoom: 'CreateRoomOutput'
+    login: 'AuthOutput'
+    predictMatch: 'PredictionOutput'
+    signup: 'AuthOutput'
+    updatePrediction: 'PredictionOutput'
+    updateRoom: 'CreateRoomOutput'
+    updateUserProfile: 'UpdateUserProfileOutput'
+  }
+  Pagination: { // field return type name
+    limit: 'Int'
+    page: 'Int'
+    pages: 'Int'
+    total: 'Int'
+  }
+  Prediction: { // field return type name
+    fixtureId: 'String'
+    prediction: 'JSON'
+    predictionId: 'ID'
+    predictionType: 'String'
+  }
+  PredictionOutput: { // field return type name
+    message: 'String'
+    prediction: 'Prediction'
   }
   Query: { // field return type name
-    ok: 'Boolean'
+    chatToken: 'String'
+    fixtures: 'Fixture'
+    room: 'Room'
+    viewer: 'User'
+  }
+  Room: { // field return type name
+    admins: 'String'
+    createdAt: 'DateTime'
+    description: 'String'
+    games: 'Game'
+    inviteLink: 'String'
+    joiningFee: 'Float'
+    name: 'String'
+    roomId: 'ID'
+    roomImageUrl: 'String'
+    roomType: 'RoomType'
+    updatedAt: 'DateTime'
+  }
+  Team: { // field return type name
+    code: 'ID'
+    logo: 'String'
+    name: 'String'
+    score: 'String'
+    statistics: 'MatchStatistic'
+    winner: 'Boolean'
+  }
+  TeamData: { // field return type name
+    away: 'Team'
+    home: 'Team'
+  }
+  UpdateUserProfileOutput: { // field return type name
+    message: 'String'
+    user: 'User'
   }
   User: { // field return type name
+    coinBalance: 'Float'
     country: 'String'
     createdAt: 'DateTime'
     email: 'EmailAddress'
     firstname: 'String'
+    gamesSummary: 'JSON'
     lastname: 'String'
     onboarded: 'Boolean'
     phone: 'PhoneNumber'
     profileImageUrl: 'String'
     referralCode: 'String'
+    referralCount: 'Int'
     roles: 'String'
+    rooms: 'Room'
+    settings: 'JSON'
     updatedAt: 'DateTime'
     userId: 'ID'
     userState: 'String'
     username: 'String'
   }
+  CursorPaginationOutput: { // field return type name
+    cursor: 'Cursor'
+  }
+  MutationOutput: { // field return type name
+    message: 'String'
+  }
+  PaginatedInput: { // field return type name
+    limit: 'Int'
+    page: 'Int'
+  }
+  PaginationOutput: { // field return type name
+    pagination: 'Pagination'
+  }
 }
 
 export interface NexusGenArgTypes {
   Mutation: {
+    checkUsername: { // args
+      username: string; // String!
+    }
+    createRoom: { // args
+      description?: string | null; // String
+      name: string; // String!
+    }
+    joinRoom: { // args
+      description?: string | null; // String
+      name: string; // String!
+    }
     login: { // args
-      email: string; // String!
-      ip?: string | null; // String
-      password: string; // String!
+      input: NexusGenInputs['LoginInput']; // LoginInput!
+    }
+    predictMatch: { // args
+      input: NexusGenInputs['PredictionInput']; // PredictionInput!
     }
     signup: { // args
       email: string; // String!
-      name: string; // String!
       password: string; // String!
+    }
+    updatePrediction: { // args
+      input: NexusGenInputs['PredictionInput']; // PredictionInput!
+    }
+    updateRoom: { // args
+      description?: string | null; // String
+      name: string; // String!
+    }
+    updateUserProfile: { // args
+      data: NexusGenInputs['UpdateUserProfileInput']; // UpdateUserProfileInput!
+    }
+  }
+  Query: {
+    chatToken: { // args
+      userId: string; // String!
+    }
+    fixtures: { // args
+      date: string; // String!
+    }
+    room: { // args
+      roomId: string; // String!
     }
   }
 }
 
 export interface NexusGenAbstractTypeMembers {
+  MutationOutput: "AuthOutput" | "CheckUsernameOutput" | "CreateRoomOutput" | "PredictionOutput" | "UpdateUserProfileOutput"
 }
 
 export interface NexusGenTypeInterfaces {
+  AuthOutput: "MutationOutput"
+  CheckUsernameOutput: "MutationOutput"
+  CreateRoomOutput: "MutationOutput"
+  PredictionOutput: "MutationOutput"
+  UpdateUserProfileOutput: "MutationOutput"
 }
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
-export type NexusGenInterfaceNames = never;
+export type NexusGenInterfaceNames = keyof NexusGenInterfaces;
 
 export type NexusGenScalarNames = keyof NexusGenScalars;
 
@@ -207,9 +642,9 @@ export type NexusGenAbstractsUsingStrategyResolveType = never;
 
 export type NexusGenFeaturesConfig = {
   abstractTypeStrategies: {
-    isTypeOf: false
-    resolveType: true
+    resolveType: false
     __typename: false
+    isTypeOf: false
   }
 }
 
