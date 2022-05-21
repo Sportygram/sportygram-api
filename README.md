@@ -20,3 +20,6 @@ TZ=UTC
 -   Run `npm run start:dev` to start the development server
 -   Run REST API requests against `localhost:3000/v1/`
 -   Navigate your browser to `localhost:3000/graphql` to run queries on the graphql server
+
+### Staging
+-   Staging API:  <https://sportygram-api.onrender.com/graphql>
