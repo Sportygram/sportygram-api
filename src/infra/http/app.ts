@@ -5,6 +5,7 @@ import { v1Router } from "./rest/v1";
 import { errorMiddleware } from "./middleware";
 import { morganMiddleware } from "./middleware/morganMiddleware";
 import { startApolloServer } from "./graphql/server";
+import http from "http";
 
 export const app = express();
 
@@ -45,7 +46,9 @@ app.get("/", (_req, res) => {
 app.use("/v1", v1Router);
 
 app.use(errorMiddleware);
-startApolloServer(app).then(() => {
+export const httpServer = http.createServer(app);
+
+startApolloServer(app, httpServer).then(() => {
     app.use("*", (_req, res) => {
         res.status(404).json({
             message: "URL Not Found",
