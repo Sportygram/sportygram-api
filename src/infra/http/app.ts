@@ -24,7 +24,7 @@ app.use(
     helmet({
         // when undefined it will load the default option: https://github.com/graphql/graphql-playground/issues/1283#issuecomment-723705276
         contentSecurityPolicy:
-            process.env.NODE_ENV === "development"
+            process.env.NODE_ENV !== "production"
                 ? devContentSecurityPolicy
                 : undefined,
     })
