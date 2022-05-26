@@ -6,7 +6,12 @@ import {
     inputObjectType,
     arg,
 } from "nexus";
-import { accessTokenMock, getUserMock, refreshTokenMock } from "./mocks/Auth";
+import {
+    accessTokenMock,
+    getUserMock,
+    getEmptyUserMock,
+    refreshTokenMock,
+} from "./mocks/Auth";
 
 /* TODO Auth graphql
     - SSO Authentication
@@ -15,9 +20,17 @@ export const AuthOutput = objectType({
     name: "AuthOutput",
     definition(t) {
         t.implements("MutationOutput");
-        t.nonNull.string("accessToken");
-        t.nonNull.string("refreshToken");
+        t.string("accessToken");
+        t.string("refreshToken");
         t.nonNull.field("user", { type: "User" });
+    },
+});
+
+export const TokenSendOutput = objectType({
+    name: "TokenSendOutput",
+    definition(t) {
+        t.implements("MutationOutput");
+        t.nonNull.boolean("sent");
     },
 });
 
@@ -45,14 +58,72 @@ export const AuthMutation = extendType({
             type: "AuthOutput",
             args: {
                 email: nonNull(stringArg()),
-                password: nonNull(stringArg()),
             },
             async resolve(_parent, _args, _context) {
                 return {
                     message: "User Account created",
+                    accessToken: null,
+                    refreshToken: null,
+                    user: getEmptyUserMock({}),
+                };
+            },
+        });
+
+        t.nonNull.field("changePassword", {
+            type: "AuthOutput",
+            args: {
+                oldPassword: stringArg(),
+                newPassword: nonNull(stringArg()),
+            },
+            async resolve(_parent, _args, _context) {
+                return {
+                    message: "User Password updated",
                     accessToken: accessTokenMock,
                     refreshToken: refreshTokenMock,
                     user: getUserMock(),
+                };
+            },
+        });
+
+        t.nonNull.field("sendEmailVerification", {
+            type: "TokenSendOutput",
+            args: {
+                email: nonNull(stringArg()),
+            },
+            async resolve(_parent, _args, _context) {
+                return {
+                    message: "Verification Email Sent",
+                    sent: true,
+                };
+            },
+        });
+
+        t.nonNull.field("sendPasswordReset", {
+            type: "TokenSendOutput",
+            args: {
+                email: nonNull(stringArg()),
+            },
+            async resolve(_parent, _args, _context) {
+                return {
+                    message: "Password Reset Email Sent",
+                    sent: true,
+                };
+            },
+        });
+
+        t.nonNull.field("verifyEmail", {
+            type: "AuthOutput",
+            args: {
+                token: nonNull(stringArg()),
+            },
+            async resolve(_parent, _args, _context) {
+                return {
+                    message: "User Email verified",
+                    accessToken: null,
+                    refreshToken: null,
+                    user: getEmptyUserMock({
+                        emailVerified: true,
+                    }),
                 };
             },
         });

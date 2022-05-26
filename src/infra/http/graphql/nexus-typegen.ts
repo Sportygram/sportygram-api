@@ -81,10 +81,11 @@ export interface NexusGenInputs {
     predictionType: string; // String!
   }
   UpdateUserProfileInput: { // input type
-    country: string; // String!
-    firstname: string; // String!
-    lastname: string; // String!
-    username: string; // String!
+    country?: string | null; // String
+    favoriteTeam?: string | null; // String
+    firstname?: string | null; // String
+    lastname?: string | null; // String
+    username?: string | null; // String
   }
 }
 
@@ -110,9 +111,9 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   AuthOutput: { // root type
-    accessToken: string; // String!
+    accessToken?: string | null; // String
     message: string; // String!
-    refreshToken: string; // String!
+    refreshToken?: string | null; // String
     user: NexusGenRootTypes['User']; // User!
   }
   ChatUser: { // root type
@@ -210,6 +211,10 @@ export interface NexusGenObjects {
     away?: NexusGenRootTypes['Team'] | null; // Team
     home?: NexusGenRootTypes['Team'] | null; // Team
   }
+  TokenSendOutput: { // root type
+    message: string; // String!
+    sent: boolean; // Boolean!
+  }
   UpdateUserProfileOutput: { // root type
     message: string; // String!
     user: NexusGenRootTypes['User']; // User!
@@ -219,6 +224,7 @@ export interface NexusGenObjects {
     country?: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: NexusGenScalars['EmailAddress']; // EmailAddress!
+    emailVerified: boolean; // Boolean!
     firstname?: string | null; // String
     gamesSummary?: NexusGenScalars['JSON'] | null; // JSON
     lastname?: string | null; // String
@@ -232,14 +238,14 @@ export interface NexusGenObjects {
     settings?: NexusGenScalars['JSON'] | null; // JSON
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userId: string; // ID!
-    userState?: string | null; // String
+    userState: string; // String!
     username?: string | null; // String
   }
 }
 
 export interface NexusGenInterfaces {
   CursorPaginationOutput: any;
-  MutationOutput: NexusGenRootTypes['AuthOutput'] | NexusGenRootTypes['CheckUsernameOutput'] | NexusGenRootTypes['CreateRoomOutput'] | NexusGenRootTypes['PredictionOutput'] | NexusGenRootTypes['UpdateUserProfileOutput'];
+  MutationOutput: NexusGenRootTypes['AuthOutput'] | NexusGenRootTypes['CheckUsernameOutput'] | NexusGenRootTypes['CreateRoomOutput'] | NexusGenRootTypes['PredictionOutput'] | NexusGenRootTypes['TokenSendOutput'] | NexusGenRootTypes['UpdateUserProfileOutput'];
   PaginatedInput: any;
   PaginationOutput: any;
 }
@@ -253,9 +259,9 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnu
 
 export interface NexusGenFieldTypes {
   AuthOutput: { // field return type
-    accessToken: string; // String!
+    accessToken: string | null; // String
     message: string; // String!
-    refreshToken: string; // String!
+    refreshToken: string | null; // String
     user: NexusGenRootTypes['User']; // User!
   }
   ChatUser: { // field return type
@@ -311,15 +317,19 @@ export interface NexusGenFieldTypes {
     timeElapsed: number | null; // Int
   }
   Mutation: { // field return type
+    changePassword: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     checkUsername: NexusGenRootTypes['CheckUsernameOutput']; // CheckUsernameOutput!
     createRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     joinRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     login: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     predictMatch: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
+    sendEmailVerification: NexusGenRootTypes['TokenSendOutput']; // TokenSendOutput!
+    sendPasswordReset: NexusGenRootTypes['TokenSendOutput']; // TokenSendOutput!
     signup: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     updatePrediction: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
     updateRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     updateUserProfile: NexusGenRootTypes['UpdateUserProfileOutput']; // UpdateUserProfileOutput!
+    verifyEmail: NexusGenRootTypes['AuthOutput']; // AuthOutput!
   }
   Pagination: { // field return type
     limit: number | null; // Int
@@ -368,6 +378,10 @@ export interface NexusGenFieldTypes {
     away: NexusGenRootTypes['Team'] | null; // Team
     home: NexusGenRootTypes['Team'] | null; // Team
   }
+  TokenSendOutput: { // field return type
+    message: string; // String!
+    sent: boolean; // Boolean!
+  }
   UpdateUserProfileOutput: { // field return type
     message: string; // String!
     user: NexusGenRootTypes['User']; // User!
@@ -377,6 +391,7 @@ export interface NexusGenFieldTypes {
     country: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: NexusGenScalars['EmailAddress']; // EmailAddress!
+    emailVerified: boolean; // Boolean!
     firstname: string | null; // String
     gamesSummary: NexusGenScalars['JSON'] | null; // JSON
     lastname: string | null; // String
@@ -390,7 +405,7 @@ export interface NexusGenFieldTypes {
     settings: NexusGenScalars['JSON'] | null; // JSON
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userId: string; // ID!
-    userState: string | null; // String
+    userState: string; // String!
     username: string | null; // String
   }
   CursorPaginationOutput: { // field return type
@@ -468,15 +483,19 @@ export interface NexusGenFieldTypeNames {
     timeElapsed: 'Int'
   }
   Mutation: { // field return type name
+    changePassword: 'AuthOutput'
     checkUsername: 'CheckUsernameOutput'
     createRoom: 'CreateRoomOutput'
     joinRoom: 'CreateRoomOutput'
     login: 'AuthOutput'
     predictMatch: 'PredictionOutput'
+    sendEmailVerification: 'TokenSendOutput'
+    sendPasswordReset: 'TokenSendOutput'
     signup: 'AuthOutput'
     updatePrediction: 'PredictionOutput'
     updateRoom: 'CreateRoomOutput'
     updateUserProfile: 'UpdateUserProfileOutput'
+    verifyEmail: 'AuthOutput'
   }
   Pagination: { // field return type name
     limit: 'Int'
@@ -525,6 +544,10 @@ export interface NexusGenFieldTypeNames {
     away: 'Team'
     home: 'Team'
   }
+  TokenSendOutput: { // field return type name
+    message: 'String'
+    sent: 'Boolean'
+  }
   UpdateUserProfileOutput: { // field return type name
     message: 'String'
     user: 'User'
@@ -534,6 +557,7 @@ export interface NexusGenFieldTypeNames {
     country: 'String'
     createdAt: 'DateTime'
     email: 'EmailAddress'
+    emailVerified: 'Boolean'
     firstname: 'String'
     gamesSummary: 'JSON'
     lastname: 'String'
@@ -567,6 +591,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    changePassword: { // args
+      newPassword: string; // String!
+      oldPassword?: string | null; // String
+    }
     checkUsername: { // args
       username: string; // String!
     }
@@ -584,9 +612,14 @@ export interface NexusGenArgTypes {
     predictMatch: { // args
       input: NexusGenInputs['PredictionInput']; // PredictionInput!
     }
+    sendEmailVerification: { // args
+      email: string; // String!
+    }
+    sendPasswordReset: { // args
+      email: string; // String!
+    }
     signup: { // args
       email: string; // String!
-      password: string; // String!
     }
     updatePrediction: { // args
       input: NexusGenInputs['PredictionInput']; // PredictionInput!
@@ -597,6 +630,9 @@ export interface NexusGenArgTypes {
     }
     updateUserProfile: { // args
       data: NexusGenInputs['UpdateUserProfileInput']; // UpdateUserProfileInput!
+    }
+    verifyEmail: { // args
+      token: string; // String!
     }
   }
   Query: {
@@ -613,7 +649,7 @@ export interface NexusGenArgTypes {
 }
 
 export interface NexusGenAbstractTypeMembers {
-  MutationOutput: "AuthOutput" | "CheckUsernameOutput" | "CreateRoomOutput" | "PredictionOutput" | "UpdateUserProfileOutput"
+  MutationOutput: "AuthOutput" | "CheckUsernameOutput" | "CreateRoomOutput" | "PredictionOutput" | "TokenSendOutput" | "UpdateUserProfileOutput"
 }
 
 export interface NexusGenTypeInterfaces {
@@ -621,6 +657,7 @@ export interface NexusGenTypeInterfaces {
   CheckUsernameOutput: "MutationOutput"
   CreateRoomOutput: "MutationOutput"
   PredictionOutput: "MutationOutput"
+  TokenSendOutput: "MutationOutput"
   UpdateUserProfileOutput: "MutationOutput"
 }
 
