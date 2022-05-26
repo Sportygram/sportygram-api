@@ -24,6 +24,7 @@ export const Team = objectType({
         t.id("code");
         t.string("name");
         t.string("logo");
+        t.string("stadium");
         t.string("score");
         t.boolean("winner");
         t.list.field("statistics", { type: "MatchStatistic" });
