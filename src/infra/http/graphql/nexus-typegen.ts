@@ -124,6 +124,11 @@ export interface NexusGenObjects {
     available: boolean; // Boolean!
     message: string; // String!
   }
+  Country: { // root type
+    code: string; // String!
+    emoji: string; // String!
+    name: string; // String!
+  }
   CreateRoomOutput: { // root type
     message: string; // String!
     room: NexusGenRootTypes['Room']; // Room!
@@ -204,6 +209,7 @@ export interface NexusGenObjects {
     logo?: string | null; // String
     name?: string | null; // String
     score?: string | null; // String
+    stadium?: string | null; // String
     statistics?: Array<NexusGenRootTypes['MatchStatistic'] | null> | null; // [MatchStatistic]
     winner?: boolean | null; // Boolean
   }
@@ -271,6 +277,11 @@ export interface NexusGenFieldTypes {
   CheckUsernameOutput: { // field return type
     available: boolean; // Boolean!
     message: string; // String!
+  }
+  Country: { // field return type
+    code: string; // String!
+    emoji: string; // String!
+    name: string; // String!
   }
   CreateRoomOutput: { // field return type
     message: string; // String!
@@ -349,8 +360,10 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     chatToken: string; // String!
+    countries: Array<NexusGenRootTypes['Country'] | null>; // [Country]!
     fixtures: NexusGenRootTypes['Fixture'][]; // [Fixture!]!
     room: NexusGenRootTypes['Room']; // Room!
+    teams: Array<NexusGenRootTypes['Team'] | null>; // [Team]!
     viewer: NexusGenRootTypes['User']; // User!
   }
   Room: { // field return type
@@ -371,6 +384,7 @@ export interface NexusGenFieldTypes {
     logo: string | null; // String
     name: string | null; // String
     score: string | null; // String
+    stadium: string | null; // String
     statistics: Array<NexusGenRootTypes['MatchStatistic'] | null> | null; // [MatchStatistic]
     winner: boolean | null; // Boolean
   }
@@ -437,6 +451,11 @@ export interface NexusGenFieldTypeNames {
   CheckUsernameOutput: { // field return type name
     available: 'Boolean'
     message: 'String'
+  }
+  Country: { // field return type name
+    code: 'String'
+    emoji: 'String'
+    name: 'String'
   }
   CreateRoomOutput: { // field return type name
     message: 'String'
@@ -515,8 +534,10 @@ export interface NexusGenFieldTypeNames {
   }
   Query: { // field return type name
     chatToken: 'String'
+    countries: 'Country'
     fixtures: 'Fixture'
     room: 'Room'
+    teams: 'Team'
     viewer: 'User'
   }
   Room: { // field return type name
@@ -537,6 +558,7 @@ export interface NexusGenFieldTypeNames {
     logo: 'String'
     name: 'String'
     score: 'String'
+    stadium: 'String'
     statistics: 'MatchStatistic'
     winner: 'Boolean'
   }
