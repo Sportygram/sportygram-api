@@ -5,13 +5,14 @@ type User = NexusGenObjects["User"];
 let userDefault: User = {
     email: "acheeroku@gmail.com",
     userId: "3658e8d9-2027-4535-9770-d534dd6a8d9c",
-    roles: ["free_customer"],
+    roles: ["user"],
     firstname: "Oluwaseun",
     lastname: "Olalere",
     userState: "active",
+    emailVerified: true,
     referralCode: "TOA-E86",
     referralCount: 0,
-    coinBalance: 0.00,
+    coinBalance: 0.0,
     phone: "+2348031234567",
     profileImageUrl:
         "https://i.pinimg.com/474x/65/25/a0/6525a08f1df98a2e3a545fe2ace4be47.jpg",
@@ -22,9 +23,22 @@ let userDefault: User = {
     rooms: [getRoomMock()],
     settings: {
         hello: "world",
-        bgColor: "blue"
-    }
+        bgColor: "blue",
+    },
 };
+
+export const getEmptyUserMock = (p?: Partial<User>): User => ({
+    ...userDefault,
+    firstname: null,
+    lastname: null,
+    emailVerified: false,
+    onboarded: false,
+    phone: null,
+    profileImageUrl: null,
+    country: null,
+    rooms: [],
+    ...p,
+});
 
 export const getUserMock = (p?: Partial<User>): User => ({
     ...userDefault,

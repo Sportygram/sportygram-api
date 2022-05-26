@@ -17,7 +17,8 @@ export const User = objectType({
         t.string("firstname");
         t.string("lastname");
         t.string("country");
-        t.string("userState");
+        t.nonNull.string("userState");
+        t.nonNull.boolean("emailVerified");
         t.nonNull.string("referralCode");
         t.nonNull.int("referralCount");
         t.phone("phone");
@@ -50,10 +51,11 @@ export const UserQuery = extendType({
 export const UpdateUserProfileInput = inputObjectType({
     name: "UpdateUserProfileInput",
     definition(t) {
-        t.nonNull.string("username");
-        t.nonNull.string("firstname");
-        t.nonNull.string("lastname");
-        t.nonNull.string("country");
+        t.string("username");
+        t.string("firstname");
+        t.string("lastname");
+        t.string("country");
+        t.string("favoriteTeam")
     },
 });
 

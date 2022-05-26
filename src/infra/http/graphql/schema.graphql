@@ -3,9 +3,9 @@
 
 
 type AuthOutput implements MutationOutput {
-  accessToken: String!
+  accessToken: String
   message: String!
-  refreshToken: String!
+  refreshToken: String
   user: User!
 }
 
@@ -116,15 +116,19 @@ type MatchStatus {
 }
 
 type Mutation {
+  changePassword(newPassword: String!, oldPassword: String): AuthOutput!
   checkUsername(username: String!): CheckUsernameOutput!
   createRoom(description: String, name: String!): CreateRoomOutput!
   joinRoom(description: String, name: String!): CreateRoomOutput!
   login(input: LoginInput!): AuthOutput!
   predictMatch(input: PredictionInput!): PredictionOutput!
-  signup(email: String!, password: String!): AuthOutput!
+  sendEmailVerification(email: String!): TokenSendOutput!
+  sendPasswordReset(email: String!): TokenSendOutput!
+  signup(email: String!): AuthOutput!
   updatePrediction(input: PredictionInput!): PredictionOutput!
   updateRoom(description: String, name: String!): CreateRoomOutput!
   updateUserProfile(data: UpdateUserProfileInput!): UpdateUserProfileOutput!
+  verifyEmail(token: String!): AuthOutput!
 }
 
 interface MutationOutput {
@@ -215,11 +219,17 @@ type TeamData {
   home: Team
 }
 
+type TokenSendOutput implements MutationOutput {
+  message: String!
+  sent: Boolean!
+}
+
 input UpdateUserProfileInput {
-  country: String!
-  firstname: String!
-  lastname: String!
-  username: String!
+  country: String
+  favoriteTeam: String
+  firstname: String
+  lastname: String
+  username: String
 }
 
 type UpdateUserProfileOutput implements MutationOutput {
@@ -232,6 +242,7 @@ type User {
   country: String
   createdAt: DateTime!
   email: EmailAddress!
+  emailVerified: Boolean!
   firstname: String
   gamesSummary: JSON
   lastname: String
@@ -245,7 +256,7 @@ type User {
   settings: JSON
   updatedAt: DateTime!
   userId: ID!
-  userState: String
+  userState: String!
   username: String
 }
 
