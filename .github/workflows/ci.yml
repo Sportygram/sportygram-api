@@ -32,22 +32,22 @@ jobs:
           cache: 'npm'
 
       - name: Run build
-        run: /
+        run: |
             yarn
             yarn build
 
       - name: Set up Infra
-        run: /
+        run: |
             echo starting integration test infra...
             docker-compose -f docker-compose.ci.yml up -d
             
       - name: Run Migration
-        run: /
+        run: |
             echo migrating and seeding database...
             yarn migrate
             yarn seed
             
       - name: Run tests
-        run: /
+        run: |
             echo testing...
             yarn test
