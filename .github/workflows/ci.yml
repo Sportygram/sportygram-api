@@ -7,7 +7,9 @@ on:
   push:
     
   workflow_dispatch:
-    
+
+env:
+  DATABASE_URL: postgresql://sgram:sgram@localhost:8001/sgramtestdb?schema=public"
 
 jobs:
   build:
@@ -20,14 +22,23 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
+    - name: Checkout Repo
     - uses: actions/checkout@v3
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: yarn
-    - run: yarn build
-    - run: yarn migrate
-    - run: yarn seed
-    - run: yarn test
+
+    - name: Run tests
+    - run: /
+          echo starting integration test infra
+          docker-compose -f docker-compose.ci.yml up -d
+          echo initializing...
+          yarn
+          yarn build
+          yarn migrate
+          yarn seed
+          echo testing...
+          yarn test
