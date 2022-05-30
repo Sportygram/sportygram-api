@@ -31,14 +31,23 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: Run tests
+      - name: Run build
         run: /
-            echo starting integration test infra
-            docker-compose -f docker-compose.ci.yml up -d
-            echo initializing...
             yarn
             yarn build
+
+      - name: Set up Infra
+        run: /
+            echo starting integration test infra...
+            docker-compose -f docker-compose.ci.yml up -d
+            
+      - name: Run Migration
+        run: /
+            echo migrating and seeding database...
             yarn migrate
             yarn seed
+            
+      - name: Run tests
+        run: /
             echo testing...
             yarn test
