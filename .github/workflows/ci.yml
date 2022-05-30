@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  DATABASE_URL: postgresql://sgram:sgram@localhost:8001/sgramtestdb?schema=public"
+  DATABASE_URL: postgresql://sgram:sgram@localhost:8001/sgramtestdb?schema=public
 
 jobs:
   build:
