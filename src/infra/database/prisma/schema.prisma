@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id              String            @id @db.Uuid
+  name            String            @unique
+  description     String
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  rolePermissions RolePermissions[]
+  roleUsers       UserRoles[]
+
+  @@map("roles")
+}
+
+enum AccessMode {
+  create
+  read
+  update
+  delete
+  edit
+}
+
+model RolePermissions {
+  role_id       String     @db.Uuid
+  permission_id String     @db.Uuid
+  role          Role       @relation(fields: [role_id], references: [id])
+  permission    Permission @relation(fields: [permission_id], references: [id])
+
+  @@unique([role_id, permission_id], map: "role_id_permission_id_unique")
+  @@map("roles_permissions")
+}
+
+model Permission {
+  id              String            @id @db.Uuid
+  accessMode      AccessMode        @map("access_mode")
+  description     String
+  resource        String
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  permissionRoles RolePermissions[]
+
+  @@map("permissions")
+}
+
+enum UserState {
+  active
+  inactive
+  deleted
+}
+
+model User {
+  id            String       @id @db.Uuid
+  email         String?      @unique
+  username      String?      @unique
+  firstname     String?
+  lastname      String?
+  passwordHash  String       @map("password_hash")
+  referrer      String?
+  country       String?
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  lastLoginIp   String?      @map("last_login_ip") @db.Inet
+  lastLoginTime DateTime?    @map("last_login_time")
+  referralCode  String       @unique @map("referral_code")
+  userState     UserState    @default(active) @map("user_state")
+  profile       UserProfile?
+  tokens        Token[]
+  userRoles     UserRoles[]
+
+  @@map("users")
+}
+
+model UserRoles {
+  role_id String @db.Uuid
+  user_id String @db.Uuid
+  role    Role   @relation(fields: [role_id], references: [id])
+  user    User   @relation(fields: [user_id], references: [id])
+
+  @@unique([role_id, user_id], map: "role_id_user_id_unique")
+  @@map("users_roles")
+}
+
+model UserProfile {
+  id              String   @id @db.Uuid
+  phone           String?
+  profileImageUrl String?  @map("profile_image_url")
+  onboarded       Boolean
+  referralCount   Int      @default(0) @map("referral_count")
+  coinBalance     Decimal  @default(0) @db.Decimal(18, 4)
+  userId          String   @unique @map("user_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  settings        Json
+  gamesSummary    Json
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@map("user_profiles")
+}
+
+enum TokenType {
+  email_verify
+  password_reset
+}
+
+model Token {
+  id        String    @id @db.Uuid
+  type      TokenType
+  expiresAt DateTime  @map("expires_at")
+  userId    String    @map("user_id") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@map("tokens")
+}
+
+// model Room {}
+// model Games {}

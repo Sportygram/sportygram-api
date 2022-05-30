@@ -1,7 +1,17 @@
 import { Request } from "express";
+import { RequestUserDTO } from "../../../lib/utils/permissions";
+import { authMiddleware } from "../middleware";
 
-export interface Context {}
+export interface Context {
+    req: Request;
+    reqUser?: RequestUserDTO;
+}
 
-export const context = (_: { req: Request }): Context => {
-    return {};
+export const context = async ({ req }: { req: Request }): Promise<Context> => {
+    const reqUser = await authMiddleware.getRequestUserFromAuthHeader(req);
+
+    return {
+        req,
+        reqUser,
+    };
 };

@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  sgram-db:
+    image: postgres:latest
+    restart: on-failure
+    container_name: sgram-db
+    environment:
+      POSTGRES_DB: sgramtestdb
+      POSTGRES_USER: sgram
+      POSTGRES_PASSWORD: sgram
+    logging:
+      driver: json-file
+    ports:
+      - 8001:5432
+
+  sgram-redis:
+    image: redis
+    container_name: sgram-cache
+    logging:
+      driver: json-file
+    ports:
+      - 6379:6379

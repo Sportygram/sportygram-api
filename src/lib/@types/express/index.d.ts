@@ -1,4 +1,5 @@
-import { RequestUserDTO } from "../../shared/utils/permissions";
+import { RequestUserDTO } from "../../utils/permissions";
+
 declare global {
     namespace Express {
         interface Request {

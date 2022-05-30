@@ -11,6 +11,8 @@ interface RoleProps {
     name: string;
     description: string;
     permissions: UserPermissions;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export class Role extends AggregateRoot<RoleProps> {
@@ -23,6 +25,12 @@ export class Role extends AggregateRoot<RoleProps> {
     }
     get description(): string {
         return this.props.description;
+    }
+    get createdAt(): Date {
+        return this.props.createdAt || new Date();
+    }
+    get updatedAt(): Date {
+        return this.props.updatedAt || new Date();
     }
     get permissions(): UserPermissions {
         return this.props.permissions;

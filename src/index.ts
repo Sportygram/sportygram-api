@@ -6,9 +6,10 @@ import logger from "./lib/core/Logger";
 
 // Infra
 import { app } from "./infra/http/app";
-import './infra/socket';
+import "./infra/socket";
+
 // Subscriptions
-// import "./modules/iam/subscribers";
+import "./modules/iam/subscribers";
 
 app.listen(app.get("PORT"), () =>
     logger.info(`🚀 Server running on port ${app.get("PORT")}`, {

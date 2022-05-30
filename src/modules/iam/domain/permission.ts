@@ -9,6 +9,8 @@ interface PermissionProps {
     accessMode: string;
     resource: string;
     description: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export class Permission extends Entity<PermissionProps> {
@@ -21,6 +23,12 @@ export class Permission extends Entity<PermissionProps> {
     }
     get resource(): string {
         return this.props.resource;
+    }
+    get createdAt(): Date {
+        return this.props.createdAt || new Date();
+    }
+    get updatedAt(): Date {
+        return this.props.updatedAt || new Date();
     }
     get value(): string {
         return Permission.getPermissionValue(
