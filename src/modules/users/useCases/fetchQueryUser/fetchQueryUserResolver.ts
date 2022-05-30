@@ -1,6 +1,6 @@
 import { FieldResolver } from "nexus";
 import { ForbiddenError } from "apollo-server-core";
-import { userReadRepo } from "../../iam/repos";
+import { userReadRepo } from "../../../iam/repos";
 
 export const viewerResolver: FieldResolver<"Query", "viewer"> = async (
     _parent,

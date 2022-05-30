@@ -93,6 +93,7 @@ model UserRoles {
 model UserProfile {
   id              String   @id @db.Uuid
   phone           String?
+  favoriteTeam    String?  @map("favorite_team")
   profileImageUrl String?  @map("profile_image_url")
   onboarded       Boolean
   referralCount   Int      @default(0) @map("referral_count")

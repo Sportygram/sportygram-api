@@ -32,6 +32,10 @@ declare global {
      * The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
      */
     json<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "JSON";
+    /**
+     * A field whose value is a IPv4 address: https://en.wikipedia.org/wiki/IPv4.
+     */
+    ipv4<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "IPv4";
   }
 }
 declare global {
@@ -60,6 +64,10 @@ declare global {
      * The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
      */
     json<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "JSON";
+    /**
+     * A field whose value is a IPv4 address: https://en.wikipedia.org/wiki/IPv4.
+     */
+    ipv4<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "IPv4";
   }
 }
 
@@ -71,7 +79,7 @@ declare global {
 export interface NexusGenInputs {
   LoginInput: { // input type
     emailOrUsername: string; // String!
-    ip?: string | null; // String
+    ip?: NexusGenScalars['IPv4'] | null; // IPv4
     password: string; // String!
   }
   PredictionInput: { // input type
@@ -85,6 +93,7 @@ export interface NexusGenInputs {
     favoriteTeam?: string | null; // String
     firstname?: string | null; // String
     lastname?: string | null; // String
+    onboarded?: boolean | null; // Boolean
     username?: string | null; // String
   }
 }
@@ -104,6 +113,7 @@ export interface NexusGenScalars {
   CountryCode: any
   DateTime: any
   EmailAddress: any
+  IPv4: any
   JSON: any
   JWT: any
   PhoneNumber: any
@@ -653,7 +663,7 @@ export interface NexusGenArgTypes {
       name: string; // String!
     }
     updateUserProfile: { // args
-      data: NexusGenInputs['UpdateUserProfileInput']; // UpdateUserProfileInput!
+      input: NexusGenInputs['UpdateUserProfileInput']; // UpdateUserProfileInput!
     }
     verifyEmail: { // args
       token: string; // String!

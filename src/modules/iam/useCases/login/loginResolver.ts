@@ -6,10 +6,11 @@ import { userReadRepo } from "../../repos";
 import { loginUseCase } from "../login";
 import { LoginDTO } from "./loginDTO";
 
-export const loginResolver: FieldResolver<
-    "Mutation",
-    "login"
-> = async (_parent, args, _ctx) => {
+export const loginResolver: FieldResolver<"Mutation", "login"> = async (
+    _parent,
+    args,
+    _ctx
+) => {
     const dto = {
         ...args.input,
     } as LoginDTO;

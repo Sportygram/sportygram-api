@@ -114,8 +114,15 @@ export class User extends AggregateRoot<UserProps> {
         this.props.lastname = lastname;
         return Result.ok();
     }
-    public updateCountry(country: string): Result<void> {
-        this.props.country = country;
+    public updateCountry(countryCode: string): Result<void> {
+        const isValidCountryCode = countries.find(
+            (country) => country.code === countryCode
+        );
+
+        if (!isValidCountryCode) {
+            return Result.fail("country must be a valid country code");
+        }
+        this.props.country = countryCode;
         return Result.ok();
     }
 
@@ -205,14 +212,7 @@ export class User extends AggregateRoot<UserProps> {
             );
 
             if (!isValidCountryCode) {
-                const isValidCountry = countries.find(
-                    (country) =>
-                        country.name.toLowerCase() ===
-                        props.country?.toLowerCase()
-                );
-                if (!isValidCountry) {
-                    return Result.fail("country must be a valid country code");
-                }
+                return Result.fail("country must be a valid country code");
             }
         }
 
