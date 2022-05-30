@@ -1,6 +1,6 @@
 import { arg, extendType, inputObjectType, nonNull, objectType } from "nexus";
-import { viewerResolver } from "../../../../modules/users/fetchQueryUser/fetchQueryUserResolver";
-import { getUserMock } from "./mocks/Auth";
+import { viewerResolver } from "../../../../modules/users/useCases/fetchQueryUser/fetchQueryUserResolver";
+import { updateUserProfileResolver } from "../../../../modules/users/useCases/updateUserProfile/updateUserProfileResolver";
 
 /* TODO: User graphql
     - Update Interests and favorite team details
@@ -26,8 +26,8 @@ export const User = objectType({
         t.nonNull.boolean("onboarded");
         t.nonNull.float("coinBalance");
         t.list.field("rooms", { type: "Room" });
-        t.json("settings")
-        t.json("gamesSummary")
+        t.json("settings");
+        t.json("gamesSummary");
         t.nonNull.dateTime("createdAt");
         t.nonNull.dateTime("updatedAt");
     },
@@ -39,7 +39,7 @@ export const UserQuery = extendType({
         t.nonNull.field("viewer", {
             type: "User",
             args: {},
-            resolve: viewerResolver
+            resolve: viewerResolver,
         });
     },
 });
@@ -51,7 +51,8 @@ export const UpdateUserProfileInput = inputObjectType({
         t.string("firstname");
         t.string("lastname");
         t.string("country");
-        t.string("favoriteTeam")
+        t.string("favoriteTeam");
+        t.boolean("onboarded");
     },
 });
 
@@ -69,14 +70,9 @@ export const UserMutation = extendType({
         t.nonNull.field("updateUserProfile", {
             type: "UpdateUserProfileOutput",
             args: {
-                data: arg({ type: nonNull(UpdateUserProfileInput) }),
+                input: arg({ type: nonNull(UpdateUserProfileInput) }),
             },
-            async resolve(_parent, args, _context) {
-                return {
-                    user: getUserMock(args.data),
-                    message: "User Updated",
-                };
-            },
+            resolve: updateUserProfileResolver,
         });
     },
 });

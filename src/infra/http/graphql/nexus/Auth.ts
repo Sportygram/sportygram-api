@@ -38,7 +38,7 @@ export const LoginInput = inputObjectType({
     definition(t) {
         t.nonNull.string("emailOrUsername");
         t.nonNull.string("password");
-        t.string("ip");
+        t.ipv4("ip");
     },
 });
 
