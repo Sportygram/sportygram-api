@@ -3,7 +3,7 @@ import { getRoomMock } from "./Messaging";
 
 type User = NexusGenObjects["User"];
 let userDefault: User = {
-    email: "acheeroku@gmail.com",
+    email: "hello@sgram.com",
     userId: "3658e8d9-2027-4535-9770-d534dd6a8d9c",
     roles: ["user"],
     firstname: "Oluwaseun",

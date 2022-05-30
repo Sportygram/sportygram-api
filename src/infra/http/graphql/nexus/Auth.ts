@@ -6,12 +6,11 @@ import {
     inputObjectType,
     arg,
 } from "nexus";
-import {
-    accessTokenMock,
-    getUserMock,
-    getEmptyUserMock,
-    refreshTokenMock,
-} from "./mocks/Auth";
+import { createUserResolver } from "../../../../modules/iam/useCases/createUser/createUserResolver";
+import { checkUsernameResolver } from "../../../../modules/iam/useCases/checkUsernameAvailability/checkUsernameResolver";
+import { changePasswordResolver } from "../../../../modules/iam/useCases/changePassword/changePasswordResolver";
+import { loginResolver } from "../../../../modules/iam/useCases/login/loginResolver";
+import { verifyEmailResolver } from "../../../../modules/iam/useCases/verifyUserEmail/verifyEmailResolver";
 
 /* TODO Auth graphql
     - SSO Authentication
@@ -39,7 +38,7 @@ export const LoginInput = inputObjectType({
     definition(t) {
         t.nonNull.string("emailOrUsername");
         t.nonNull.string("password");
-        t.nonNull.string("ip");
+        t.string("ip");
     },
 });
 
@@ -58,15 +57,10 @@ export const AuthMutation = extendType({
             type: "AuthOutput",
             args: {
                 email: nonNull(stringArg()),
+                password: stringArg(),
+                referralCode: stringArg(),
             },
-            async resolve(_parent, _args, _context) {
-                return {
-                    message: "User Account created",
-                    accessToken: null,
-                    refreshToken: null,
-                    user: getEmptyUserMock({}),
-                };
-            },
+            resolve: createUserResolver,
         });
 
         t.nonNull.field("changePassword", {
@@ -75,14 +69,7 @@ export const AuthMutation = extendType({
                 oldPassword: stringArg(),
                 newPassword: nonNull(stringArg()),
             },
-            async resolve(_parent, _args, _context) {
-                return {
-                    message: "User Password updated",
-                    accessToken: accessTokenMock,
-                    refreshToken: refreshTokenMock,
-                    user: getUserMock(),
-                };
-            },
+            resolve: changePasswordResolver,
         });
 
         t.nonNull.field("sendEmailVerification", {
@@ -116,16 +103,7 @@ export const AuthMutation = extendType({
             args: {
                 token: nonNull(stringArg()),
             },
-            async resolve(_parent, _args, _context) {
-                return {
-                    message: "User Email verified",
-                    accessToken: null,
-                    refreshToken: null,
-                    user: getEmptyUserMock({
-                        emailVerified: true,
-                    }),
-                };
-            },
+            resolve: verifyEmailResolver,
         });
 
         t.nonNull.field("login", {
@@ -133,16 +111,7 @@ export const AuthMutation = extendType({
             args: {
                 input: arg({ type: nonNull(LoginInput) }),
             },
-            async resolve(_parent, _args, _context) {
-                return {
-                    message: "User Authentication token created",
-                    accessToken: accessTokenMock,
-                    refreshToken: refreshTokenMock,
-                    user: getUserMock({
-                        username: "bleh",
-                    }),
-                };
-            },
+            resolve: loginResolver,
         });
 
         t.nonNull.field("checkUsername", {
@@ -150,12 +119,7 @@ export const AuthMutation = extendType({
             args: {
                 username: nonNull(stringArg()),
             },
-            async resolve(_parent, _args, _context) {
-                return {
-                    available: true,
-                    message: "Username is available",
-                };
-            },
+            resolve: checkUsernameResolver,
         });
     },
 });

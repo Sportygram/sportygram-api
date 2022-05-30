@@ -94,7 +94,7 @@ scalar JWT
 
 input LoginInput {
   emailOrUsername: String!
-  ip: String!
+  ip: String
   password: String!
 }
 
@@ -118,7 +118,7 @@ type Mutation {
   predictMatch(input: PredictionInput!): PredictionOutput!
   sendEmailVerification(email: String!): TokenSendOutput!
   sendPasswordReset(email: String!): TokenSendOutput!
-  signup(email: String!): AuthOutput!
+  signup(email: String!, password: String, referralCode: String): AuthOutput!
   updatePrediction(input: PredictionInput!): PredictionOutput!
   updateRoom(description: String, name: String!): CreateRoomOutput!
   updateUserProfile(data: UpdateUserProfileInput!): UpdateUserProfileOutput!

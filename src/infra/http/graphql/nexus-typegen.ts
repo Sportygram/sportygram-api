@@ -71,7 +71,7 @@ declare global {
 export interface NexusGenInputs {
   LoginInput: { // input type
     emailOrUsername: string; // String!
-    ip: string; // String!
+    ip?: string | null; // String
     password: string; // String!
   }
   PredictionInput: { // input type
@@ -620,6 +620,8 @@ export interface NexusGenArgTypes {
     }
     signup: { // args
       email: string; // String!
+      password?: string | null; // String
+      referralCode?: string | null; // String
     }
     updatePrediction: { // args
       input: NexusGenInputs['PredictionInput']; // PredictionInput!

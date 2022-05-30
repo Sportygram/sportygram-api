@@ -15,6 +15,8 @@ interface TokenProps {
     type: string;
     expiresAt?: Date;
     userId: UserId;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export class Token extends Entity<TokenProps> {
@@ -33,6 +35,13 @@ export class Token extends Entity<TokenProps> {
     get expiresAt(): Date {
         if (!this.props.expiresAt) throw new Error("Invalid expireAt");
         return this.props.expiresAt;
+    }
+
+    get createdAt(): Date {
+        return this.props.createdAt || new Date();
+    }
+    get updatedAt(): Date {
+        return this.props.updatedAt || new Date();
     }
 
     public hasExpired(): boolean {

@@ -1,5 +1,5 @@
 import * as express from "express";
-import { Pagination } from "../../../@types";
+import { Pagination } from "../../../lib/@types";
 import logger from "../../../lib/core/Logger";
 
 export abstract class BaseController {

@@ -1,6 +1,6 @@
 import Joi from "joi";
 import "reflect-metadata";
-import { config } from "../../../config";
+import { config } from "../../config";
 import { PermissionsError } from "../../core/AppError";
 import { left } from "../../core/Result";
 
@@ -32,7 +32,6 @@ type JWTClaims = {
     userId: string;
     roles: string[];
     state: string;
-    organizationId: string;
 };
 
 type RequestUserDTO = {
@@ -40,7 +39,6 @@ type RequestUserDTO = {
     roles: string[];
     state: string;
     permissions: string[];
-    organizationId: string;
 };
 
 const RequestUserDTOSchema = Joi.object({
@@ -63,7 +61,6 @@ const SystemRequestUser: RequestUserDTO = {
     roles: ["system"],
     state: "active",
     permissions: ["system"],
-    organizationId: sgramOrganizationId,
 };
 
 function hasPermissions(_useCaseName: string, requiredPermissions: string[]) {

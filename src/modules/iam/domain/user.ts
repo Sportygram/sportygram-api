@@ -18,21 +18,23 @@ import { EmailTokenCreated } from "./events/emailTokenCreated";
 import { EmailVerified } from "./events/emailVerified";
 import { UserDeleted } from "./events/userDeleted";
 import { countries } from "./countries";
+import { ReferralCode } from "./valueObjects/referralCode";
 
+type Username = string;
 interface UserProps {
-    username?: string;
-    firstname?: string;
-    lastname?: string;
-    country?: string;
+    username?: string | null;
+    firstname?: string | null;
+    lastname?: string | null;
+    country?: string | null;
     email: UserEmail;
     passwordHash: UserPassword;
     roles: UserRoles;
     tokens: UserTokens;
-    referrerId?: UserId;
+    referrerId?: UserId | null;
+    referralCode: ReferralCode;
     userState: string;
-    lastLoginIp?: string;
-    lastLoginTime?: Date;
-    createdBy?: UserId;
+    lastLoginIp?: string | null;
+    lastLoginTime?: Date | null;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -41,25 +43,28 @@ export class User extends AggregateRoot<UserProps> {
     get userId(): UserId {
         return UserId.create(this._id).getValue();
     }
-    get username(): string | undefined {
+    get username(): Username | null | undefined {
         return this.props.username;
     }
     get email(): UserEmail {
         return this.props.email;
     }
-    get firstname(): string | undefined {
+    get firstname() {
         return this.props.firstname;
     }
-    get lastname(): string | undefined {
+    get lastname() {
         return this.props.lastname;
     }
-    get country(): string | undefined {
+    get country() {
         return this.props.country;
     }
-    get referrerId(): UserId | undefined {
+    get referralCode(): ReferralCode {
+        return this.props.referralCode;
+    }
+    get referrerId() {
         return this.props.referrerId;
     }
-    get passwordHash(): UserPassword {
+    get passwordHash() {
         return this.props.passwordHash;
     }
     get roles(): UserRoles {
@@ -74,20 +79,17 @@ export class User extends AggregateRoot<UserProps> {
     get userState(): UserState {
         return this.props.userState as UserState;
     }
-    get lastLoginIp(): string | undefined {
+    get lastLoginIp() {
         return this.props.lastLoginIp;
     }
-    get lastLoginTime(): Date | undefined {
+    get lastLoginTime() {
         return this.props.lastLoginTime;
     }
-    get createdBy(): UserId | undefined {
-        return this.props.createdBy;
+    get createdAt(): Date {
+        return this.props.createdAt || new Date();
     }
-    get createdAt(): Date | undefined {
-        return this.props.createdAt;
-    }
-    get updatedAt(): Date | undefined {
-        return this.props.updatedAt;
+    get updatedAt(): Date {
+        return this.props.updatedAt || new Date();
     }
 
     constructor(userProps: UserProps, id?: UniqueEntityID) {
@@ -114,6 +116,11 @@ export class User extends AggregateRoot<UserProps> {
     }
     public updateCountry(country: string): Result<void> {
         this.props.country = country;
+        return Result.ok();
+    }
+
+    public updateReferralCode(referralCode: ReferralCode): Result<void> {
+        this.props.referralCode = referralCode;
         return Result.ok();
     }
 
@@ -174,7 +181,7 @@ export class User extends AggregateRoot<UserProps> {
     public static create(props: UserProps, id?: UniqueEntityID): Result<User> {
         const guardResult = Guard.againstNullOrUndefinedBulk([
             { argument: props.email, argumentName: "email" },
-            { argument: props.passwordHash, argumentName: "password" },
+            { argument: props.passwordHash, argumentName: "passwordHash" },
             { argument: props.userState, argumentName: "userState" },
             { argument: props.roles, argumentName: "roles" },
         ]);

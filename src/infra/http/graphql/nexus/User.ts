@@ -1,4 +1,5 @@
 import { arg, extendType, inputObjectType, nonNull, objectType } from "nexus";
+import { viewerResolver } from "../../../../modules/users/fetchQueryUser/fetchQueryUserResolver";
 import { getUserMock } from "./mocks/Auth";
 
 /* TODO: User graphql
@@ -6,7 +7,6 @@ import { getUserMock } from "./mocks/Auth";
     - Purchase coins
     - updateSettings
 */
-
 export const User = objectType({
     name: "User",
     definition(t) {
@@ -39,11 +39,7 @@ export const UserQuery = extendType({
         t.nonNull.field("viewer", {
             type: "User",
             args: {},
-            async resolve(_parent, _args, _context, _info) {
-                return getUserMock({
-                    username: "united",
-                });
-            },
+            resolve: viewerResolver
         });
     },
 });
