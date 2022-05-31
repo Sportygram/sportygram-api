@@ -12,14 +12,14 @@ import {
 export const updateUserProfileResolver: FieldResolver<
     "Mutation",
     "updateUserProfile"
-> = async (_parent, args, ctx) => {
+> = async (_parent, args, ctx, info) => {
     const dto = {
-        ...args,
+        ...args.input,
         userId: ctx.reqUser?.userId,
         requestUser: ctx.reqUser,
     } as UpdateUserProfileDTO;
     dto.requestUser.permissions.push(UserPermission.Me);
-
+    console.log(info)
     const result = await updateUserProfile.execute(dto);
 
     if (result.isRight()) {

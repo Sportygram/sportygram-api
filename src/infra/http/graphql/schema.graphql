@@ -127,13 +127,14 @@ type Mutation {
   joinRoom(description: String, name: String!): CreateRoomOutput!
   login(input: LoginInput!): AuthOutput!
   predictMatch(input: PredictionInput!): PredictionOutput!
+  resetPassword(password: String!, token: String!, userId: String!): AuthOutput!
   sendEmailVerification(email: String!): TokenSendOutput!
   sendPasswordReset(email: String!): TokenSendOutput!
   signup(email: String!, password: String, referralCode: String): AuthOutput!
   updatePrediction(input: PredictionInput!): PredictionOutput!
   updateRoom(description: String, name: String!): CreateRoomOutput!
   updateUserProfile(input: UpdateUserProfileInput!): UpdateUserProfileOutput!
-  verifyEmail(token: String!): AuthOutput!
+  verifyEmail(token: String!, userId: String!): AuthOutput!
 }
 
 interface MutationOutput {
@@ -235,6 +236,7 @@ input UpdateUserProfileInput {
   firstname: String
   lastname: String
   onboarded: Boolean
+  phone: String
   username: String
 }
 
@@ -249,6 +251,7 @@ type User {
   createdAt: DateTime!
   email: EmailAddress!
   emailVerified: Boolean!
+  favoriteTeam: String
   firstname: String
   gamesSummary: JSON
   lastname: String
@@ -260,6 +263,7 @@ type User {
   roles: [String]!
   rooms: [Room]
   settings: JSON
+  tokens: JSON
   updatedAt: DateTime!
   userId: ID!
   userState: String!

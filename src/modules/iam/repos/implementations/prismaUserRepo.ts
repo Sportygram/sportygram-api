@@ -3,9 +3,10 @@ import { prisma } from "../../../../infra/database/prisma/client";
 import { User } from "../../domain/user";
 import { v4 as uuidv4 } from "uuid";
 import { UserEmail } from "../../domain/valueObjects/userEmail";
-import { RawRole } from "../../mappers/roleMap";
+import { RawRole, RoleMap } from "../../mappers/roleMap";
 import { RawUser, UserMap } from "../../mappers/userMap";
 import { UserRepo } from "../interfaces";
+import { TokenMap } from "../../mappers/tokenMap";
 
 export class PrismaUserRepo implements UserRepo {
     constructor() {}
@@ -89,30 +90,46 @@ export class PrismaUserRepo implements UserRepo {
         throw new Error("Method not implemented.");
     }
 
-    // async saveUserTokens(tokens: UserTokens) {
-    //     await this.tokenRepo.saveBulk(tokens);
-    // }
-
     async save(user: User): Promise<void> {
         const rawUser = await UserMap.toPersistence(user);
 
         const tokens = {
             createMany: {
-                data: rawUser.tokens.map((t: any) => {
-                    delete t.userId;
-                    return t;
-                }),
+                data: user.tokens
+                    .getNewItems()
+                    .map(TokenMap.toPersistence)
+                    .map((t: any) => {
+                        delete t.userId;
+                        return t;
+                    }),
                 skipDuplicates: true,
             },
         };
+
+        const deletedTokens = user.tokens
+            .getRemovedItems()
+            .map(TokenMap.toPersistence)
+            .map((t: any) => ({ id: t.id }));
+
         const userRoles = {
             createMany: {
-                data: rawUser.roles.map((role) => {
-                    return { role_id: role.id };
-                }),
+                data: user.roles
+                    .getNewItems()
+                    .map(RoleMap.toPersistence)
+                    .map((role) => {
+                        return { role_id: role.id };
+                    }),
                 skipDuplicates: true,
             },
         };
+
+        const deletedRoles = user.roles
+            .getRemovedItems()
+            .map(RoleMap.toPersistence)
+            .map((role) => {
+                return { role_id: role.id };
+            });
+
         const rawUserWithoutTokens: Partial<RawUser> = rawUser;
         delete rawUserWithoutTokens.roles;
 
@@ -120,7 +137,12 @@ export class PrismaUserRepo implements UserRepo {
             where: {
                 id: rawUser.id || undefined,
             },
-            update: { ...rawUserWithoutTokens, tokens, userRoles },
+            update: {
+                ...rawUserWithoutTokens,
+                tokens: { ...tokens, deleteMany: deletedTokens },
+                userRoles: { ...userRoles, deleteMany: deletedRoles },
+            },
+
             create: {
                 ...(rawUserWithoutTokens as RawUser),
                 tokens,

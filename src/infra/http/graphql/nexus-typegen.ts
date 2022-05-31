@@ -94,6 +94,7 @@ export interface NexusGenInputs {
     firstname?: string | null; // String
     lastname?: string | null; // String
     onboarded?: boolean | null; // Boolean
+    phone?: string | null; // String
     username?: string | null; // String
   }
 }
@@ -241,6 +242,7 @@ export interface NexusGenObjects {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: NexusGenScalars['EmailAddress']; // EmailAddress!
     emailVerified: boolean; // Boolean!
+    favoriteTeam?: string | null; // String
     firstname?: string | null; // String
     gamesSummary?: NexusGenScalars['JSON'] | null; // JSON
     lastname?: string | null; // String
@@ -252,6 +254,7 @@ export interface NexusGenObjects {
     roles: Array<string | null>; // [String]!
     rooms?: Array<NexusGenRootTypes['Room'] | null> | null; // [Room]
     settings?: NexusGenScalars['JSON'] | null; // JSON
+    tokens?: NexusGenScalars['JSON'] | null; // JSON
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userId: string; // ID!
     userState: string; // String!
@@ -344,6 +347,7 @@ export interface NexusGenFieldTypes {
     joinRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     login: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     predictMatch: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
+    resetPassword: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     sendEmailVerification: NexusGenRootTypes['TokenSendOutput']; // TokenSendOutput!
     sendPasswordReset: NexusGenRootTypes['TokenSendOutput']; // TokenSendOutput!
     signup: NexusGenRootTypes['AuthOutput']; // AuthOutput!
@@ -416,6 +420,7 @@ export interface NexusGenFieldTypes {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: NexusGenScalars['EmailAddress']; // EmailAddress!
     emailVerified: boolean; // Boolean!
+    favoriteTeam: string | null; // String
     firstname: string | null; // String
     gamesSummary: NexusGenScalars['JSON'] | null; // JSON
     lastname: string | null; // String
@@ -427,6 +432,7 @@ export interface NexusGenFieldTypes {
     roles: Array<string | null>; // [String]!
     rooms: Array<NexusGenRootTypes['Room'] | null> | null; // [Room]
     settings: NexusGenScalars['JSON'] | null; // JSON
+    tokens: NexusGenScalars['JSON'] | null; // JSON
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userId: string; // ID!
     userState: string; // String!
@@ -518,6 +524,7 @@ export interface NexusGenFieldTypeNames {
     joinRoom: 'CreateRoomOutput'
     login: 'AuthOutput'
     predictMatch: 'PredictionOutput'
+    resetPassword: 'AuthOutput'
     sendEmailVerification: 'TokenSendOutput'
     sendPasswordReset: 'TokenSendOutput'
     signup: 'AuthOutput'
@@ -590,6 +597,7 @@ export interface NexusGenFieldTypeNames {
     createdAt: 'DateTime'
     email: 'EmailAddress'
     emailVerified: 'Boolean'
+    favoriteTeam: 'String'
     firstname: 'String'
     gamesSummary: 'JSON'
     lastname: 'String'
@@ -601,6 +609,7 @@ export interface NexusGenFieldTypeNames {
     roles: 'String'
     rooms: 'Room'
     settings: 'JSON'
+    tokens: 'JSON'
     updatedAt: 'DateTime'
     userId: 'ID'
     userState: 'String'
@@ -644,6 +653,11 @@ export interface NexusGenArgTypes {
     predictMatch: { // args
       input: NexusGenInputs['PredictionInput']; // PredictionInput!
     }
+    resetPassword: { // args
+      password: string; // String!
+      token: string; // String!
+      userId: string; // String!
+    }
     sendEmailVerification: { // args
       email: string; // String!
     }
@@ -667,6 +681,7 @@ export interface NexusGenArgTypes {
     }
     verifyEmail: { // args
       token: string; // String!
+      userId: string; // String!
     }
   }
   Query: {

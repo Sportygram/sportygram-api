@@ -5,11 +5,15 @@ import {
 } from "./updateUserProfileErrors";
 import { Either, Result, left, right } from "../../../../lib/core/Result";
 import * as AppError from "../../../../lib/core/AppError";
-import { UseCase } from "../../../../lib/core/UseCase";
+import { UseCase, WithChanges } from "../../../../lib/core/UseCase";
 import { Phone } from "../../domain/valueObjects/phone";
 import { UserPermission as P } from "../../domain/users.permissions";
 import { hasPermissions } from "../../../../lib/utils/permissions";
-import { QueryUser, UserReadRepo, UserRepo } from "../../../iam/repos/interfaces";
+import {
+    QueryUser,
+    UserReadRepo,
+    UserRepo,
+} from "../../../iam/repos/interfaces";
 import { UserProfileRepo } from "../../repos/interfaces";
 
 type Response = Either<
@@ -21,28 +25,20 @@ type Response = Either<
 >;
 
 export class UpdateUserProfile
+    extends WithChanges
     implements UseCase<UpdateUserProfileDTO, Promise<Response>>
 {
-    private changes: Result<any>[];
-
     constructor(
         private userRepo: UserRepo,
         private userProfileRepo: UserProfileRepo,
         private userReadRepo: UserReadRepo
     ) {
-        this.changes = [];
-    }
-
-    public addChange(result: Result<any>): void {
-        this.changes.push(result);
-    }
-
-    public getCombinedChangesResult(): Result<any> {
-        return Result.combine(this.changes);
+        super();
     }
 
     @hasPermissions("UpdateUserProfile", [P.Me, P.System, P.EditUserProfile])
     async execute(request: UpdateUserProfileDTO): Promise<Response> {
+        const changes: Result<any>[] = [];
         const {
             userId,
             username,
@@ -70,46 +66,49 @@ export class UpdateUserProfile
 
             if (username) {
                 // TODO: Check if username is avalilable
-                this.addChange(user.updateUsername(username));
+                this.addChange(user.updateUsername(username), changes);
             }
 
             if (firstname) {
-                this.addChange(user.updateFirstname(firstname));
+                this.addChange(user.updateFirstname(firstname), changes);
             }
 
             if (lastname) {
-                this.addChange(user.updateLastname(lastname));
+                this.addChange(user.updateLastname(lastname), changes);
             }
 
             if (country) {
-                this.addChange(user.updateCountry(country));
+                this.addChange(user.updateCountry(country), changes);
             }
 
             if (onboarded) {
-                this.addChange(profile.updateOnboarded(onboarded));
+                this.addChange(profile.updateOnboarded(onboarded), changes);
             }
 
             if (favoriteTeam) {
-                this.addChange(profile.updateFavoriteTeam(favoriteTeam));
+                this.addChange(profile.updateFavoriteTeam(favoriteTeam), changes);
             }
 
             if (profileImageUrl) {
-                this.addChange(profile.updateProfileImageUrl(profileImageUrl));
+                this.addChange(profile.updateProfileImageUrl(profileImageUrl), changes);
             }
 
             if (phone) {
                 const phoneOrError = Phone.create(phone);
                 if (phoneOrError.isSuccess)
                     this.addChange(
-                        profile.updatePhone(phoneOrError.getValue())
+                        profile.updatePhone(phoneOrError.getValue()), changes
                     );
                 else return left(new AppError.InputError(phoneOrError.error));
             }
 
-            if (this.getCombinedChangesResult().isSuccess) {
-                await this.userProfileRepo.save(profile);
-                await this.userRepo.save(user);
+            const updateOrError = this.getChangesResult(changes);
+            if (updateOrError.isFailure) {
+                return left(new AppError.InputError(updateOrError.error));
             }
+
+            await this.userProfileRepo.save(profile);
+            await this.userRepo.save(user);
 
             const readUser = await this.userReadRepo.getUserById(
                 request.userId

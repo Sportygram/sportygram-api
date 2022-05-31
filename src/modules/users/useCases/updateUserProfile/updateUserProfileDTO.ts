@@ -1,3 +1,4 @@
+import { Result } from "../../../../lib/core/Result";
 import { RequestUserDTO } from "../../../../lib/utils/permissions";
 
 export interface UpdateUserProfileDTO {
@@ -11,4 +12,5 @@ export interface UpdateUserProfileDTO {
     country?: string;
     profileImageUrl?: string;
     requestUser: RequestUserDTO;
+    changes: Result<any>[]
 }

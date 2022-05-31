@@ -1,4 +1,4 @@
-import { matchSocketHandler } from "../../modules/fixtures/infra/match.socket";
+import { matchSocketHandler } from "../../modules/gaming/infra/match.socket";
 import { httpServer } from "../http/app";
 const { Server } = require("socket.io");
 

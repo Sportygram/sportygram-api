@@ -11,10 +11,14 @@ import { checkUsernameResolver } from "../../../../modules/iam/useCases/checkUse
 import { changePasswordResolver } from "../../../../modules/iam/useCases/changePassword/changePasswordResolver";
 import { loginResolver } from "../../../../modules/iam/useCases/login/loginResolver";
 import { verifyEmailResolver } from "../../../../modules/iam/useCases/verifyUserEmail/verifyEmailResolver";
+import { withUser } from "./utils";
+import { resetPasswordResolver } from "../../../../modules/iam/useCases/resetPassword/resetPasswordResolver";
 
 /* TODO Auth graphql
     - SSO Authentication
+    - Add a 
 */
+
 export const AuthOutput = objectType({
     name: "AuthOutput",
     definition(t) {
@@ -69,7 +73,7 @@ export const AuthMutation = extendType({
                 oldPassword: stringArg(),
                 newPassword: nonNull(stringArg()),
             },
-            resolve: changePasswordResolver,
+            resolve: withUser(changePasswordResolver),
         });
 
         t.nonNull.field("sendEmailVerification", {
@@ -101,9 +105,20 @@ export const AuthMutation = extendType({
         t.nonNull.field("verifyEmail", {
             type: "AuthOutput",
             args: {
+                userId: nonNull(stringArg()),
                 token: nonNull(stringArg()),
             },
             resolve: verifyEmailResolver,
+        });
+        
+        t.nonNull.field("resetPassword", {
+            type: "AuthOutput",
+            args: {
+                userId: nonNull(stringArg()),
+                token: nonNull(stringArg()),
+                password: nonNull(stringArg()),
+            },
+            resolve: resetPasswordResolver,
         });
 
         t.nonNull.field("login", {
@@ -119,7 +134,7 @@ export const AuthMutation = extendType({
             args: {
                 username: nonNull(stringArg()),
             },
-            resolve: checkUsernameResolver,
+            resolve: withUser(checkUsernameResolver),
         });
     },
 });
