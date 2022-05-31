@@ -1,4 +1,12 @@
+import { ForbiddenError } from "apollo-server-core";
 import { enumType, interfaceType, objectType } from "nexus";
+
+export function withUser(f: Function) {
+    return (parent: any, args: any, ctx: any, ...others: any[]) => {
+        if (!ctx.reqUser) throw new ForbiddenError("Token Signature Expired");
+        return f(parent, args, ctx, ...others);
+    };
+}
 
 export const Sort = enumType({
     name: "sort",

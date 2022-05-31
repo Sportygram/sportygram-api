@@ -1,27 +1,25 @@
 import { FieldResolver } from "nexus";
 import { ForbiddenError, UserInputError } from "apollo-server-core";
 import * as AppError from "../../../../lib/core/AppError";
-import { UserDoesNotExistError } from "./verifyUserEmailErrors";
+import { UserDoesNotExistError } from "./resetPasswordErrors";
 import { userReadRepo } from "../../repos";
-import { verifyUserEmail } from ".";
-import { VerifyUserEmailDTO } from "./verifyUserEmailDTO";
-import { sleep } from "../../../../lib/utils/sleep";
+import { resetPassword } from ".";
+import { ResetPasswordDTO } from "./resetPasswordDTO";
 
-export const verifyEmailResolver: FieldResolver<
+export const resetPasswordResolver: FieldResolver<
     "Mutation",
-    "verifyEmail"
+    "resetPassword"
 > = async (_parent, args, _ctx) => {
-    const dto = args as VerifyUserEmailDTO;
+    const dto = args as ResetPasswordDTO;
 
-    const result = await verifyUserEmail.execute(dto);
+    const result = await resetPassword.execute(dto);
 
     if (result.isRight()) {
-        await sleep(200);
         const user = await userReadRepo.getUserById(dto.userId);
         if (!user) throw new Error("User fetch Error");
 
         return {
-            message: "User Email verified",
+            message: "User Password Reset",
             accessToken: null,
             refreshToken: null,
             user,

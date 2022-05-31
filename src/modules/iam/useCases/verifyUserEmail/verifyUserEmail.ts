@@ -8,8 +8,6 @@ import { Either, Result, left, right } from "../../../../lib/core/Result";
 import * as AppError from "../../../../lib/core/AppError";
 import { UserRepo } from "../../repos/interfaces";
 import { UseCase } from "../../../../lib/core/UseCase";
-import { hasPermissions } from "../../../../lib/utils/permissions";
-import { IAMPermission as P } from "../../domain/iam.permissions";
 
 export type VerifyUserEmailResponse = Either<
     | UserDoesNotExistError
@@ -30,7 +28,6 @@ export class VerifyUserEmail
         this.userRepo = userRepo;
     }
 
-    @hasPermissions("VerifyUserEmail", [P.EditUser])
     async execute(
         request: VerifyUserEmailDTO
     ): Promise<VerifyUserEmailResponse> {

@@ -34,17 +34,19 @@ export class AfterEmailVerified implements IHandle<EmailVerified> {
         const verifiedUserRole: string = sgramConfig?.verifiedUserRole;
 
         try {
-            await this.assignRoleToUser.execute({
-                userId: user.userId.id.toString(),
-                roleName: verifiedUserRole,
-                requestUser: SystemRequestUser,
-            });
+            await Promise.all([
+                this.assignRoleToUser.execute({
+                    userId: user.userId.id.toString(),
+                    roleName: verifiedUserRole,
+                    requestUser: SystemRequestUser,
+                }),
 
-            await this.removeUserFromRole.execute({
-                userId: user.userId.id.toString(),
-                roleId: defaultRoleId,
-                requestUser: SystemRequestUser,
-            });
+                this.removeUserFromRole.execute({
+                    userId: user.userId.id.toString(),
+                    roleName: defaultRoleId,
+                    requestUser: SystemRequestUser,
+                }),
+            ]);
 
             logger.info(
                 `[AfterEmailVerified]: Successfully re-assigned user role after EmailVerified`,

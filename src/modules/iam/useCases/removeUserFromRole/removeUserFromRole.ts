@@ -31,7 +31,7 @@ export class RemoveUserFromRole
 
     @hasPermissions("RemoveUserFromRole", ["edit:role_assignment", "system"])
     async execute(request: RemoveUserFromRoleDTO): Promise<Response> {
-        const { roleId, userId } = request;
+        const { roleName, userId } = request;
 
         try {
             const user = await this.userRepo.getUserByUserId(userId);
@@ -39,9 +39,9 @@ export class RemoveUserFromRole
                 return left(new UserDoesNotExistError(userId));
             }
             // Check if Role exists
-            const role = await this.roleRepo.getRoleById(roleId);
+            const role = await this.roleRepo.getRole(roleName);
             if (!role) {
-                return left(new RoleDoesNotExistError(roleId));
+                return left(new RoleDoesNotExistError(roleName));
             }
 
             user.removeRole(role);

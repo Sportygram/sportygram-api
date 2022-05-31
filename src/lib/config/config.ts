@@ -13,7 +13,7 @@ export const config = {
         url: process.env.REDIS_URL || "redis://localhost:6379",
     },
     sendgrid: {
-        apiKey: "",
+        apiKey: "SG.",
     },
     aws: {
         s3BucketName: "sgram-prod-s3",
