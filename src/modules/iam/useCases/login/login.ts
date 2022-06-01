@@ -20,7 +20,6 @@ export class LoginUseCase implements UseCase<LoginDTO, Promise<Response>> {
     constructor(private userRepo: UserRepo, private authService: AuthService) {}
 
     async execute(request: LoginDTO): Promise<Response> {
-        // eslint-disable-next-line no-console
         try {
             //#region Validate DTO
             const emailOrError = UserEmail.create(request.emailOrUsername);

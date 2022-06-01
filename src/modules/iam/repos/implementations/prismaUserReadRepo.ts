@@ -8,7 +8,6 @@ export class PrismaUserReadRepo implements UserReadRepo {
             where: { id: userId },
             include: {
                 profile: true,
-                tokens: true,
                 userRoles: {
                     select: {
                         role: true,

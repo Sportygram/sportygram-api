@@ -1,9 +1,13 @@
-import { redisClient as client } from "./redisClient";
+import { RedisClient } from "./redisClient";
 
 export class AsyncRedisClient {
     private tokenExpiryTime = 604800; // All keys expire after a week
+    private client: RedisClient;
 
-    constructor() {}
+    constructor(redisClient: RedisClient) {
+        redisClient.connect();
+        this.client = redisClient;
+    }
 
     public async count(key: string): Promise<number> {
         const allKeys = await this.getAllKeys(key);
@@ -16,15 +20,15 @@ export class AsyncRedisClient {
     }
 
     public async getOne(key: string) {
-        return client.get(key);
+        return this.client.get(key);
     }
 
     public async getAllKeys(wildcard: string): Promise<string[]> {
-        return client.keys(wildcard);
+        return this.client.keys(wildcard);
     }
 
     public async getAllKeyValue(wildcard: string): Promise<any[]> {
-        const results = await client.keys(wildcard);
+        const results = await this.client.keys(wildcard);
         const allResults = await Promise.all(
             results.map(async (key) => {
                 const value = await this.getOne(key);
@@ -35,8 +39,8 @@ export class AsyncRedisClient {
     }
 
     public async set(key: string, value: any): Promise<any> {
-        const reply = await client.set(key, value);
-        client.expire(key, this.tokenExpiryTime);
+        const reply = await this.client.set(key, value);
+        this.client.expire(key, this.tokenExpiryTime);
         return reply;
     }
 
@@ -46,17 +50,21 @@ export class AsyncRedisClient {
      * @param value
      * @param timeout timeout in seconds, default to 604800 (1week)
      */
-    public async setex(key: string, value: any, timeout = 604800): Promise<any> {
-        const reply = await client.set(key, value);
-        client.expire(key, timeout);
+    public async setex(
+        key: string,
+        value: any,
+        timeout = 604800
+    ): Promise<any> {
+        const reply = await this.client.set(key, value);
+        this.client.expire(key, timeout);
         return reply;
     }
 
     public async deleteOne(key: string): Promise<number> {
-        return client.del(key);
+        return this.client.del(key);
     }
 
     public async testConnection(): Promise<any> {
-        return client.set("test", "connected");
+        return this.client.set("test", "connected");
     }
 }

@@ -4,7 +4,7 @@ import { JWTClaims, RequestUserDTO } from "../../../lib/utils/permissions";
 
 export interface AuthService {
     signJWT(props: JWTClaims): JWTToken;
-    decodeJWT(token: string): Promise<JWTClaims | undefined>;
+    decodeToken(token: string): Promise<JWTClaims | undefined>;
     createRefreshToken(): RefreshToken;
     getTokens(email: string): Promise<string[]>;
     saveAuthenticatedUser(

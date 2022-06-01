@@ -21,6 +21,9 @@ import { countries } from "./countries";
 import { ReferralCode } from "./valueObjects/referralCode";
 
 type Username = string;
+type UserMetadata = {
+    firebase?: any;
+};
 interface UserProps {
     username?: string | null;
     firstname?: string | null;
@@ -33,6 +36,7 @@ interface UserProps {
     referrerId?: UserId | null;
     referralCode: ReferralCode;
     userState: string;
+    metadata?: UserMetadata;
     lastLoginIp?: string | null;
     lastLoginTime?: Date | null;
     createdAt?: Date;
@@ -81,6 +85,9 @@ export class User extends AggregateRoot<UserProps> {
     }
     get lastLoginIp() {
         return this.props.lastLoginIp;
+    }
+    get metadata(): UserMetadata {
+        return this.props.metadata || {};
     }
     get lastLoginTime() {
         return this.props.lastLoginTime;

@@ -76,6 +76,7 @@ model User {
   profile       UserProfile?
   tokens        Token[]
   userRoles     UserRoles[]
+  metadata      Json         @default("{}")
 
   @@map("users")
 }
@@ -101,8 +102,8 @@ model UserProfile {
   userId          String   @unique @map("user_id") @db.Uuid
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
-  settings        Json
-  gamesSummary    Json
+  settings        Json     @default("{}")
+  gamesSummary    Json     @default("{}")
   user            User     @relation(fields: [userId], references: [id])
 
   @@map("user_profiles")
