@@ -23,6 +23,10 @@ const isValidNumber = (value: any): value is number => {
     return typeof Number(value) === "number" && !isNaN(value);
 };
 
+const isValidHexColour = (value: string) => {
+    const re = /^#[0-9A-F]{6}$/i;
+    return re.test(value);
+};
 /* Type Predicate for filtering out any undefined or null values  from arrays*/
 function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
     return value !== null && value !== undefined;
@@ -50,6 +54,7 @@ export {
     isConstObjectType,
     isConstArrayType as isType,
     isValidNumber,
+    isValidHexColour,
     notEmpty,
     isNullOrUndefined,
     addDaysToDate,

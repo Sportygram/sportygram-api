@@ -8,6 +8,7 @@ import { UserProfileId } from "./userProfileId";
 import { Phone } from "./valueObjects/phone";
 import { teams } from "../../../infra/http/graphql/nexus/mocks/data";
 import { config } from "../../../lib/config";
+import { isValidHexColour } from "../../../lib/utils/typeUtils";
 
 interface UserProfileProps {
     userId: UserId;
@@ -81,6 +82,11 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
         return Result.ok();
     }
     public updateProfileColour(profileColour: string): Result<void> {
+        const isValidColour = isValidHexColour(profileColour);
+
+        if (!isValidColour) {
+            return Result.fail("Profile must be a valid HexColour");
+        }
         this.props.profileColour = profileColour;
         return Result.ok();
     }
@@ -117,6 +123,14 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
 
             if (!isValidTeam) {
                 return Result.fail("Favorite Team must be a valid team");
+            }
+        }
+
+        if (props.profileColour) {
+            const isValidColour = isValidHexColour(props.profileColour);
+
+            if (!isValidColour) {
+                return Result.fail("Profile must be a valid HexColour");
             }
         }
 
