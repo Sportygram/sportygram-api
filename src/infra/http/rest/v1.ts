@@ -1,7 +1,7 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
+import { userRouter } from "../../../modules/users/infra/http/routes/user.routes";
 import swaggerDocument from "./swagger.json";
-// import { iamRouter } from "../../modules/iam/infra/http/routes/iam.routes";
 
 export const v1Router = express.Router();
 
@@ -15,4 +15,4 @@ v1Router.get("/", (_req, res) => {
 
 v1Router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// v1Router.use("/users", iamRouter);
+v1Router.use("/users", userRouter);
