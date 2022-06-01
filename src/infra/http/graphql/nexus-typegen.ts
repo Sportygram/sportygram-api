@@ -686,7 +686,6 @@ export interface NexusGenArgTypes {
     }
     verifyEmail: { // args
       token: string; // String!
-      userId: string; // String!
     }
   }
   Query: {

@@ -136,7 +136,7 @@ type Mutation {
   updatePrediction(input: PredictionInput!): PredictionOutput!
   updateRoom(description: String, name: String!): CreateRoomOutput!
   updateUserProfile(input: UpdateUserProfileInput!): UpdateUserProfileOutput!
-  verifyEmail(token: String!, userId: String!): AuthOutput!
+  verifyEmail(token: String!): AuthOutput!
 }
 
 interface MutationOutput {

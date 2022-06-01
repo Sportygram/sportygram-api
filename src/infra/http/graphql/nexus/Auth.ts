@@ -116,10 +116,9 @@ export const AuthMutation = extendType({
         t.nonNull.field("verifyEmail", {
             type: "AuthOutput",
             args: {
-                userId: nonNull(stringArg()),
                 token: nonNull(stringArg()),
             },
-            resolve: verifyEmailResolver,
+            resolve: withUser(verifyEmailResolver),
         });
 
         t.nonNull.field("resetPassword", {
