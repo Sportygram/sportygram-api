@@ -66,7 +66,14 @@ export class UpdateUserProfile
             }
 
             if (username) {
-                // TODO: Check if username is avalilable
+                const existingUser = await this.userRepo.getUserByUsername(
+                    username
+                );
+                if (existingUser) {
+                    return left(
+                        new AppError.InputError("Username already exists")
+                    );
+                }
                 this.addChange(user.updateUsername(username), changes);
             }
 
@@ -87,21 +94,31 @@ export class UpdateUserProfile
             }
 
             if (favoriteTeam) {
-                this.addChange(profile.updateFavoriteTeam(favoriteTeam), changes);
+                this.addChange(
+                    profile.updateFavoriteTeam(favoriteTeam),
+                    changes
+                );
             }
 
             if (profileColour) {
-                this.addChange(profile.updateProfileColour(profileColour), changes);
+                this.addChange(
+                    profile.updateProfileColour(profileColour),
+                    changes
+                );
             }
             if (profileImageUrl) {
-                this.addChange(profile.updateProfileImageUrl(profileImageUrl), changes);
+                this.addChange(
+                    profile.updateProfileImageUrl(profileImageUrl),
+                    changes
+                );
             }
 
             if (phone) {
                 const phoneOrError = Phone.create(phone);
                 if (phoneOrError.isSuccess)
                     this.addChange(
-                        profile.updatePhone(phoneOrError.getValue()), changes
+                        profile.updatePhone(phoneOrError.getValue()),
+                        changes
                     );
                 else return left(new AppError.InputError(phoneOrError.error));
             }
