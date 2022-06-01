@@ -10,8 +10,11 @@ import { sleep } from "../../../../lib/utils/sleep";
 export const verifyEmailResolver: FieldResolver<
     "Mutation",
     "verifyEmail"
-> = async (_parent, args, _ctx) => {
-    const dto = args as VerifyUserEmailDTO;
+> = async (_parent, args, ctx) => {
+    const dto = {
+        ...args,
+        userId: ctx.reqUser?.userId,
+    } as VerifyUserEmailDTO;
 
     const result = await verifyUserEmail.execute(dto);
 

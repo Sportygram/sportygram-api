@@ -20,7 +20,7 @@ export const createUserResolver: FieldResolver<"Mutation", "signup"> = async (
         referralCode: args.referralCode || undefined,
         role: sgConfig.defaultUserRole,
         requestUser: defaultRequestUser,
-        sendVerificationMail: true,
+        sendVerificationMail: false,
         sendPasswordResetMail: false,
     };
 
