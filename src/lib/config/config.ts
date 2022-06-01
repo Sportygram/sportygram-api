@@ -18,4 +18,8 @@ export const config = {
     aws: {
         s3BucketName: "sgram-prod-s3",
     },
+    firebase: {
+        refreshToken: "",
+        databaseURL: "https://<DATABASE_NAME>.firebaseio.com",
+    },
 };

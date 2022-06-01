@@ -254,7 +254,6 @@ export interface NexusGenObjects {
     roles: Array<string | null>; // [String]!
     rooms?: Array<NexusGenRootTypes['Room'] | null> | null; // [Room]
     settings?: NexusGenScalars['JSON'] | null; // JSON
-    tokens?: NexusGenScalars['JSON'] | null; // JSON
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userId: string; // ID!
     userState: string; // String!
@@ -346,11 +345,13 @@ export interface NexusGenFieldTypes {
     createRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     joinRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     login: NexusGenRootTypes['AuthOutput']; // AuthOutput!
+    logout: boolean; // Boolean!
     predictMatch: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
     resetPassword: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     sendEmailVerification: NexusGenRootTypes['TokenSendOutput']; // TokenSendOutput!
     sendPasswordReset: NexusGenRootTypes['TokenSendOutput']; // TokenSendOutput!
     signup: NexusGenRootTypes['AuthOutput']; // AuthOutput!
+    syncFirebaseUser: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     updatePrediction: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
     updateRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     updateUserProfile: NexusGenRootTypes['UpdateUserProfileOutput']; // UpdateUserProfileOutput!
@@ -432,7 +433,6 @@ export interface NexusGenFieldTypes {
     roles: Array<string | null>; // [String]!
     rooms: Array<NexusGenRootTypes['Room'] | null> | null; // [Room]
     settings: NexusGenScalars['JSON'] | null; // JSON
-    tokens: NexusGenScalars['JSON'] | null; // JSON
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userId: string; // ID!
     userState: string; // String!
@@ -523,11 +523,13 @@ export interface NexusGenFieldTypeNames {
     createRoom: 'CreateRoomOutput'
     joinRoom: 'CreateRoomOutput'
     login: 'AuthOutput'
+    logout: 'Boolean'
     predictMatch: 'PredictionOutput'
     resetPassword: 'AuthOutput'
     sendEmailVerification: 'TokenSendOutput'
     sendPasswordReset: 'TokenSendOutput'
     signup: 'AuthOutput'
+    syncFirebaseUser: 'AuthOutput'
     updatePrediction: 'PredictionOutput'
     updateRoom: 'CreateRoomOutput'
     updateUserProfile: 'UpdateUserProfileOutput'
@@ -609,7 +611,6 @@ export interface NexusGenFieldTypeNames {
     roles: 'String'
     rooms: 'Room'
     settings: 'JSON'
-    tokens: 'JSON'
     updatedAt: 'DateTime'
     userId: 'ID'
     userState: 'String'
@@ -668,6 +669,10 @@ export interface NexusGenArgTypes {
       email: string; // String!
       password?: string | null; // String
       referralCode?: string | null; // String
+    }
+    syncFirebaseUser: { // args
+      referralCode?: string | null; // String
+      token: string; // String!
     }
     updatePrediction: { // args
       input: NexusGenInputs['PredictionInput']; // PredictionInput!

@@ -104,12 +104,10 @@ export class RedisAuthService implements AuthService {
             roles: props.roles,
             state: props.state,
         };
-        return jwt.sign(claims, authConfig.secret, {
-            expiresIn: Number(authConfig.authTokenExpiresInSeconds),
-        });
+        return jwt.sign(claims, authConfig.secret);
     }
 
-    decodeJWT(token: string): Promise<JWTClaims | undefined> {
+    decodeToken(token: string): Promise<JWTClaims | undefined> {
         return new Promise((resolve) => {
             jwt.verify(token, authConfig.secret, (err: any, decoded: any) => {
                 if (err) return resolve(undefined);

@@ -7,6 +7,7 @@ import { RawRole, RoleMap } from "../../mappers/roleMap";
 import { RawUser, UserMap } from "../../mappers/userMap";
 import { UserRepo } from "../interfaces";
 import { TokenMap } from "../../mappers/tokenMap";
+import { JsonObject } from "swagger-ui-express";
 
 export class PrismaUserRepo implements UserRepo {
     constructor() {}
@@ -139,12 +140,14 @@ export class PrismaUserRepo implements UserRepo {
             },
             update: {
                 ...rawUserWithoutTokens,
+                metadata: rawUser.metadata as JsonObject,
                 tokens: { ...tokens, deleteMany: deletedTokens },
                 userRoles: { ...userRoles, deleteMany: deletedRoles },
             },
 
             create: {
                 ...(rawUserWithoutTokens as RawUser),
+                metadata: rawUser.metadata as JsonObject,
                 tokens,
                 userRoles,
                 profile: {
