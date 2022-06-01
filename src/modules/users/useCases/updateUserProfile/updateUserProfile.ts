@@ -48,6 +48,7 @@ export class UpdateUserProfile
             onboarded,
             phone,
             country,
+            profileColour,
             profileImageUrl,
         } = request;
 
@@ -89,6 +90,9 @@ export class UpdateUserProfile
                 this.addChange(profile.updateFavoriteTeam(favoriteTeam), changes);
             }
 
+            if (profileColour) {
+                this.addChange(profile.updateProfileColour(profileColour), changes);
+            }
             if (profileImageUrl) {
                 this.addChange(profile.updateProfileImageUrl(profileImageUrl), changes);
             }

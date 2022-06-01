@@ -2,6 +2,9 @@ export const config = {
     sportygram: {
         defaultUserRole: "unverified_email_user",
         verifiedUserRole: "user",
+        defaultProfileColour: "#6E6CCA",
+        defaultProfileImage:
+            "https://i.pinimg.com/474x/65/25/a0/6525a08f1df98a2e3a545fe2ace4be47.jpg",
         domain: "sportygram.com",
     },
     auth: {

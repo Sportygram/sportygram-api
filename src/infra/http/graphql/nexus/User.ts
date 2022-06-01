@@ -23,7 +23,8 @@ export const User = objectType({
         t.nonNull.string("referralCode");
         t.nonNull.int("referralCount");
         t.phone("phone");
-        t.string("profileImageUrl");
+        t.nonNull.hexColor("profileColour");
+        t.nonNull.string("profileImageUrl");
         t.string("favoriteTeam");
         t.nonNull.boolean("onboarded");
         t.nonNull.float("coinBalance");
@@ -54,6 +55,7 @@ export const UpdateUserProfileInput = inputObjectType({
         t.string("lastname");
         t.string("phone");
         t.string("country");
+        t.hexColor("profileColour");
         t.string("favoriteTeam");
         t.boolean("onboarded");
     },

@@ -7,6 +7,7 @@ import { GamesSummary, Settings } from "./valueObjects/settings";
 import { UserProfileId } from "./userProfileId";
 import { Phone } from "./valueObjects/phone";
 import { teams } from "../../../infra/http/graphql/nexus/mocks/data";
+import { config } from "../../../lib/config";
 
 interface UserProfileProps {
     userId: UserId;
@@ -14,6 +15,7 @@ interface UserProfileProps {
     coinBalance: number;
     referralCount: number;
     favoriteTeam?: string | null;
+    profileColour?: string | null;
     profileImageUrl?: string | null;
     onboarded: boolean;
     settings: Settings;
@@ -31,6 +33,11 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
     }
     get phone(): Phone | undefined {
         return this.props.phone;
+    }
+    get profileColour(): string {
+        return (
+            this.props.profileColour || config.sportygram.defaultProfileColour
+        );
     }
     get profileImageUrl(): string | undefined | null {
         return this.props.profileImageUrl;
@@ -71,6 +78,10 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
 
     public updatePhone(phone: Phone): Result<void> {
         this.props.phone = phone;
+        return Result.ok();
+    }
+    public updateProfileColour(profileColour: string): Result<void> {
+        this.props.profileColour = profileColour;
         return Result.ok();
     }
     public updateProfileImageUrl(profileImageUrl: string): Result<void> {

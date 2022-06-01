@@ -18,6 +18,7 @@ export class UserProfileMap {
                 phone: raw.phone
                     ? Phone.create(raw.phone).getValue()
                     : undefined,
+                profileColour: raw.profileColour,
                 profileImageUrl: raw.profileImageUrl,
                 onboarded: raw.onboarded,
                 favoriteTeam: raw.favoriteTeam,
@@ -43,6 +44,7 @@ export class UserProfileMap {
         return {
             id: profile.userProfileId.id.toString(),
             phone: profile.phone?.value || null,
+            profileColour: profile.profileColour || null,
             profileImageUrl: profile.profileImageUrl || null,
             onboarded: profile.onboarded,
             favoriteTeam: profile.favoriteTeam || null,

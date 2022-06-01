@@ -36,6 +36,10 @@ declare global {
      * A field whose value is a IPv4 address: https://en.wikipedia.org/wiki/IPv4.
      */
     ipv4<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "IPv4";
+    /**
+     * A field whose value is a hex color code: https://en.wikipedia.org/wiki/Web_colors.
+     */
+    hexColor<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "HexColorCode";
   }
 }
 declare global {
@@ -68,6 +72,10 @@ declare global {
      * A field whose value is a IPv4 address: https://en.wikipedia.org/wiki/IPv4.
      */
     ipv4<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "IPv4";
+    /**
+     * A field whose value is a hex color code: https://en.wikipedia.org/wiki/Web_colors.
+     */
+    hexColor<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "HexColorCode";
   }
 }
 
@@ -95,6 +103,7 @@ export interface NexusGenInputs {
     lastname?: string | null; // String
     onboarded?: boolean | null; // Boolean
     phone?: string | null; // String
+    profileColour?: NexusGenScalars['HexColorCode'] | null; // HexColorCode
     username?: string | null; // String
   }
 }
@@ -114,6 +123,7 @@ export interface NexusGenScalars {
   CountryCode: any
   DateTime: any
   EmailAddress: any
+  HexColorCode: any
   IPv4: any
   JSON: any
   JWT: any
@@ -248,6 +258,7 @@ export interface NexusGenObjects {
     lastname?: string | null; // String
     onboarded: boolean; // Boolean!
     phone?: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
+    profileColour?: NexusGenScalars['HexColorCode'] | null; // HexColorCode
     profileImageUrl?: string | null; // String
     referralCode: string; // String!
     referralCount: number; // Int!
@@ -427,6 +438,7 @@ export interface NexusGenFieldTypes {
     lastname: string | null; // String
     onboarded: boolean; // Boolean!
     phone: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
+    profileColour: NexusGenScalars['HexColorCode'] | null; // HexColorCode
     profileImageUrl: string | null; // String
     referralCode: string; // String!
     referralCount: number; // Int!
@@ -605,6 +617,7 @@ export interface NexusGenFieldTypeNames {
     lastname: 'String'
     onboarded: 'Boolean'
     phone: 'PhoneNumber'
+    profileColour: 'HexColorCode'
     profileImageUrl: 'String'
     referralCode: 'String'
     referralCount: 'Int'

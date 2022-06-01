@@ -10,6 +10,7 @@ export interface UpdateUserProfileDTO {
     lastname?: string;
     phone?: string;
     country?: string;
+    profileColour?: string;
     profileImageUrl?: string;
     requestUser: RequestUserDTO;
     changes: Result<any>[]
