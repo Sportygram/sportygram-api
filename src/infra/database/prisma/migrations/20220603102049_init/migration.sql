@@ -41,17 +41,19 @@ CREATE TABLE "users" (
     "id" UUID NOT NULL,
     "email" TEXT,
     "username" TEXT,
+    "phone" TEXT,
     "firstname" TEXT,
     "lastname" TEXT,
-    "password_hash" TEXT NOT NULL,
-    "referrer" TEXT,
     "country" TEXT,
+    "referrer" UUID,
+    "referral_code" TEXT NOT NULL,
+    "password_hash" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "last_login_ip" INET,
     "last_login_time" TIMESTAMP(3),
-    "referral_code" TEXT NOT NULL,
     "user_state" "UserState" NOT NULL DEFAULT E'active',
+    "metadata" JSONB NOT NULL DEFAULT '{}',
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -65,16 +67,19 @@ CREATE TABLE "users_roles" (
 -- CreateTable
 CREATE TABLE "user_profiles" (
     "id" UUID NOT NULL,
-    "phone" TEXT,
-    "profile_image_url" TEXT,
+    "displayName" TEXT,
     "onboarded" BOOLEAN NOT NULL,
+    "favorite_team" TEXT,
+    "profile_colour" TEXT,
+    "profile_image_url" TEXT,
     "referral_count" INTEGER NOT NULL DEFAULT 0,
     "coinBalance" DECIMAL(18,4) NOT NULL DEFAULT 0,
     "user_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
-    "settings" JSONB NOT NULL,
-    "gamesSummary" JSONB NOT NULL,
+    "settings" JSONB NOT NULL DEFAULT '{}',
+    "gamesSummary" JSONB NOT NULL DEFAULT '{}',
+    "metadata" JSONB NOT NULL DEFAULT '{}',
 
     CONSTRAINT "user_profiles_pkey" PRIMARY KEY ("id")
 );
@@ -91,6 +96,21 @@ CREATE TABLE "tokens" (
     CONSTRAINT "tokens_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "rooms" (
+    "id" UUID NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "rooms_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "rooms_chat_users" (
+    "room_id" UUID NOT NULL,
+    "user_profile_id" UUID NOT NULL,
+    "role" TEXT NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "roles_name_key" ON "roles"("name");
 
@@ -104,6 +124,9 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "users_phone_key" ON "users"("phone");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "users_referral_code_key" ON "users"("referral_code");
 
 -- CreateIndex
@@ -111,6 +134,9 @@ CREATE UNIQUE INDEX "role_id_user_id_unique" ON "users_roles"("role_id", "user_i
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_profiles_user_id_key" ON "user_profiles"("user_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "room_id_user_profile_id_unique" ON "rooms_chat_users"("room_id", "user_profile_id");
 
 -- AddForeignKey
 ALTER TABLE "roles_permissions" ADD CONSTRAINT "roles_permissions_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -129,3 +155,9 @@ ALTER TABLE "user_profiles" ADD CONSTRAINT "user_profiles_user_id_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "tokens" ADD CONSTRAINT "tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "rooms_chat_users" ADD CONSTRAINT "rooms_chat_users_user_profile_id_fkey" FOREIGN KEY ("user_profile_id") REFERENCES "user_profiles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "rooms_chat_users" ADD CONSTRAINT "rooms_chat_users_room_id_fkey" FOREIGN KEY ("room_id") REFERENCES "rooms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

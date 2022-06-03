@@ -20,12 +20,14 @@ export class PrismaUserProfileRepo implements UserProfileRepo {
     }
 
     async save(userProfile: UserProfile): Promise<void> {
-        const rawUserProfile: RawUserProfile = await UserProfileMap.toPersistence(userProfile);
+        const rawUserProfile: RawUserProfile =
+            await UserProfileMap.toPersistence(userProfile);
         const pUserProfile = {
             ...rawUserProfile,
             settings: rawUserProfile.settings as JsonObject,
-            gamesSummary: rawUserProfile.gamesSummary as JsonObject
-        }
+            metadata: rawUserProfile.metadata as JsonObject,
+            gamesSummary: rawUserProfile.gamesSummary as JsonObject,
+        };
         await prisma.userProfile.upsert({
             where: { id: rawUserProfile.id },
             update: pUserProfile,

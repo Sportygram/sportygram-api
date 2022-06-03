@@ -12,6 +12,7 @@ import { UserTokens } from "../domain/userTokens";
 import { TokenMap } from "./tokenMap";
 import { notEmpty } from "../../../lib/utils/typeUtils";
 import { ReferralCode } from "../domain/valueObjects/referralCode";
+import { Phone } from "../domain/valueObjects/phone";
 
 export type RawUser = PUser & {
     roles: RawRole[];
@@ -71,6 +72,9 @@ export class UserMap {
                 passwordHash: userPasswordOrError.getValue(),
                 firstname: raw.firstname,
                 lastname: raw.lastname,
+                phone: raw.phone
+                    ? Phone.create(raw.phone).getValue()
+                    : undefined,
                 country: raw.country,
                 lastLoginIp: raw.lastLoginIp,
                 lastLoginTime: raw.lastLoginTime,
@@ -105,6 +109,7 @@ export class UserMap {
             username: user.username || null,
             firstname: user.firstname || null,
             lastname: user.lastname || null,
+            phone: user.phone?.value || null,
             country: user.country || null,
             email: user.email.value,
             passwordHash: password,

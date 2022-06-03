@@ -117,7 +117,7 @@ export class UpdateUserProfile
                 const phoneOrError = Phone.create(phone);
                 if (phoneOrError.isSuccess)
                     this.addChange(
-                        profile.updatePhone(phoneOrError.getValue()),
+                        user.updatePhone(phoneOrError.getValue()),
                         changes
                     );
                 else return left(new AppError.InputError(phoneOrError.error));

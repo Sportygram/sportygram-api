@@ -5,14 +5,12 @@ import { UserId } from "./userId";
 import { Guard } from "../../../lib/core/Guard";
 import { GamesSummary, Settings } from "./valueObjects/settings";
 import { UserProfileId } from "./userProfileId";
-import { Phone } from "./valueObjects/phone";
 import { teams } from "../../../infra/http/graphql/nexus/mocks/data";
 import { config } from "../../../lib/config";
 import { isValidHexColour } from "../../../lib/utils/typeUtils";
 
 interface UserProfileProps {
     userId: UserId;
-    phone?: Phone;
     coinBalance: number;
     referralCount: number;
     favoriteTeam?: string | null;
@@ -21,6 +19,7 @@ interface UserProfileProps {
     onboarded: boolean;
     settings: Settings;
     gamesSummary: GamesSummary;
+    metadata: any;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -32,9 +31,7 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
     get userId(): UserId {
         return this.props.userId;
     }
-    get phone(): Phone | undefined {
-        return this.props.phone;
-    }
+
     get profileColour(): string {
         return (
             this.props.profileColour || config.sportygram.defaultProfileColour
@@ -48,6 +45,9 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
     }
     get settings(): Settings {
         return this.props.settings;
+    }
+    get metadata() {
+        return this.props.metadata;
     }
     get gamesSummary(): GamesSummary {
         return this.props.gamesSummary;
@@ -77,10 +77,6 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
         return Result.ok();
     }
 
-    public updatePhone(phone: Phone): Result<void> {
-        this.props.phone = phone;
-        return Result.ok();
-    }
     public updateProfileColour(profileColour: string): Result<void> {
         const isValidColour = isValidHexColour(profileColour);
 
