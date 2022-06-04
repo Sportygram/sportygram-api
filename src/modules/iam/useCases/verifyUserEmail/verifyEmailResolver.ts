@@ -19,7 +19,7 @@ export const verifyEmailResolver: FieldResolver<
     const result = await verifyUserEmail.execute(dto);
 
     if (result.isRight()) {
-        await sleep(200);
+        await sleep(500);
         const user = await userReadRepo.getUserById(dto.userId);
         if (!user) throw new Error("User fetch Error");
 

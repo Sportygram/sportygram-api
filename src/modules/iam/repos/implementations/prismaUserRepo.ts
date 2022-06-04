@@ -115,7 +115,7 @@ export class PrismaUserRepo implements UserRepo {
         const userRoles = {
             createMany: {
                 data: user.roles
-                    .getNewItems()
+                    .getItems()
                     .map(RoleMap.toPersistence)
                     .map((role) => {
                         return { role_id: role.id };
