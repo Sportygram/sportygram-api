@@ -35,6 +35,8 @@ model RolePermissions {
   permission_id String     @db.Uuid
   role          Role       @relation(fields: [role_id], references: [id])
   permission    Permission @relation(fields: [permission_id], references: [id])
+  createdAt     DateTime?  @default(now()) @map("created_at")
+  updatedAt     DateTime?  @updatedAt @map("updated_at")
 
   @@unique([role_id, permission_id], map: "role_id_permission_id_unique")
   @@map("roles_permissions")
@@ -62,16 +64,17 @@ model User {
   id            String       @id @db.Uuid
   email         String?      @unique
   username      String?      @unique
+  phone         String?      @unique
   firstname     String?
   lastname      String?
-  passwordHash  String       @map("password_hash")
-  referrer      String?
   country       String?
+  referrer      String?      @db.Uuid
+  referralCode  String       @unique @map("referral_code")
+  passwordHash  String       @map("password_hash")
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")
   lastLoginIp   String?      @map("last_login_ip") @db.Inet
   lastLoginTime DateTime?    @map("last_login_time")
-  referralCode  String       @unique @map("referral_code")
   userState     UserState    @default(active) @map("user_state")
   profile       UserProfile?
   tokens        Token[]
@@ -82,30 +85,34 @@ model User {
 }
 
 model UserRoles {
-  role_id String @db.Uuid
-  user_id String @db.Uuid
-  role    Role   @relation(fields: [role_id], references: [id])
-  user    User   @relation(fields: [user_id], references: [id])
+  role_id   String    @db.Uuid
+  user_id   String    @db.Uuid
+  role      Role      @relation(fields: [role_id], references: [id])
+  user      User      @relation(fields: [user_id], references: [id])
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   @@unique([role_id, user_id], map: "role_id_user_id_unique")
   @@map("users_roles")
 }
 
 model UserProfile {
-  id              String   @id @db.Uuid
-  phone           String?
-  favoriteTeam    String?  @map("favorite_team")
-  profileColour   String?  @map("profile_colour")
-  profileImageUrl String?  @map("profile_image_url")
+  id              String          @id @db.Uuid
+  displayName     String?         @map("display_name")
   onboarded       Boolean
-  referralCount   Int      @default(0) @map("referral_count")
-  coinBalance     Decimal  @default(0) @db.Decimal(18, 4)
-  userId          String   @unique @map("user_id") @db.Uuid
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  settings        Json     @default("{}")
-  gamesSummary    Json     @default("{}")
-  user            User     @relation(fields: [userId], references: [id])
+  favoriteTeam    String?         @map("favorite_team")
+  profileColour   String?         @map("profile_colour")
+  profileImageUrl String?         @map("profile_image_url")
+  referralCount   Int             @default(0) @map("referral_count")
+  coinBalance     Decimal         @default(0) @db.Decimal(18, 4)
+  userId          String          @unique @map("user_id") @db.Uuid
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  settings        Json            @default("{}")
+  gamesSummary    Json            @default("{}")
+  metadata        Json            @default("{}")
+  user            User            @relation(fields: [userId], references: [id])
+  chatUserRooms   RoomChatUsers[]
 
   @@map("user_profiles")
 }
@@ -127,5 +134,39 @@ model Token {
   @@map("tokens")
 }
 
-// model Room {}
-// model Games {}
+model Room {
+  id           String   @id @db.Uuid
+  name         String
+  description  String?
+  roomType     String   @default("public") @map("room_type")
+  roomImageUrl String?  @map("room_image_url")
+  joiningFee   Int      @default(0) @map("joining_fee")
+  createdById  String   @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  metadata     Json     @default("{}")
+
+  roomChatUsers RoomChatUsers[]
+
+  @@map("rooms")
+}
+
+model RoomChatUsers {
+  room_id         String      @db.Uuid
+  user_profile_id String      @db.Uuid
+  role            String
+  rooom           Room        @relation(fields: [room_id], references: [id])
+  chatUser        UserProfile @relation(fields: [user_profile_id], references: [id])
+  createdAt       DateTime?   @default(now()) @map("created_at")
+  updatedAt       DateTime?   @updatedAt @map("updated_at")
+
+  @@unique([room_id, user_profile_id], map: "room_id_user_profile_id_unique")
+  @@map("rooms_chat_users")
+}
+
+// model Game {
+//   roomId
+//   type
+
+//   @@map("games")
+// }

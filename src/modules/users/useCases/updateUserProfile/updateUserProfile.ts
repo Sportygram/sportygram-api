@@ -41,7 +41,7 @@ export class UpdateUserProfile
         const changes: Result<any>[] = [];
         const {
             userId,
-            username,
+            displayName,
             favoriteTeam,
             firstname,
             lastname,
@@ -65,9 +65,8 @@ export class UpdateUserProfile
                 return left(new UserProfileDoesNotExistError(userId));
             }
 
-            if (username) {
-                // TODO: Check if username is avalilable
-                this.addChange(user.updateUsername(username), changes);
+            if (displayName) {
+                this.addChange(profile.updateDisplayName(displayName), changes);
             }
 
             if (firstname) {
@@ -87,21 +86,31 @@ export class UpdateUserProfile
             }
 
             if (favoriteTeam) {
-                this.addChange(profile.updateFavoriteTeam(favoriteTeam), changes);
+                this.addChange(
+                    profile.updateFavoriteTeam(favoriteTeam),
+                    changes
+                );
             }
 
             if (profileColour) {
-                this.addChange(profile.updateProfileColour(profileColour), changes);
+                this.addChange(
+                    profile.updateProfileColour(profileColour),
+                    changes
+                );
             }
             if (profileImageUrl) {
-                this.addChange(profile.updateProfileImageUrl(profileImageUrl), changes);
+                this.addChange(
+                    profile.updateProfileImageUrl(profileImageUrl),
+                    changes
+                );
             }
 
             if (phone) {
                 const phoneOrError = Phone.create(phone);
                 if (phoneOrError.isSuccess)
                     this.addChange(
-                        profile.updatePhone(phoneOrError.getValue()), changes
+                        user.updatePhone(phoneOrError.getValue()),
+                        changes
                     );
                 else return left(new AppError.InputError(phoneOrError.error));
             }

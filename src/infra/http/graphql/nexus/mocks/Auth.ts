@@ -1,3 +1,4 @@
+import { config } from "../../../../../lib/config";
 import { NexusGenObjects } from "../../nexus-typegen";
 import { getRoomMock } from "./Messaging";
 
@@ -14,6 +15,7 @@ let userDefault: User = {
     referralCount: 0,
     coinBalance: 0.0,
     phone: "+2348031234567",
+    profileColour: config.sportygram.defaultProfileColour,
     profileImageUrl:
         "https://i.pinimg.com/474x/65/25/a0/6525a08f1df98a2e3a545fe2ace4be47.jpg",
     onboarded: true,
@@ -34,7 +36,6 @@ export const getEmptyUserMock = (p?: Partial<User>): User => ({
     emailVerified: false,
     onboarded: false,
     phone: null,
-    profileImageUrl: null,
     country: null,
     rooms: [],
     ...p,

@@ -5,21 +5,22 @@ import { UserId } from "./userId";
 import { Guard } from "../../../lib/core/Guard";
 import { GamesSummary, Settings } from "./valueObjects/settings";
 import { UserProfileId } from "./userProfileId";
-import { Phone } from "./valueObjects/phone";
 import { teams } from "../../../infra/http/graphql/nexus/mocks/data";
 import { config } from "../../../lib/config";
+import { isValidHexColour } from "../../../lib/utils/typeUtils";
 
 interface UserProfileProps {
     userId: UserId;
-    phone?: Phone;
+    displayName?: string;
     coinBalance: number;
     referralCount: number;
-    favoriteTeam?: string | null;
-    profileColour?: string | null;
-    profileImageUrl?: string | null;
+    favoriteTeam?: string;
+    profileColour?: string;
+    profileImageUrl?: string;
     onboarded: boolean;
     settings: Settings;
     gamesSummary: GamesSummary;
+    metadata: any;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -31,22 +32,25 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
     get userId(): UserId {
         return this.props.userId;
     }
-    get phone(): Phone | undefined {
-        return this.props.phone;
+    get displayName(): string | undefined {
+        return this.props.displayName;
     }
     get profileColour(): string {
         return (
             this.props.profileColour || config.sportygram.defaultProfileColour
         );
     }
-    get profileImageUrl(): string | undefined | null {
+    get profileImageUrl(): string | undefined {
         return this.props.profileImageUrl;
     }
-    get favoriteTeam(): string | undefined | null {
+    get favoriteTeam(): string | undefined {
         return this.props.favoriteTeam;
     }
     get settings(): Settings {
         return this.props.settings;
+    }
+    get metadata() {
+        return this.props.metadata;
     }
     get gamesSummary(): GamesSummary {
         return this.props.gamesSummary;
@@ -71,16 +75,21 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
         super(userProps, id);
     }
 
+    public updateDisplayName(displayName: string): Result<void> {
+        this.props.displayName = displayName;
+        return Result.ok();
+    }
     public updateOnboarded(onboarded: boolean): Result<void> {
         this.props.onboarded = onboarded;
         return Result.ok();
     }
 
-    public updatePhone(phone: Phone): Result<void> {
-        this.props.phone = phone;
-        return Result.ok();
-    }
     public updateProfileColour(profileColour: string): Result<void> {
+        const isValidColour = isValidHexColour(profileColour);
+
+        if (!isValidColour) {
+            return Result.fail("Profile must be a valid HexColour");
+        }
         this.props.profileColour = profileColour;
         return Result.ok();
     }
@@ -117,6 +126,14 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
 
             if (!isValidTeam) {
                 return Result.fail("Favorite Team must be a valid team");
+            }
+        }
+
+        if (props.profileColour) {
+            const isValidColour = isValidHexColour(props.profileColour);
+
+            if (!isValidColour) {
+                return Result.fail("Profile must be a valid HexColour");
             }
         }
 

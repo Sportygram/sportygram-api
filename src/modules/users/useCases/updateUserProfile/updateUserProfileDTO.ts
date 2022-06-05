@@ -1,10 +1,9 @@
-import { Result } from "../../../../lib/core/Result";
 import { RequestUserDTO } from "../../../../lib/utils/permissions";
 
 export interface UpdateUserProfileDTO {
     userId: string;
     onboarded?: boolean;
-    username?: string;
+    displayName?: string;
     favoriteTeam?: string;
     firstname?: string;
     lastname?: string;
@@ -13,5 +12,4 @@ export interface UpdateUserProfileDTO {
     profileColour?: string;
     profileImageUrl?: string;
     requestUser: RequestUserDTO;
-    changes: Result<any>[]
 }

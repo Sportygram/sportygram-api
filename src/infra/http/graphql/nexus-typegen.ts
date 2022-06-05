@@ -110,7 +110,7 @@ export interface NexusGenInputs {
 
 export interface NexusGenEnums {
   GameType: "DAILY" | "SEASON" | "WEEKLY"
-  RoomType: "PRIVATE" | "PUBLIC"
+  RoomType: "private" | "public"
   sort: "ASC" | "DESC"
 }
 
@@ -138,6 +138,7 @@ export interface NexusGenObjects {
     user: NexusGenRootTypes['User']; // User!
   }
   ChatUser: { // root type
+    streamUserId: string; // String!
     token: NexusGenScalars['JWT']; // JWT!
     username: string; // String!
   }
@@ -213,14 +214,12 @@ export interface NexusGenObjects {
   }
   Query: {};
   Room: { // root type
-    admins?: Array<string | null> | null; // [String]
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     description?: string | null; // String
     games?: Array<NexusGenRootTypes['Game'] | null> | null; // [Game]
-    inviteLink: string; // String!
+    id: string; // ID!
     joiningFee: number; // Float!
     name: string; // String!
-    roomId: string; // ID!
     roomImageUrl?: string | null; // String
     roomType: NexusGenEnums['RoomType']; // RoomType!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -258,8 +257,8 @@ export interface NexusGenObjects {
     lastname?: string | null; // String
     onboarded: boolean; // Boolean!
     phone?: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
-    profileColour?: NexusGenScalars['HexColorCode'] | null; // HexColorCode
-    profileImageUrl?: string | null; // String
+    profileColour: NexusGenScalars['HexColorCode']; // HexColorCode!
+    profileImageUrl: string; // String!
     referralCode: string; // String!
     referralCount: number; // Int!
     roles: Array<string | null>; // [String]!
@@ -294,6 +293,7 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   ChatUser: { // field return type
+    streamUserId: string; // String!
     token: NexusGenScalars['JWT']; // JWT!
     username: string; // String!
   }
@@ -393,14 +393,12 @@ export interface NexusGenFieldTypes {
     viewer: NexusGenRootTypes['User']; // User!
   }
   Room: { // field return type
-    admins: Array<string | null> | null; // [String]
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     description: string | null; // String
     games: Array<NexusGenRootTypes['Game'] | null> | null; // [Game]
-    inviteLink: string; // String!
+    id: string; // ID!
     joiningFee: number; // Float!
     name: string; // String!
-    roomId: string; // ID!
     roomImageUrl: string | null; // String
     roomType: NexusGenEnums['RoomType']; // RoomType!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -438,8 +436,8 @@ export interface NexusGenFieldTypes {
     lastname: string | null; // String
     onboarded: boolean; // Boolean!
     phone: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
-    profileColour: NexusGenScalars['HexColorCode'] | null; // HexColorCode
-    profileImageUrl: string | null; // String
+    profileColour: NexusGenScalars['HexColorCode']; // HexColorCode!
+    profileImageUrl: string; // String!
     referralCode: string; // String!
     referralCount: number; // Int!
     roles: Array<string | null>; // [String]!
@@ -473,6 +471,7 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   ChatUser: { // field return type name
+    streamUserId: 'String'
     token: 'JWT'
     username: 'String'
   }
@@ -572,14 +571,12 @@ export interface NexusGenFieldTypeNames {
     viewer: 'User'
   }
   Room: { // field return type name
-    admins: 'String'
     createdAt: 'DateTime'
     description: 'String'
     games: 'Game'
-    inviteLink: 'String'
+    id: 'ID'
     joiningFee: 'Float'
     name: 'String'
-    roomId: 'ID'
     roomImageUrl: 'String'
     roomType: 'RoomType'
     updatedAt: 'DateTime'
@@ -656,6 +653,7 @@ export interface NexusGenArgTypes {
     createRoom: { // args
       description?: string | null; // String
       name: string; // String!
+      roomType?: string | null; // String
     }
     joinRoom: { // args
       description?: string | null; // String

@@ -6,27 +6,26 @@ export const ChatUser = objectType({
     name: "ChatUser",
     definition(t) {
         t.nonNull.string("username");
+        t.nonNull.string("streamUserId");
         t.nonNull.jwt("token");
     },
 });
 
 export const RoomType = enumType({
     name: "RoomType",
-    members: ["PUBLIC", "PRIVATE"],
+    members: ["public", "private"],
 });
 
 export const Room = objectType({
     name: "Room",
     definition(t) {
+        t.nonNull.id("id");
         t.nonNull.string("name");
-        t.nonNull.id("roomId");
-        t.nonNull.string("inviteLink");
+        t.string("description");
         t.nonNull.field("roomType", { type: "RoomType" });
         t.string("roomImageUrl");
-        t.string("description");
-        t.list.string("admins");
-        t.list.field("games", { type: "Game" });
         t.nonNull.float("joiningFee");
+        t.list.field("games", { type: "Game" });
         t.nonNull.dateTime("createdAt");
         t.nonNull.dateTime("updatedAt");
     },
@@ -73,6 +72,7 @@ export const MessagingMutation = extendType({
             args: {
                 name: nonNull(stringArg()),
                 description: stringArg(),
+                roomType: stringArg(),
             },
             async resolve(_parent, _args, _context) {
                 return {

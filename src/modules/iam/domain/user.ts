@@ -19,26 +19,29 @@ import { EmailVerified } from "./events/emailVerified";
 import { UserDeleted } from "./events/userDeleted";
 import { countries } from "./countries";
 import { ReferralCode } from "./valueObjects/referralCode";
+import { Phone } from "./valueObjects/phone";
 
 type Username = string;
 type UserMetadata = {
     firebase?: any;
 };
+
 interface UserProps {
-    username?: string | null;
-    firstname?: string | null;
-    lastname?: string | null;
-    country?: string | null;
     email: UserEmail;
+    username?: string;
+    phone?: Phone;
+    firstname?: string;
+    lastname?: string;
+    country?: string;
     passwordHash: UserPassword;
     roles: UserRoles;
     tokens: UserTokens;
-    referrerId?: UserId | null;
+    referrerId?: UserId;
     referralCode: ReferralCode;
     userState: string;
     metadata?: UserMetadata;
-    lastLoginIp?: string | null;
-    lastLoginTime?: Date | null;
+    lastLoginIp?: string;
+    lastLoginTime?: Date;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -47,11 +50,14 @@ export class User extends AggregateRoot<UserProps> {
     get userId(): UserId {
         return UserId.create(this._id).getValue();
     }
-    get username(): Username | null | undefined {
+    get username(): Username | undefined {
         return this.props.username;
     }
     get email(): UserEmail {
         return this.props.email;
+    }
+    get phone(): Phone | undefined {
+        return this.props.phone;
     }
     get firstname() {
         return this.props.firstname;
@@ -111,6 +117,10 @@ export class User extends AggregateRoot<UserProps> {
 
     public updateUsername(username: string): Result<void> {
         this.props.username = username;
+        return Result.ok();
+    }
+    public updatePhone(phone: Phone): Result<void> {
+        this.props.phone = phone;
         return Result.ok();
     }
     public updateFirstname(firstname: string): Result<void> {

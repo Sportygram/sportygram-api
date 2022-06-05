@@ -25,4 +25,9 @@ export const config = {
         refreshToken: "",
         databaseURL: "https://<DATABASE_NAME>.firebaseio.com",
     },
+    getStream: {
+        apiKey: "a8kthzhhtzrn",
+        apiSecret:
+            "h2zgvgbh6eqfwm6kpme9kjdd3sssv44kt25zvmkpcm7uu3xtyjydrnghg979ymkf",
+    },
 };
