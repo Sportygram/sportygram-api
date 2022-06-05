@@ -10,6 +10,7 @@ type AuthOutput implements MutationOutput {
 }
 
 type ChatUser {
+  streamUserId: String!
   token: JWT!
   username: String!
 }
@@ -128,7 +129,7 @@ type MatchStatus {
 type Mutation {
   changePassword(newPassword: String!, oldPassword: String): AuthOutput!
   checkUsername(username: String!): CheckUsernameOutput!
-  createRoom(description: String, name: String!): CreateRoomOutput!
+  createRoom(description: String, name: String!, roomType: String): CreateRoomOutput!
   joinRoom(description: String, name: String!): CreateRoomOutput!
   login(input: LoginInput!): AuthOutput!
   logout: Boolean!
@@ -199,22 +200,20 @@ type Query {
 }
 
 type Room {
-  admins: [String]
   createdAt: DateTime!
   description: String
   games: [Game]
-  inviteLink: String!
+  id: ID!
   joiningFee: Float!
   name: String!
-  roomId: ID!
   roomImageUrl: String
   roomType: RoomType!
   updatedAt: DateTime!
 }
 
 enum RoomType {
-  PRIVATE
-  PUBLIC
+  private
+  public
 }
 
 type Team {
@@ -265,8 +264,8 @@ type User {
   lastname: String
   onboarded: Boolean!
   phone: PhoneNumber
-  profileColour: HexColorCode
-  profileImageUrl: String
+  profileColour: HexColorCode!
+  profileImageUrl: String!
   referralCode: String!
   referralCount: Int!
   roles: [String]!

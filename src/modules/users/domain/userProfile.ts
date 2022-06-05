@@ -11,11 +11,12 @@ import { isValidHexColour } from "../../../lib/utils/typeUtils";
 
 interface UserProfileProps {
     userId: UserId;
+    displayName?: string;
     coinBalance: number;
     referralCount: number;
-    favoriteTeam?: string | null;
-    profileColour?: string | null;
-    profileImageUrl?: string | null;
+    favoriteTeam?: string;
+    profileColour?: string;
+    profileImageUrl?: string;
     onboarded: boolean;
     settings: Settings;
     gamesSummary: GamesSummary;
@@ -31,16 +32,18 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
     get userId(): UserId {
         return this.props.userId;
     }
-
+    get displayName(): string | undefined {
+        return this.props.displayName;
+    }
     get profileColour(): string {
         return (
             this.props.profileColour || config.sportygram.defaultProfileColour
         );
     }
-    get profileImageUrl(): string | undefined | null {
+    get profileImageUrl(): string | undefined {
         return this.props.profileImageUrl;
     }
-    get favoriteTeam(): string | undefined | null {
+    get favoriteTeam(): string | undefined {
         return this.props.favoriteTeam;
     }
     get settings(): Settings {
@@ -72,6 +75,10 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
         super(userProps, id);
     }
 
+    public updateDisplayName(displayName: string): Result<void> {
+        this.props.displayName = displayName;
+        return Result.ok();
+    }
     public updateOnboarded(onboarded: boolean): Result<void> {
         this.props.onboarded = onboarded;
         return Result.ok();

@@ -70,14 +70,14 @@ export class UserMap {
             {
                 email: userEmailOrError.getValue(),
                 passwordHash: userPasswordOrError.getValue(),
-                firstname: raw.firstname,
-                lastname: raw.lastname,
+                firstname: raw.firstname || undefined,
+                lastname: raw.lastname || undefined,
                 phone: raw.phone
                     ? Phone.create(raw.phone).getValue()
                     : undefined,
-                country: raw.country,
-                lastLoginIp: raw.lastLoginIp,
-                lastLoginTime: raw.lastLoginTime,
+                country: raw.country || undefined,
+                lastLoginIp: raw.lastLoginIp || undefined,
+                lastLoginTime: raw.lastLoginTime || undefined,
                 referrerId,
                 referralCode,
                 userState: raw.userState,

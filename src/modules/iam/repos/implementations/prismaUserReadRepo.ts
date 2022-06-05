@@ -32,8 +32,9 @@ export class PrismaUserReadRepo implements UserReadRepo {
             profileImageUrl:
                 baseUserWithRoles.profileImageUrl ||
                 sgramConfig.defaultProfileImage,
-            emailVerified:
-                baseUserWithRoles.roles[0] !== sgramConfig.defaultUserRole,
+            emailVerified: !baseUserWithRoles.roles.includes(
+                sgramConfig.defaultUserRole
+            ),
             coinBalance: baseUserWithRoles.coinBalance.toNumber(),
             rooms: [],
         };

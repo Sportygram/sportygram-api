@@ -14,10 +14,11 @@ export class UserProfileMap {
         const userOrError = UserProfile.create(
             {
                 userId: userId,
-                profileColour: raw.profileColour,
-                profileImageUrl: raw.profileImageUrl,
+                displayName: raw.displayName || undefined,
+                profileColour: raw.profileColour || undefined,
+                profileImageUrl: raw.profileImageUrl || undefined,
                 onboarded: raw.onboarded,
-                favoriteTeam: raw.favoriteTeam,
+                favoriteTeam: raw.favoriteTeam || undefined,
                 coinBalance: raw.coinBalance.toNumber(),
                 referralCount: raw.referralCount,
                 gamesSummary: (raw.gamesSummary as GamesSummary) || {},
@@ -40,7 +41,7 @@ export class UserProfileMap {
     ): Promise<RawUserProfile> {
         return {
             id: profile.userProfileId.id.toString(),
-            displayName: null,
+            displayName: profile.displayName || null,
             profileColour: profile.profileColour || null,
             profileImageUrl: profile.profileImageUrl || null,
             onboarded: profile.onboarded,

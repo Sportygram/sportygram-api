@@ -41,7 +41,7 @@ export class UpdateUserProfile
         const changes: Result<any>[] = [];
         const {
             userId,
-            username,
+            displayName,
             favoriteTeam,
             firstname,
             lastname,
@@ -65,16 +65,8 @@ export class UpdateUserProfile
                 return left(new UserProfileDoesNotExistError(userId));
             }
 
-            if (username) {
-                const existingUser = await this.userRepo.getUserByUsername(
-                    username
-                );
-                if (existingUser) {
-                    return left(
-                        new AppError.InputError("Username already exists")
-                    );
-                }
-                this.addChange(user.updateUsername(username), changes);
+            if (displayName) {
+                this.addChange(profile.updateDisplayName(displayName), changes);
             }
 
             if (firstname) {

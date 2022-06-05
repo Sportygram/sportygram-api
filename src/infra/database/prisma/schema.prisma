@@ -35,6 +35,8 @@ model RolePermissions {
   permission_id String     @db.Uuid
   role          Role       @relation(fields: [role_id], references: [id])
   permission    Permission @relation(fields: [permission_id], references: [id])
+  createdAt     DateTime?  @default(now()) @map("created_at")
+  updatedAt     DateTime?  @updatedAt @map("updated_at")
 
   @@unique([role_id, permission_id], map: "role_id_permission_id_unique")
   @@map("roles_permissions")
@@ -83,10 +85,12 @@ model User {
 }
 
 model UserRoles {
-  role_id String @db.Uuid
-  user_id String @db.Uuid
-  role    Role   @relation(fields: [role_id], references: [id])
-  user    User   @relation(fields: [user_id], references: [id])
+  role_id   String    @db.Uuid
+  user_id   String    @db.Uuid
+  role      Role      @relation(fields: [role_id], references: [id])
+  user      User      @relation(fields: [user_id], references: [id])
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   @@unique([role_id, user_id], map: "role_id_user_id_unique")
   @@map("users_roles")
@@ -94,7 +98,7 @@ model UserRoles {
 
 model UserProfile {
   id              String          @id @db.Uuid
-  displayName     String?
+  displayName     String?         @map("display_name")
   onboarded       Boolean
   favoriteTeam    String?         @map("favorite_team")
   profileColour   String?         @map("profile_colour")
@@ -131,8 +135,17 @@ model Token {
 }
 
 model Room {
-  id            String          @id @db.Uuid
-  name          String
+  id           String   @id @db.Uuid
+  name         String
+  description  String?
+  roomType     String   @default("public") @map("room_type")
+  roomImageUrl String?  @map("room_image_url")
+  joiningFee   Int      @default(0) @map("joining_fee")
+  createdById  String   @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  metadata     Json     @default("{}")
+
   roomChatUsers RoomChatUsers[]
 
   @@map("rooms")
@@ -144,6 +157,8 @@ model RoomChatUsers {
   role            String
   rooom           Room        @relation(fields: [room_id], references: [id])
   chatUser        UserProfile @relation(fields: [user_profile_id], references: [id])
+  createdAt       DateTime?   @default(now()) @map("created_at")
+  updatedAt       DateTime?   @updatedAt @map("updated_at")
 
   @@unique([room_id, user_profile_id], map: "room_id_user_profile_id_unique")
   @@map("rooms_chat_users")

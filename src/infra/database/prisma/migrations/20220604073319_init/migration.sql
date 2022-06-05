@@ -21,7 +21,9 @@ CREATE TABLE "roles" (
 -- CreateTable
 CREATE TABLE "roles_permissions" (
     "role_id" UUID NOT NULL,
-    "permission_id" UUID NOT NULL
+    "permission_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3)
 );
 
 -- CreateTable
@@ -61,13 +63,15 @@ CREATE TABLE "users" (
 -- CreateTable
 CREATE TABLE "users_roles" (
     "role_id" UUID NOT NULL,
-    "user_id" UUID NOT NULL
+    "user_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3)
 );
 
 -- CreateTable
 CREATE TABLE "user_profiles" (
     "id" UUID NOT NULL,
-    "displayName" TEXT,
+    "display_name" TEXT,
     "onboarded" BOOLEAN NOT NULL,
     "favorite_team" TEXT,
     "profile_colour" TEXT,
@@ -100,6 +104,14 @@ CREATE TABLE "tokens" (
 CREATE TABLE "rooms" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
+    "description" TEXT,
+    "room_type" TEXT NOT NULL DEFAULT E'public',
+    "room_image_url" TEXT,
+    "joining_fee" INTEGER NOT NULL DEFAULT 0,
+    "createdById" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "metadata" JSONB NOT NULL DEFAULT '{}',
 
     CONSTRAINT "rooms_pkey" PRIMARY KEY ("id")
 );
@@ -108,7 +120,9 @@ CREATE TABLE "rooms" (
 CREATE TABLE "rooms_chat_users" (
     "room_id" UUID NOT NULL,
     "user_profile_id" UUID NOT NULL,
-    "role" TEXT NOT NULL
+    "role" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3)
 );
 
 -- CreateIndex

@@ -5,7 +5,6 @@ import { UserDoesNotExistError } from "./verifyUserEmailErrors";
 import { userReadRepo } from "../../repos";
 import { verifyUserEmail } from ".";
 import { VerifyUserEmailDTO } from "./verifyUserEmailDTO";
-import { sleep } from "../../../../lib/utils/sleep";
 
 export const verifyEmailResolver: FieldResolver<
     "Mutation",
@@ -19,10 +18,10 @@ export const verifyEmailResolver: FieldResolver<
     const result = await verifyUserEmail.execute(dto);
 
     if (result.isRight()) {
-        await sleep(200);
         const user = await userReadRepo.getUserById(dto.userId);
         if (!user) throw new Error("User fetch Error");
-
+        
+        user.emailVerified = true;
         return {
             message: "User Email verified",
             accessToken: null,

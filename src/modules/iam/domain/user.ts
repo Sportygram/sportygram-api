@@ -25,22 +25,23 @@ type Username = string;
 type UserMetadata = {
     firebase?: any;
 };
+
 interface UserProps {
     email: UserEmail;
-    username?: string | null;
+    username?: string;
     phone?: Phone;
-    firstname?: string | null;
-    lastname?: string | null;
-    country?: string | null;
+    firstname?: string;
+    lastname?: string;
+    country?: string;
     passwordHash: UserPassword;
     roles: UserRoles;
     tokens: UserTokens;
-    referrerId?: UserId | null;
+    referrerId?: UserId;
     referralCode: ReferralCode;
     userState: string;
     metadata?: UserMetadata;
-    lastLoginIp?: string | null;
-    lastLoginTime?: Date | null;
+    lastLoginIp?: string;
+    lastLoginTime?: Date;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -49,7 +50,7 @@ export class User extends AggregateRoot<UserProps> {
     get userId(): UserId {
         return UserId.create(this._id).getValue();
     }
-    get username(): Username | null | undefined {
+    get username(): Username | undefined {
         return this.props.username;
     }
     get email(): UserEmail {
