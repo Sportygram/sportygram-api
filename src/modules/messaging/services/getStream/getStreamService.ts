@@ -23,9 +23,9 @@ export interface GetStreamService {
     ): Promise<{ [key: string]: UserResponse<DefaultGenerics> } | undefined>;
     updateUser(
         userId: string,
-        set: any,
-        unset: any
-    ): Promise<{ [key: string]: UserResponse<DefaultGenerics> }>;
+        set?: any,
+        unset?: any
+    ): Promise<{ [key: string]: UserResponse<DefaultGenerics> } | undefined>;
     updateUsers(updates: UserUpdate[]): Promise<any>;
     deactivateUser(userId: string): Promise<any>;
     activateUser(userId: string): Promise<any>;
@@ -90,15 +90,20 @@ export class GetStreamServiceImpl implements GetStreamService {
             return undefined;
         }
     }
-    async updateUser(userId: string, set: any, unset: any) {
+    async updateUser(userId: string, set?: any, unset?: any) {
         const update = {
             id: userId,
             set,
             unset,
         };
         // response will contain user object with updated users info
-        const response = await this.client.partialUpdateUser(update);
-        return response.users;
+        try {
+            const response = await this.client.partialUpdateUser(update);
+            return response.users;
+        } catch (error) {
+            this.log(error);
+            return undefined;
+        }
     }
     async updateUsers(_updates: UserUpdate[]) {
         throw new Error("Method not implemented.");

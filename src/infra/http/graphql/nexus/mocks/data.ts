@@ -401,9 +401,13 @@ const raw = [
     },
 ];
 
-export const teams = raw.map((tData) => ({
-    code: tData.team.code,
-    name: tData.team.name,
-    logo: tData.team.logo,
-    stadium: tData.venue.name,
-}));
+export const teams = raw
+    .map((tData) => ({
+        code: tData.team.code,
+        name: tData.team.name,
+        logo: tData.team.logo,
+        stadium: tData.venue.name,
+    }))
+    .sort((a, b) => {
+        return a.name.localeCompare(b.name);
+    });

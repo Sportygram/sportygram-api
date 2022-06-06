@@ -108,6 +108,16 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
         return Result.ok();
     }
 
+    public updateStreamData(streamData: any, token?: string): Result<void> {
+        const current = this.metadata.stream || { data: {} };
+        this.props.metadata.stream = {
+            ...current,
+            token: token || current?.token,
+            data: { ...current.data, ...streamData },
+        };
+        return Result.ok();
+    }
+    
     public static create(
         props: UserProfileProps,
         id?: UniqueEntityID

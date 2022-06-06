@@ -15,6 +15,8 @@ import {
     UserRepo,
 } from "../../../iam/repos/interfaces";
 import { UserProfileRepo } from "../../repos/interfaces";
+import { GetStreamService } from "../../../messaging/services/getStream/getStreamService";
+import { Username } from "../../../iam/domain/valueObjects/username";
 
 type Response = Either<
     | UserProfileDoesNotExistError
@@ -31,7 +33,8 @@ export class UpdateUserProfile
     constructor(
         private userRepo: UserRepo,
         private userProfileRepo: UserProfileRepo,
-        private userReadRepo: UserReadRepo
+        private userReadRepo: UserReadRepo,
+        private streamService: GetStreamService
     ) {
         super();
     }
@@ -41,6 +44,7 @@ export class UpdateUserProfile
         const changes: Result<any>[] = [];
         const {
             userId,
+            username,
             displayName,
             favoriteTeam,
             firstname,
@@ -64,6 +68,24 @@ export class UpdateUserProfile
             if (!profile) {
                 return left(new UserProfileDoesNotExistError(userId));
             }
+            if (username) {
+                const existingUser = await this.userRepo.getUserByUsername(
+                    username
+                );
+                if (existingUser) {
+                    return left(
+                        new AppError.InputError("Username already exists")
+                    );
+                }
+                const usernameOrError = Username.create(username);
+                if (usernameOrError.isFailure) {
+                    return left(new AppError.InputError(usernameOrError.error));
+                }
+                this.addChange(
+                    user.updateUsername(usernameOrError.getValue()),
+                    changes
+                );
+            }
 
             if (displayName) {
                 this.addChange(profile.updateDisplayName(displayName), changes);
@@ -71,10 +93,22 @@ export class UpdateUserProfile
 
             if (firstname) {
                 this.addChange(user.updateFirstname(firstname), changes);
+                this.addChange(
+                    profile.updateDisplayName(
+                        `${firstname} ${user.lastname || ""}`.trim()
+                    ),
+                    changes
+                );
             }
 
             if (lastname) {
                 this.addChange(user.updateLastname(lastname), changes);
+                this.addChange(
+                    profile.updateDisplayName(
+                        `${user.firstname} ${lastname || ""}`.trim()
+                    ),
+                    changes
+                );
             }
 
             if (country) {
@@ -119,6 +153,20 @@ export class UpdateUserProfile
             if (updateOrError.isFailure) {
                 return left(new AppError.InputError(updateOrError.error));
             }
+
+            // TODO: Refactor into a subscriber that updates chatUser on profile/user update
+            // update chatUser streamData if update is successful
+            const streamId = profile.id.toString();
+            const updatedStream = await this.streamService.updateUser(
+                streamId,
+                {
+                    username: user.username?.value,
+                    displayName: profile.displayName,
+                    profileImageUrl: profile.profileImageUrl,
+                }
+            );
+            if (updatedStream)
+                profile.updateStreamData(updatedStream[streamId]);
 
             await this.userProfileRepo.save(profile);
             await this.userRepo.save(user);
