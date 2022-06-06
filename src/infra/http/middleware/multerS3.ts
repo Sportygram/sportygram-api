@@ -44,5 +44,4 @@ export function createS3Storage(opts: any): any {
     return new (S3Storage as any)(opts);
 }
 
-// export = createS3Storage;
 export default createS3Storage;
