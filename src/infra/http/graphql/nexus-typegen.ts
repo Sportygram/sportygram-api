@@ -96,6 +96,11 @@ export interface NexusGenInputs {
     predictionId?: string | null; // String
     predictionType: string; // String!
   }
+  UpdateRoomInput: { // input type
+    description?: string | null; // String
+    name?: string | null; // String
+    roomId: string; // String!
+  }
   UpdateUserProfileInput: { // input type
     country?: string | null; // String
     favoriteTeam?: string | null; // String
@@ -653,8 +658,7 @@ export interface NexusGenArgTypes {
       roomType?: string | null; // String
     }
     joinRoom: { // args
-      description?: string | null; // String
-      name: string; // String!
+      roomId: string; // String!
     }
     login: { // args
       input: NexusGenInputs['LoginInput']; // LoginInput!
@@ -686,8 +690,7 @@ export interface NexusGenArgTypes {
       input: NexusGenInputs['PredictionInput']; // PredictionInput!
     }
     updateRoom: { // args
-      description?: string | null; // String
-      name: string; // String!
+      input: NexusGenInputs['UpdateRoomInput']; // UpdateRoomInput!
     }
     updateUserProfile: { // args
       input: NexusGenInputs['UpdateUserProfileInput']; // UpdateUserProfileInput!

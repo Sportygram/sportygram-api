@@ -1,5 +1,6 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
+import { roomRouter } from "../../../modules/messaging/infra/http/routes/messaging.routes";
 import { userRouter } from "../../../modules/users/infra/http/routes/user.routes";
 import swaggerDocument from "./swagger.json";
 
@@ -16,3 +17,4 @@ v1Router.get("/", (_req, res) => {
 v1Router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 v1Router.use("/users", userRouter);
+v1Router.use("/rooms", roomRouter);

@@ -1,5 +1,6 @@
 import {
     ChannelResponse,
+    Channel,
     DefaultGenerics,
     StreamChat,
     UserResponse,
@@ -31,7 +32,9 @@ export interface GetStreamService {
     activateUser(userId: string): Promise<any>;
     deleteUser(userId: string): Promise<any>;
 
-    getChannel(channelId: string): Promise<any | undefined>;
+    getChannel(
+        channelId: string
+    ): Promise<Channel<DefaultGenerics> | undefined>;
     createChannel(
         type: string,
         channelId?: string,
@@ -61,8 +64,9 @@ export class GetStreamServiceImpl implements GetStreamService {
     }
 
     log(error: any) {
-        if (error.config) delete error.config;
-        if (error.request) delete error.request;
+        if (error.config) {
+            error = error.toJSON();
+        }
         logger.error("[Stream Error]", error);
     }
 
@@ -120,8 +124,17 @@ export class GetStreamServiceImpl implements GetStreamService {
     //#endregion
 
     //#region Channels
-    async getChannel() {
-        throw new Error("Method not implemented.");
+    async getChannel(
+        channelId: string
+    ): Promise<Channel<DefaultGenerics> | undefined> {
+        const filter = { id: { $eq: channelId } };
+        try {
+            const channels = await this.client.queryChannels(filter);
+            return channels[0] || undefined;
+        } catch (error) {
+            this.log(error);
+            return undefined;
+        }
     }
     async createChannel(type: string, channelId?: string, custom?: any) {
         try {
@@ -139,13 +152,20 @@ export class GetStreamServiceImpl implements GetStreamService {
             return undefined;
         }
     }
-    async updateChannel(_channelId: string, _data: any) {
-        throw new Error("Method not implemented.");
-        // const update = await this.client.channel.update({
-        //     name: "myspecialchannel",
-        //     image: "imageurl",
-        //     mycustomfield: "123",
-        // });
+    async updateChannel(channelId: string, set?: any, unset?: any) {
+        try {
+            const channel = this.client.channel("messaging", channelId);
+            const update = {
+                set,
+                unset,
+            };
+            const response = await channel.updatePartial(update);
+            return response.channel;
+        } catch (error) {
+            // TODO: Log to database and retry
+            this.log(error);
+            return undefined;
+        }
     }
     async sendMessageToChannel(
         _channelId: string,

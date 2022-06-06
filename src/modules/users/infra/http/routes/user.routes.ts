@@ -10,7 +10,7 @@ const userRouter = Router();
 userRouter.post(
     "/me/upload",
     authMiddleware.authenticate(),
-    uploadMiddleware.uploadProfile(),
+    uploadMiddleware.uploadProfile({ keyType: "user" }),
     (req, res) => updateProfileImageController.execute(req, res)
 );
 

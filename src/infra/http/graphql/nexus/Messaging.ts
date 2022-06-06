@@ -1,7 +1,16 @@
-import { enumType, extendType, nonNull, objectType, stringArg } from "nexus";
+import {
+    arg,
+    enumType,
+    extendType,
+    inputObjectType,
+    nonNull,
+    objectType,
+    stringArg,
+} from "nexus";
 import { createRoomResolver } from "../../../../modules/messaging/useCases/createRoom/createRoomResolver";
 import { roomQueryResolver } from "../../../../modules/messaging/useCases/fetchQueryRoom/fetchQueryRoomResolver";
 import { chatTokenResolver } from "../../../../modules/messaging/useCases/generateChatToken/chatTokenResolver";
+import { updateRoomResolver } from "../../../../modules/messaging/useCases/updateRoom/updateRoomResolver";
 import { getRoomMock } from "./mocks/Messaging";
 import { withUser } from "./utils";
 
@@ -59,6 +68,15 @@ export const CreateRoomOutput = objectType({
     },
 });
 
+export const UpdateRoomInput = inputObjectType({
+    name: "UpdateRoomInput",
+    definition(t) {
+        t.nonNull.string("roomId");
+        t.string("name");
+        t.string("description");
+    },
+});
+
 export const MessagingMutation = extendType({
     type: "Mutation",
     definition(t) {
@@ -75,8 +93,7 @@ export const MessagingMutation = extendType({
         t.nonNull.field("joinRoom", {
             type: "CreateRoomOutput",
             args: {
-                name: nonNull(stringArg()),
-                description: stringArg(),
+                roomId: nonNull(stringArg()),
             },
             async resolve(_parent, _args, _context) {
                 return {
@@ -89,15 +106,9 @@ export const MessagingMutation = extendType({
         t.nonNull.field("updateRoom", {
             type: "CreateRoomOutput",
             args: {
-                name: nonNull(stringArg()),
-                description: stringArg(),
+                input: arg({ type: nonNull(UpdateRoomInput) }),
             },
-            async resolve(_parent, _args, _context) {
-                return {
-                    message: "Room Updated",
-                    room: getRoomMock(),
-                };
-            },
+            resolve: withUser(updateRoomResolver),
         });
     },
 });

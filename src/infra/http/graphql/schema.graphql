@@ -129,7 +129,7 @@ type Mutation {
   changePassword(newPassword: String!, oldPassword: String): AuthOutput!
   checkUsername(username: String!): CheckUsernameOutput!
   createRoom(description: String, name: String!, roomType: String): CreateRoomOutput!
-  joinRoom(description: String, name: String!): CreateRoomOutput!
+  joinRoom(roomId: String!): CreateRoomOutput!
   login(input: LoginInput!): AuthOutput!
   logout: Boolean!
   predictMatch(input: PredictionInput!): PredictionOutput!
@@ -139,7 +139,7 @@ type Mutation {
   signup(email: String!, password: String, referralCode: String): AuthOutput!
   syncFirebaseUser(referralCode: String, token: String!): AuthOutput!
   updatePrediction(input: PredictionInput!): PredictionOutput!
-  updateRoom(description: String, name: String!): CreateRoomOutput!
+  updateRoom(input: UpdateRoomInput!): CreateRoomOutput!
   updateUserProfile(input: UpdateUserProfileInput!): UpdateUserProfileOutput!
   verifyEmail(token: String!): AuthOutput!
 }
@@ -233,6 +233,12 @@ type TeamData {
 type TokenSendOutput implements MutationOutput {
   message: String!
   sent: Boolean!
+}
+
+input UpdateRoomInput {
+  description: String
+  name: String
+  roomId: String!
 }
 
 input UpdateUserProfileInput {

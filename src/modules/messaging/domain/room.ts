@@ -67,7 +67,18 @@ export class Room extends AggregateRoot<RoomProps> {
         this.members?.add(member);
         return Result.ok();
     }
-
+    public updateName(name: string): Result<void> {
+        this.props.name = name;
+        return Result.ok();
+    }
+    public updateDescription(description: string): Result<void> {
+        this.props.description = description;
+        return Result.ok();
+    }
+    public updateRoomImageUrl(roomImageUrl: string): Result<void> {
+        this.props.roomImageUrl = roomImageUrl;
+        return Result.ok();
+    }
     public updateStreamData(streamData: any): Result<void> {
         const current = this.metadata.stream || { data: {} };
         this.props.metadata.stream = {
