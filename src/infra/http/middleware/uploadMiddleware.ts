@@ -12,7 +12,7 @@ export class UploadMiddleware {
         return res.status(status).json({ message });
     }
 
-    uploadProfile() {
+    uploadProfile({ keyType }: { keyType: "user" | "room" }) {
         return (req: Request, res: Response, next: NextFunction) => {
             // Upload Image
             if (!req.requestUser?.userId)
@@ -21,7 +21,15 @@ export class UploadMiddleware {
                     "User authentication required",
                     500
                 );
-            const key = `users/${req.requestUser.userId}/avatar`;
+
+            const roomId = req.params?.roomId;
+            if (keyType === "room" && !roomId) {
+                return this.endRequest(res, "roomId required", 401);
+            }
+            const key =
+                keyType === "user"
+                    ? `users/${req.requestUser.userId}/avatar`
+                    : `rooms/${roomId}/avatar`;
 
             return multer({
                 storage: S3Storage({ key }),

@@ -1,40 +1,34 @@
 import { FieldResolver } from "nexus";
 import { ForbiddenError, UserInputError } from "apollo-server-core";
 import * as AppError from "../../../../lib/core/AppError";
-import { updateUserProfile } from ".";
-import { UserPermission } from "../../domain/users.permissions";
-import { UpdateUserProfileDTO } from "./updateUserProfileDTO";
-import {
-    UserDoesNotExistError,
-    UserProfileDoesNotExistError,
-} from "./updateUserProfileErrors";
+import { updateRoom } from ".";
+import { MessagingPermission } from "../../domain/messaging.permissions";
+import { UpdateRoomDTO } from "./updateRoomDTO";
+import { RoomDoesNotExistError } from "./updateRoomErrors";
 
-export const updateUserProfileResolver: FieldResolver<
+export const updateRoomResolver: FieldResolver<
     "Mutation",
-    "updateUserProfile"
+    "updateRoom"
 > = async (_parent, args, ctx) => {
     const dto = {
         ...args.input,
-        userId: ctx.reqUser?.userId,
         requestUser: ctx.reqUser,
-    } as UpdateUserProfileDTO;
-    dto.requestUser.permissions.push(UserPermission.Me);
-
-    const result = await updateUserProfile.execute(dto);
+    } as UpdateRoomDTO;
+    dto.requestUser.permissions.push(MessagingPermission.Me);
+    const result = await updateRoom.execute(dto);
 
     if (result.isRight()) {
-        const user = result.value.getValue();
+        const room = result.value.getValue();
 
         return {
-            message: "User Updated",
-            user,
+            message: "Room Updated",
+            room,
         };
     } else {
         const error = result.value;
 
         switch (error.constructor) {
-            case UserDoesNotExistError:
-            case UserProfileDoesNotExistError:
+            case RoomDoesNotExistError:
             case AppError.InputError:
                 throw new UserInputError(error.errorValue().message);
             case AppError.PermissionsError:

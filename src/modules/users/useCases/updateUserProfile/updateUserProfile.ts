@@ -161,7 +161,7 @@ export class UpdateUserProfile
                 streamId,
                 {
                     username: user.username?.value,
-                    displayName: profile.displayName,
+                    name: profile.displayName,
                     profileImageUrl: profile.profileImageUrl,
                 }
             );
