@@ -2,7 +2,6 @@ import { enumType, extendType, nonNull, objectType, stringArg } from "nexus";
 import { createRoomResolver } from "../../../../modules/messaging/useCases/createRoom/createRoomResolver";
 import { roomQueryResolver } from "../../../../modules/messaging/useCases/fetchQueryRoom/fetchQueryRoomResolver";
 import { chatTokenResolver } from "../../../../modules/messaging/useCases/generateChatToken/chatTokenResolver";
-import { accessTokenMock } from "./mocks/Auth";
 import { getRoomMock } from "./mocks/Messaging";
 import { withUser } from "./utils";
 
