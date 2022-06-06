@@ -697,9 +697,6 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
-    chatToken: { // args
-      userId: string; // String!
-    }
     fixtures: { // args
       date: string; // String!
     }

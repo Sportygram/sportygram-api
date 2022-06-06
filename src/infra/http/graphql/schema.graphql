@@ -190,7 +190,7 @@ type PredictionOutput implements MutationOutput {
 }
 
 type Query {
-  chatToken(userId: String!): String!
+  chatToken: String!
   countries: [Country]!
   fixtures(date: String!): [Fixture!]!
   room(roomId: String!): Room!

@@ -1,5 +1,7 @@
 import { enumType, extendType, nonNull, objectType, stringArg } from "nexus";
 import { createRoomResolver } from "../../../../modules/messaging/useCases/createRoom/createRoomResolver";
+import { roomQueryResolver } from "../../../../modules/messaging/useCases/fetchQueryRoom/fetchQueryRoomResolver";
+import { chatTokenResolver } from "../../../../modules/messaging/useCases/generateChatToken/chatTokenResolver";
 import { accessTokenMock } from "./mocks/Auth";
 import { getRoomMock } from "./mocks/Messaging";
 import { withUser } from "./utils";
@@ -37,12 +39,7 @@ export const MessagingQuery = extendType({
     definition(t) {
         t.nonNull.field("chatToken", {
             type: "String",
-            args: {
-                userId: nonNull(stringArg()),
-            },
-            async resolve(_parent, _args, _context, _info) {
-                return accessTokenMock;
-            },
+            resolve: withUser(chatTokenResolver),
         });
 
         t.nonNull.field("room", {
@@ -50,9 +47,7 @@ export const MessagingQuery = extendType({
             args: {
                 roomId: nonNull(stringArg()),
             },
-            async resolve(_parent, _args, _context, _info) {
-                return getRoomMock();
-            },
+            resolve: withUser(roomQueryResolver),
         });
     },
 });
