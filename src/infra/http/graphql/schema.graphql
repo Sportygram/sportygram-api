@@ -9,10 +9,9 @@ type AuthOutput implements MutationOutput {
   user: User!
 }
 
-type ChatUser {
+type ChatData {
   streamUserId: String!
-  token: JWT!
-  username: String!
+  token: String!
 }
 
 type CheckUsernameOutput implements MutationOutput {
@@ -253,6 +252,7 @@ type UpdateUserProfileOutput implements MutationOutput {
 }
 
 type User {
+  chatData: ChatData
   coinBalance: Float!
   country: String
   createdAt: DateTime!
@@ -269,7 +269,6 @@ type User {
   referralCode: String!
   referralCount: Int!
   roles: [String]!
-  rooms: [Room]
   settings: JSON
   updatedAt: DateTime!
   userId: ID!

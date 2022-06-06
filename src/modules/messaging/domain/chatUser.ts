@@ -71,8 +71,7 @@ export class ChatUser extends AggregateRoot<ChatUserProps> {
         id?: UniqueEntityID
     ): Result<ChatUser> {
         const guardResult = Guard.againstNullOrUndefinedBulk([
-            { argument: props.displayName, argumentName: "username" },
-            { argument: props.role, argumentName: "role" },
+            { argument: props.coinBalance, argumentName: "coinBalance" },
         ]);
 
         if (!guardResult.succeeded) {

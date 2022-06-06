@@ -1,13 +1,14 @@
 import { enumType, extendType, nonNull, objectType, stringArg } from "nexus";
+import { createRoomResolver } from "../../../../modules/messaging/useCases/createRoom/createRoomResolver";
 import { accessTokenMock } from "./mocks/Auth";
 import { getRoomMock } from "./mocks/Messaging";
+import { withUser } from "./utils";
 
-export const ChatUser = objectType({
-    name: "ChatUser",
+export const ChatData = objectType({
+    name: "ChatData",
     definition(t) {
-        t.nonNull.string("username");
         t.nonNull.string("streamUserId");
-        t.nonNull.jwt("token");
+        t.nonNull.string("token");
     },
 });
 
@@ -74,12 +75,7 @@ export const MessagingMutation = extendType({
                 description: stringArg(),
                 roomType: stringArg(),
             },
-            async resolve(_parent, _args, _context) {
-                return {
-                    message: "Chat Room Created",
-                    room: getRoomMock(),
-                };
-            },
+            resolve: withUser(createRoomResolver),
         });
 
         t.nonNull.field("joinRoom", {

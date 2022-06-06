@@ -8,7 +8,11 @@ import { ChatUserRepo, RoomRepo } from "../../repos/interfaces";
 import { RoomChatUsers } from "../../domain/roomChatUsers";
 import { UserProfileDoesNotExistError } from "../createChatUser/createChatUserErrors";
 import { GetStreamService } from "../../services/getStream/getStreamService";
-import { ChatUserDoesNotExistError } from "./createRoomErrors";
+import {
+    ChatUserDoesNotExistError,
+    StreamRoomCreationError,
+} from "./createRoomErrors";
+import { config } from "../../../../lib/config";
 
 type Response = Either<
     | UserProfileDoesNotExistError
@@ -44,6 +48,7 @@ export class CreateRoom implements UseCase<CreateRoomDTO, Promise<Response>> {
             if (!chatUser) {
                 return left(new ChatUserDoesNotExistError(createdBy));
             }
+            chatUser.updateRole("channel_moderator");
 
             const roomOrError: Result<Room> = Room.create({
                 name,
@@ -60,14 +65,26 @@ export class CreateRoom implements UseCase<CreateRoomDTO, Promise<Response>> {
             }
 
             const room = roomOrError.getValue();
+            const roomId = room.roomId.id.toString();
             const streamChannel = await this.streamService.createChannel(
                 "messaging",
-                room.roomId.id.toString(),
+                roomId,
                 {
                     name: room.name,
-                    members: [chatUser.chatUserId.id.toString()],
+                    description,
+                    created_by_id: config.getStream.defaultChannelOwnerId,
+                    members: [
+                        {
+                            user_id: chatUser.chatUserId.id.toString(),
+                            channel_role: "channel_moderator",
+                        },
+                    ],
                 }
             );
+
+            if (!streamChannel) {
+                return left(new StreamRoomCreationError(roomId));
+            }
 
             room.updateStreamData(streamChannel);
             await this.roomRepo.save(room);

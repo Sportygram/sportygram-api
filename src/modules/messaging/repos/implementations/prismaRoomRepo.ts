@@ -30,20 +30,20 @@ export class PrismaRoomRepo implements RoomRepo {
                     role: member.role,
                 })),
             };
-
-            roomChatUsers.deleteMany = room.members
-                .getRemovedItems()
-                .map((member) => ({
-                    user_profile_id: member.id.toString(),
-                    role: member.role,
-                }));
         }
+
+        const deletedMembers = room.members
+            ?.getRemovedItems()
+            .map((member) => ({
+                user_profile_id: member.id.toString(),
+                role: member.role,
+            }));
 
         await prisma.room.upsert({
             where: { id: rawRoom.id },
             update: {
                 ...roomEntity,
-                roomChatUsers,
+                roomChatUsers: { ...roomChatUsers, deleteMany: deletedMembers },
             },
             create: {
                 ...roomEntity,

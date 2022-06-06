@@ -1,6 +1,5 @@
 import { config } from "../../../../../lib/config";
 import { NexusGenObjects } from "../../nexus-typegen";
-import { getRoomMock } from "./Messaging";
 
 type User = NexusGenObjects["User"];
 let userDefault: User = {
@@ -22,7 +21,11 @@ let userDefault: User = {
     country: "NG",
     createdAt: "2022-05-19T01:45:57.686Z",
     updatedAt: "2022-05-19T01:45:57.686Z",
-    rooms: [getRoomMock()],
+    // rooms: [getRoomMock()],
+    chatData: {
+        streamUserId: "mock",
+        token: "dev-token",
+    },
     settings: {
         hello: "world",
         bgColor: "blue",
@@ -37,7 +40,7 @@ export const getEmptyUserMock = (p?: Partial<User>): User => ({
     onboarded: false,
     phone: null,
     country: null,
-    rooms: [],
+    // rooms: [],
     ...p,
 });
 

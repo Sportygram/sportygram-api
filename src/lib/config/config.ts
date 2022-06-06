@@ -16,7 +16,7 @@ export const config = {
         url: process.env.REDIS_URL || "redis://localhost:6379",
     },
     sendgrid: {
-        apiKey: "SG.",
+        apiKey: process.env.SENDGRID_KEY || "SG.",
     },
     aws: {
         s3BucketName: "sgram-prod-s3",
@@ -26,8 +26,8 @@ export const config = {
         databaseURL: "https://<DATABASE_NAME>.firebaseio.com",
     },
     getStream: {
-        apiKey: "a8kthzhhtzrn",
-        apiSecret:
-            "h2zgvgbh6eqfwm6kpme9kjdd3sssv44kt25zvmkpcm7uu3xtyjydrnghg979ymkf",
+        apiKey: process.env.STREAM_KEY,
+        apiSecret: process.env.STREAM_SECRET,
+        defaultChannelOwnerId: "7ce39465-4525-442c-aa17-e5e2b5e28e7f",
     },
 };
