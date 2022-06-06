@@ -3,6 +3,7 @@ import { RequestUserDTO } from "../../../../lib/utils/permissions";
 export interface UpdateUserProfileDTO {
     userId: string;
     onboarded?: boolean;
+    username?: string;
     displayName?: string;
     favoriteTeam?: string;
     firstname?: string;

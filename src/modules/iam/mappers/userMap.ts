@@ -13,6 +13,7 @@ import { TokenMap } from "./tokenMap";
 import { notEmpty } from "../../../lib/utils/typeUtils";
 import { ReferralCode } from "../domain/valueObjects/referralCode";
 import { Phone } from "../domain/valueObjects/phone";
+import { Username } from "../domain/valueObjects/username";
 
 export type RawUser = PUser & {
     roles: RawRole[];
@@ -52,6 +53,7 @@ export class UserMap {
             hashed: true,
         });
         const userEmailOrError = UserEmail.create(raw.email);
+        const username = raw.username ? Username.create(raw.username).getValue() : undefined;
 
         const referrerId = raw.referrer
             ? UserId.create(new UniqueEntityID(raw.referrer)).getValue()
@@ -70,6 +72,7 @@ export class UserMap {
             {
                 email: userEmailOrError.getValue(),
                 passwordHash: userPasswordOrError.getValue(),
+                username,
                 firstname: raw.firstname || undefined,
                 lastname: raw.lastname || undefined,
                 phone: raw.phone
@@ -106,7 +109,7 @@ export class UserMap {
 
         return {
             id: user.userId.id.toString(),
-            username: user.username || null,
+            username: user.username?.value || null,
             firstname: user.firstname || null,
             lastname: user.lastname || null,
             phone: user.phone?.value || null,

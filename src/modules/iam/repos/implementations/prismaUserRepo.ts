@@ -156,6 +156,9 @@ export class PrismaUserRepo implements UserRepo {
                         onboarded: false,
                         settings: {},
                         gamesSummary: {},
+                        displayName: `${user.firstname || ""} ${
+                            user.lastname || ""
+                        }`.trim(),
                     },
                 },
             },

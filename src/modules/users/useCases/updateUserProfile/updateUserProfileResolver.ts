@@ -15,7 +15,6 @@ export const updateUserProfileResolver: FieldResolver<
 > = async (_parent, args, ctx, info) => {
     const dto = {
         ...args.input,
-        displayName: args.input.username,
         userId: ctx.reqUser?.userId,
         requestUser: ctx.reqUser,
     } as UpdateUserProfileDTO;

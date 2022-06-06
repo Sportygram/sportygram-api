@@ -20,15 +20,15 @@ import { UserDeleted } from "./events/userDeleted";
 import { countries } from "./countries";
 import { ReferralCode } from "./valueObjects/referralCode";
 import { Phone } from "./valueObjects/phone";
+import { Username } from "./valueObjects/username";
 
-type Username = string;
 type UserMetadata = {
     firebase?: any;
 };
 
 interface UserProps {
     email: UserEmail;
-    username?: string;
+    username?: Username;
     phone?: Phone;
     firstname?: string;
     lastname?: string;
@@ -115,7 +115,7 @@ export class User extends AggregateRoot<UserProps> {
         this.addDomainEvent(new UserAuthTokenGenerated(this));
     }
 
-    public updateUsername(username: string): Result<void> {
+    public updateUsername(username: Username): Result<void> {
         this.props.username = username;
         return Result.ok();
     }
