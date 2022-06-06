@@ -22,10 +22,10 @@ export const createRoomResolver: FieldResolver<
     if (result.isRight()) {
         const roomId = result.value.getValue().id.toString();
         const room = await roomReadRepo.getRoomById(roomId);
-        if (!room) throw new Error("User fetch Error");
+        if (!room) throw new Error("Room fetch Error");
 
         return {
-            message: "Room Created",
+            message: "Chat Room Created",
             room,
         };
     } else {

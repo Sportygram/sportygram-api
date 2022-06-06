@@ -63,10 +63,9 @@ export class Room extends AggregateRoot<RoomProps> {
     }
 
     public addMember(member: ChatUser): Result<void> {
-        if (!this.members)
-            this.props.members = RoomChatUsers.create([])
+        if (!this.members) this.props.members = RoomChatUsers.create([]);
         this.members?.add(member);
-        return Result.ok()
+        return Result.ok();
     }
 
     public updateStreamData(streamData: any): Result<void> {
@@ -85,7 +84,9 @@ export class Room extends AggregateRoot<RoomProps> {
     public static create(props: RoomProps, id?: UniqueEntityID): Result<Room> {
         const guardResult = Guard.againstNullOrUndefinedBulk([
             { argument: props.name, argumentName: "name" },
-            { argument: props.description, argumentName: "description" },
+            { argument: props.roomType, argumentName: "roomType" },
+            { argument: props.createdById, argumentName: "createdById" },
+            { argument: props.joiningFee, argumentName: "joiningFee" },
         ]);
 
         if (!guardResult.succeeded) {

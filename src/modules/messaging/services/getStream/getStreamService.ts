@@ -4,6 +4,7 @@ import {
     StreamChat,
     UserResponse,
 } from "stream-chat";
+import logger from "../../../../lib/core/Logger";
 
 export type UserUpdate = {
     id: string;
@@ -13,10 +14,13 @@ export type UserUpdate = {
 
 export interface GetStreamService {
     createToken(userId: string): Promise<string>;
-    
+
+    createOrReplaceUser(
+        userData: any
+    ): Promise<{ [key: string]: UserResponse<DefaultGenerics> } | undefined>;
     createOrReplaceUsers(
         userData: any[]
-    ): Promise<{ [key: string]: UserResponse<DefaultGenerics> }>;
+    ): Promise<{ [key: string]: UserResponse<DefaultGenerics> } | undefined>;
     updateUser(
         userId: string,
         set: any,
@@ -27,12 +31,12 @@ export interface GetStreamService {
     activateUser(userId: string): Promise<any>;
     deleteUser(userId: string): Promise<any>;
 
-    getChannel(channelId: string): Promise<any>;
+    getChannel(channelId: string): Promise<any | undefined>;
     createChannel(
         type: string,
         channelId?: string,
         custom?: any
-    ): Promise<ChannelResponse<DefaultGenerics>>;
+    ): Promise<ChannelResponse<DefaultGenerics> | undefined>;
     updateChannel(channelId: string, data: any): Promise<any>;
     sendMessageToChannel(
         channelId: string,
@@ -51,19 +55,40 @@ export class GetStreamServiceImpl implements GetStreamService {
 
     constructor(streamConfig: any) {
         const { apiKey, apiSecret } = streamConfig;
-        this.client = StreamChat.getInstance(apiKey, apiSecret);
+        this.client = StreamChat.getInstance(apiKey, apiSecret, {
+            timeout: 6000,
+        });
+    }
+
+    log(error: any) {
+        if (error.config) delete error.config;
+        if (error.request) delete error.request;
+        logger.error("[Stream Error]", error);
     }
 
     async createToken(userId: string) {
-        const token = this.client.createToken(userId);
-        return token;
+        return this.client.createToken(userId);
     }
 
     //#region Users
     /** Create or Replace users */
+    async createOrReplaceUser(userData: any) {
+        try {
+            const response = await this.client.upsertUser(userData);
+            return response.users;
+        } catch (error) {
+            this.log(error);
+            return undefined;
+        }
+    }
     async createOrReplaceUsers(userData: any[]) {
-        const response = await this.client.upsertUsers(userData);
-        return response.users;
+        try {
+            const response = await this.client.upsertUsers(userData);
+            return response.users;
+        } catch (err) {
+            this.log(err);
+            return undefined;
+        }
     }
     async updateUser(userId: string, set: any, unset: any) {
         const update = {
@@ -94,9 +119,20 @@ export class GetStreamServiceImpl implements GetStreamService {
         throw new Error("Method not implemented.");
     }
     async createChannel(type: string, channelId?: string, custom?: any) {
-        const channel = this.client.channel(type, channelId, custom);
-        const response = await channel.create();
-        return response.channel;
+        try {
+            const channel = this.client.channel(type, channelId, custom);
+            await channel.create();
+            const updatedChannel = await channel.assignRoles([
+                {
+                    user_id: custom.members[0],
+                    channel_role: "channel_moderator",
+                },
+            ]);
+            return updatedChannel.channel;
+        } catch (err) {
+            this.log(err);
+            return undefined;
+        }
     }
     async updateChannel(_channelId: string, _data: any) {
         throw new Error("Method not implemented.");

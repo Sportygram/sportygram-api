@@ -9,6 +9,7 @@ import {
     UserProfileDoesNotExistError,
 } from "./createChatUserErrors";
 import { ChatUser } from "../../domain/chatUser";
+import { get } from "lodash";
 
 type Response = Either<
     | UserProfileDoesNotExistError
@@ -38,10 +39,11 @@ export class CreateChatUser
             }
 
             const streamId = chatUser.chatUserId.id.toString();
-            const response = await this.streamService.createOrReplaceUsers([
-                { id: streamId, role: "user" },
-            ]);
-            const streamUser = response[streamId];
+            const response = await this.streamService.createOrReplaceUsers([{
+                id: streamId,
+                role: "user",
+            }]);
+            const streamUser = get(response, streamId);
 
             if (!streamUser) {
                 return left(new StreamUserCreationError(streamId));

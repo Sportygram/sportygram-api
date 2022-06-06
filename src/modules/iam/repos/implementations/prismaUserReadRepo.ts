@@ -1,6 +1,7 @@
 import { prisma } from "../../../../infra/database/prisma/client";
 import { config } from "../../../../lib/config";
 import { QueryUser, UserReadRepo } from "../interfaces";
+import { get } from "lodash";
 
 const sgramConfig = config.sportygram;
 export class PrismaUserReadRepo implements UserReadRepo {
@@ -36,7 +37,10 @@ export class PrismaUserReadRepo implements UserReadRepo {
                 sgramConfig.defaultUserRole
             ),
             coinBalance: baseUserWithRoles.coinBalance.toNumber(),
-            rooms: [],
+            chatData: {
+                streamUserId: baseUserWithRoles.id,
+                token: get(baseUserWithRoles.metadata, "stream.token"),
+            },
         };
     }
 }

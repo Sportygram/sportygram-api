@@ -28,7 +28,7 @@ export const User = objectType({
         t.string("favoriteTeam");
         t.nonNull.boolean("onboarded");
         t.nonNull.float("coinBalance");
-        t.list.field("rooms", { type: "Room" });
+        t.field("chatData", { type: "ChatData" });
         t.json("settings");
         t.json("gamesSummary");
         t.nonNull.dateTime("createdAt");

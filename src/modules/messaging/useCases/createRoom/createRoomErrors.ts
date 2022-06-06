@@ -8,3 +8,11 @@ export class ChatUserDoesNotExistError extends Result<UseCaseError> {
         } as UseCaseError);
     }
 }
+
+export class StreamRoomCreationError extends Result<UseCaseError> {
+    constructor(roomId: string) {
+        super(false, {
+            message: `Error creating room on getStream; id: ${roomId}`,
+        } as UseCaseError);
+    }
+}

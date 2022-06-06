@@ -137,10 +137,9 @@ export interface NexusGenObjects {
     refreshToken?: string | null; // String
     user: NexusGenRootTypes['User']; // User!
   }
-  ChatUser: { // root type
+  ChatData: { // root type
     streamUserId: string; // String!
-    token: NexusGenScalars['JWT']; // JWT!
-    username: string; // String!
+    token: string; // String!
   }
   CheckUsernameOutput: { // root type
     available: boolean; // Boolean!
@@ -246,6 +245,7 @@ export interface NexusGenObjects {
     user: NexusGenRootTypes['User']; // User!
   }
   User: { // root type
+    chatData?: NexusGenRootTypes['ChatData'] | null; // ChatData
     coinBalance: number; // Float!
     country?: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -262,7 +262,6 @@ export interface NexusGenObjects {
     referralCode: string; // String!
     referralCount: number; // Int!
     roles: Array<string | null>; // [String]!
-    rooms?: Array<NexusGenRootTypes['Room'] | null> | null; // [Room]
     settings?: NexusGenScalars['JSON'] | null; // JSON
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userId: string; // ID!
@@ -292,10 +291,9 @@ export interface NexusGenFieldTypes {
     refreshToken: string | null; // String
     user: NexusGenRootTypes['User']; // User!
   }
-  ChatUser: { // field return type
+  ChatData: { // field return type
     streamUserId: string; // String!
-    token: NexusGenScalars['JWT']; // JWT!
-    username: string; // String!
+    token: string; // String!
   }
   CheckUsernameOutput: { // field return type
     available: boolean; // Boolean!
@@ -425,6 +423,7 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   User: { // field return type
+    chatData: NexusGenRootTypes['ChatData'] | null; // ChatData
     coinBalance: number; // Float!
     country: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -441,7 +440,6 @@ export interface NexusGenFieldTypes {
     referralCode: string; // String!
     referralCount: number; // Int!
     roles: Array<string | null>; // [String]!
-    rooms: Array<NexusGenRootTypes['Room'] | null> | null; // [Room]
     settings: NexusGenScalars['JSON'] | null; // JSON
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     userId: string; // ID!
@@ -470,10 +468,9 @@ export interface NexusGenFieldTypeNames {
     refreshToken: 'String'
     user: 'User'
   }
-  ChatUser: { // field return type name
+  ChatData: { // field return type name
     streamUserId: 'String'
-    token: 'JWT'
-    username: 'String'
+    token: 'String'
   }
   CheckUsernameOutput: { // field return type name
     available: 'Boolean'
@@ -603,6 +600,7 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   User: { // field return type name
+    chatData: 'ChatData'
     coinBalance: 'Float'
     country: 'String'
     createdAt: 'DateTime'
@@ -619,7 +617,6 @@ export interface NexusGenFieldTypeNames {
     referralCode: 'String'
     referralCount: 'Int'
     roles: 'String'
-    rooms: 'Room'
     settings: 'JSON'
     updatedAt: 'DateTime'
     userId: 'ID'
