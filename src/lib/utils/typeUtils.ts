@@ -52,7 +52,7 @@ function joiValidate<T>(
 export {
     isValidEnumValue,
     isConstObjectType,
-    isConstArrayType as isType,
+    isConstArrayType,
     isValidNumber,
     isValidHexColour,
     notEmpty,

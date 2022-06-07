@@ -62,7 +62,11 @@ export class Room extends AggregateRoot<RoomProps> {
         return this.props.updatedAt || new Date();
     }
 
-    public addMember(member: ChatUser): Result<void> {
+    public updateExistingMember(member: ChatUser): Result<void> {
+        this.props.members = RoomChatUsers.create([member]);
+        return Result.ok();
+    }
+    public addNewMember(member: ChatUser): Result<void> {
         if (!this.members) this.props.members = RoomChatUsers.create([]);
         this.members?.add(member);
         return Result.ok();

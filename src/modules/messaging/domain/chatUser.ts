@@ -5,14 +5,21 @@ import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
 import { ChatUserId } from "./chatUserId";
 import { ChatUserCreated } from "./events/chatUserCreated";
 
-type ChatUserRole = "user" | "admin" | "channel_member" | "channel_moderator";
+export const ChatUserRole = {
+    User: "user",
+    Admin: "admin",
+    ChannelMember: "channel_member",
+    Moderator: "channel_moderator",
+} as const;
+export type ChatUserRole = typeof ChatUserRole[keyof typeof ChatUserRole];
+
 export type ChatUserMetadata = {
     stream?: { token?: string; data: any };
 };
 
 interface ChatUserProps {
     displayName?: string;
-    role?: ChatUserRole;
+    role?: string;
     coinBalance: number;
     metadata: ChatUserMetadata;
     createdAt?: Date;
@@ -43,7 +50,16 @@ export class ChatUser extends AggregateRoot<ChatUserProps> {
         return this.props.updatedAt || new Date();
     }
 
-    public updateRole(role: ChatUserRole): Result<void> {
+    public updateRole(roleStr: string): Result<void> {
+        const role = roleStr.toLowerCase() as ChatUserRole;
+        const roleTypeGuard = Guard.isValidValueOfObjectType<ChatUserRole>(
+            role,
+            ChatUserRole,
+            "role"
+        );
+        if (!roleTypeGuard.succeeded) {
+            return Result.fail<void>("Invalid role");
+        }
         this.props.role = role;
         return Result.ok();
     }
@@ -78,7 +94,19 @@ export class ChatUser extends AggregateRoot<ChatUserProps> {
             return Result.fail<ChatUser>(guardResult.message || "");
         }
 
-        const chatUser = new ChatUser({ ...props }, id);
+        const role = props.role?.toLowerCase() as ChatUserRole;
+        if (role) {
+            const roleTypeGuard = Guard.isValidValueOfObjectType<ChatUserRole>(
+                role,
+                ChatUserRole,
+                "role"
+            );
+            if (!roleTypeGuard.succeeded) {
+                return Result.fail<ChatUser>("Invalid role");
+            }
+        }
+
+        const chatUser = new ChatUser({ ...props, role }, id);
         const isNewChatUser = !id;
 
         if (isNewChatUser) {

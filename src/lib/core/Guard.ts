@@ -1,6 +1,6 @@
 import {
     isConstObjectType,
-    isType,
+    isConstArrayType,
     isValidEnumValue,
 } from "../utils/typeUtils";
 
@@ -146,7 +146,7 @@ export class Guard {
         typeArray: ReadonlyArray<T>,
         argumentName: string
     ): GuardResult {
-        const isValid = isType<T>(value, typeArray);
+        const isValid = isConstArrayType<T>(value, typeArray);
         return isValid
             ? { succeeded: true }
             : {

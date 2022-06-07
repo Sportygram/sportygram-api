@@ -14,6 +14,13 @@ type ChatData {
   token: String!
 }
 
+enum ChatUserRoleType {
+  admin
+  channel_member
+  channel_moderator
+  user
+}
+
 type CheckUsernameOutput implements MutationOutput {
   available: Boolean!
   message: String!
@@ -138,6 +145,7 @@ type Mutation {
   sendPasswordReset(email: String!): TokenSendOutput!
   signup(email: String!, password: String, referralCode: String): AuthOutput!
   syncFirebaseUser(referralCode: String, token: String!): AuthOutput!
+  updateChatUserRole(role: ChatUserRoleType!, roomId: String!): CreateRoomOutput!
   updatePrediction(input: PredictionInput!): PredictionOutput!
   updateRoom(input: UpdateRoomInput!): CreateRoomOutput!
   updateUserProfile(input: UpdateUserProfileInput!): UpdateUserProfileOutput!

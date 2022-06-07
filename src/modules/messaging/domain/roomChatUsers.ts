@@ -10,7 +10,7 @@ export class RoomChatUsers extends WatchedList<ChatUser> {
         return a.equals(b);
     }
 
-    public static create(roles: ChatUser[]): RoomChatUsers {
-        return new RoomChatUsers(roles ? roles : []);
+    public static create(chatUsers: ChatUser[]): RoomChatUsers {
+        return new RoomChatUsers(chatUsers ? chatUsers : []);
     }
 }
