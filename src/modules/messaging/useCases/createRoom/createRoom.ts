@@ -7,7 +7,10 @@ import { Room } from "../../domain/room";
 import { ChatUserRepo, RoomRepo } from "../../repos/interfaces";
 import { RoomChatUsers } from "../../domain/roomChatUsers";
 import { UserProfileDoesNotExistError } from "../createChatUser/createChatUserErrors";
-import { GetStreamService } from "../../services/getStream/getStreamService";
+import {
+    GetStreamService,
+    StreamChannelType,
+} from "../../services/getStream/getStreamService";
 import {
     ChatUserDoesNotExistError,
     StreamRoomCreationError,
@@ -67,18 +70,13 @@ export class CreateRoom implements UseCase<CreateRoomDTO, Promise<Response>> {
             const room = roomOrError.getValue();
             const roomId = room.roomId.id.toString();
             const streamChannel = await this.streamService.createChannel(
-                "messaging",
+                StreamChannelType.Messaging,
                 roomId,
                 {
                     name: room.name,
                     description,
                     created_by_id: config.getStream.defaultChannelOwnerId,
-                    members: [
-                        {
-                            user_id: chatUser.chatUserId.id.toString(),
-                            channel_role: "channel_moderator",
-                        },
-                    ],
+                    members: [chatUser.chatUserId.id.toString()],
                 }
             );
 
