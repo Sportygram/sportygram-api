@@ -72,9 +72,13 @@ export class GetStreamServiceImpl implements GetStreamService {
             errorData.data = error.response.data;
             errorData.status = error.response.status;
         } else if (error.request) {
-            errorData.data = error.request;
+            errorData.data = error.config.data;
+            errorData.params = error.config.params;
+            errorData.url = error.config.url;
+            errorData.method = error.config.method;
         } else errorData = error;
-        
+
+        errorData.message = error.message;
         logger.error("[Stream Error]", errorData);
     }
 
@@ -201,14 +205,44 @@ export class GetStreamServiceImpl implements GetStreamService {
             return undefined;
         }
     }
-    async removeMembers(_channelId: string, _userIds: string[]) {
-        throw new Error("Method not implemented.");
+    async removeMembers(channelId: string, chatUserIds: string[]) {
+        try {
+            const channel = this.client.channel(
+                StreamChannelType.Messaging,
+                channelId
+            );
+            const updatedChannel = await channel.removeMembers(chatUserIds);
+            return updatedChannel.channel;
+        } catch (err) {
+            this.log(err);
+            return undefined;
+        }
     }
-    async addModerators(_channelId: string, _userIds: string[]) {
-        throw new Error("Method not implemented.");
+    async addModerators(channelId: string, chatUserIds: string[]) {
+        try {
+            const channel = this.client.channel(
+                StreamChannelType.Messaging,
+                channelId
+            );
+            const updatedChannel = await channel.addModerators(chatUserIds);
+            return updatedChannel.channel;
+        } catch (err) {
+            this.log(err);
+            return undefined;
+        }
     }
-    async demoteModerators(_channelId: string, _userIds: string[]) {
-        throw new Error("Method not implemented.");
+    async demoteModerators(channelId: string, chatUserIds: string[]) {
+        try {
+            const channel = this.client.channel(
+                StreamChannelType.Messaging,
+                channelId
+            );
+            const updatedChannel = await channel.demoteModerators(chatUserIds);
+            return updatedChannel.channel;
+        } catch (err) {
+            this.log(err);
+            return undefined;
+        }
     }
     //#endregion
 }

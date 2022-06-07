@@ -114,6 +114,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  ChatUserRoleType: "admin" | "channel_member" | "channel_moderator" | "user"
   GameType: "DAILY" | "SEASON" | "WEEKLY"
   RoomType: "private" | "public"
   sort: "ASC" | "DESC"
@@ -366,6 +367,7 @@ export interface NexusGenFieldTypes {
     sendPasswordReset: NexusGenRootTypes['TokenSendOutput']; // TokenSendOutput!
     signup: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     syncFirebaseUser: NexusGenRootTypes['AuthOutput']; // AuthOutput!
+    updateChatUserRole: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     updatePrediction: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
     updateRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     updateUserProfile: NexusGenRootTypes['UpdateUserProfileOutput']; // UpdateUserProfileOutput!
@@ -543,6 +545,7 @@ export interface NexusGenFieldTypeNames {
     sendPasswordReset: 'TokenSendOutput'
     signup: 'AuthOutput'
     syncFirebaseUser: 'AuthOutput'
+    updateChatUserRole: 'CreateRoomOutput'
     updatePrediction: 'PredictionOutput'
     updateRoom: 'CreateRoomOutput'
     updateUserProfile: 'UpdateUserProfileOutput'
@@ -685,6 +688,10 @@ export interface NexusGenArgTypes {
     syncFirebaseUser: { // args
       referralCode?: string | null; // String
       token: string; // String!
+    }
+    updateChatUserRole: { // args
+      role: NexusGenEnums['ChatUserRoleType']; // ChatUserRoleType!
+      roomId: string; // String!
     }
     updatePrediction: { // args
       input: NexusGenInputs['PredictionInput']; // PredictionInput!
