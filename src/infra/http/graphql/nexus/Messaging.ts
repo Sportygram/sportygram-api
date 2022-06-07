@@ -7,11 +7,11 @@ import {
     objectType,
     stringArg,
 } from "nexus";
+import { addUserToRoomResolver } from "../../../../modules/messaging/useCases/addUserToRoom/addUserToRoomResolver";
 import { createRoomResolver } from "../../../../modules/messaging/useCases/createRoom/createRoomResolver";
 import { roomQueryResolver } from "../../../../modules/messaging/useCases/fetchQueryRoom/fetchQueryRoomResolver";
 import { chatTokenResolver } from "../../../../modules/messaging/useCases/generateChatToken/chatTokenResolver";
 import { updateRoomResolver } from "../../../../modules/messaging/useCases/updateRoom/updateRoomResolver";
-import { getRoomMock } from "./mocks/Messaging";
 import { withUser } from "./utils";
 
 export const ChatData = objectType({
@@ -95,12 +95,7 @@ export const MessagingMutation = extendType({
             args: {
                 roomId: nonNull(stringArg()),
             },
-            async resolve(_parent, _args, _context) {
-                return {
-                    message: "Room Joined",
-                    room: getRoomMock(),
-                };
-            },
+            resolve: withUser(addUserToRoomResolver),
         });
 
         t.nonNull.field("updateRoom", {

@@ -28,6 +28,6 @@ export const config = {
     getStream: {
         apiKey: process.env.STREAM_KEY,
         apiSecret: process.env.STREAM_SECRET,
-        defaultChannelOwnerId: "7ce39465-4525-442c-aa17-e5e2b5e28e7f",
+        defaultChannelOwnerId: "e3a2060e-51a4-4852-bbdc-582da830df89",
     },
 };

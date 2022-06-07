@@ -150,16 +150,16 @@ export class TestGetStreamService implements GetStreamService {
         throw new Error("Method not implemented.");
     }
 
-    addMembers(_userIds: string[]): Promise<any> {
+    addMembers(_channelId: string, _userIds: string[]): Promise<any> {
         throw new Error("Method not implemented.");
     }
-    removeMembers(_userIds: string[]): Promise<any> {
+    removeMembers(_channelId: string, _userIds: string[]): Promise<any> {
         throw new Error("Method not implemented.");
     }
-    addModerators(_userIds: string[]): Promise<any> {
+    addModerators(_channelId: string, _userIds: string[]): Promise<any> {
         throw new Error("Method not implemented.");
     }
-    demoteModerators(_userIds: string[]): Promise<any> {
+    demoteModerators(_channelId: string, _userIds: string[]): Promise<any> {
         throw new Error("Method not implemented.");
     }
 }

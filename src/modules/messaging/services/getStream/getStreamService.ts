@@ -13,6 +13,9 @@ export type UserUpdate = {
     unset?: any;
 };
 
+export const StreamChannelType = {
+    Messaging: "messaging",
+};
 export interface GetStreamService {
     createToken(userId: string): Promise<string>;
 
@@ -47,10 +50,10 @@ export interface GetStreamService {
         userId?: string
     ): Promise<any>;
 
-    addMembers(userIds: string[]): Promise<any>;
-    removeMembers(userIds: string[]): Promise<any>;
-    addModerators(userIds: string[]): Promise<any>;
-    demoteModerators(userIds: string[]): Promise<any>;
+    addMembers(channelId: string, chatUserIds: string[]): Promise<any>;
+    removeMembers(channelId: string, chatUserIds: string[]): Promise<any>;
+    addModerators(channelId: string, chatUserIds: string[]): Promise<any>;
+    demoteModerators(channelId: string, chatUserIds: string[]): Promise<any>;
 }
 
 export class GetStreamServiceImpl implements GetStreamService {
@@ -64,10 +67,15 @@ export class GetStreamServiceImpl implements GetStreamService {
     }
 
     log(error: any) {
-        if (error.config) {
-            error = error.toJSON();
-        }
-        logger.error("[Stream Error]", error);
+        let errorData: any = {};
+        if (error.response) {
+            errorData.data = error.response.data;
+            errorData.status = error.response.status;
+        } else if (error.request) {
+            errorData.data = error.request;
+        } else errorData = error;
+        
+        logger.error("[Stream Error]", errorData);
     }
 
     async createToken(userId: string) {
@@ -154,7 +162,10 @@ export class GetStreamServiceImpl implements GetStreamService {
     }
     async updateChannel(channelId: string, set?: any, unset?: any) {
         try {
-            const channel = this.client.channel("messaging", channelId);
+            const channel = this.client.channel(
+                StreamChannelType.Messaging,
+                channelId
+            );
             const update = {
                 set,
                 unset,
@@ -177,16 +188,26 @@ export class GetStreamServiceImpl implements GetStreamService {
     //#endregion
 
     //#region  Members
-    async addMembers(_userIds: string[]) {
+    async addMembers(channelId: string, chatUserIds: string[]) {
+        try {
+            const channel = this.client.channel(
+                StreamChannelType.Messaging,
+                channelId
+            );
+            const updatedChannel = await channel.addMembers(chatUserIds);
+            return updatedChannel.channel;
+        } catch (err) {
+            this.log(err);
+            return undefined;
+        }
+    }
+    async removeMembers(_channelId: string, _userIds: string[]) {
         throw new Error("Method not implemented.");
     }
-    async removeMembers(_userIds: string[]) {
+    async addModerators(_channelId: string, _userIds: string[]) {
         throw new Error("Method not implemented.");
     }
-    async addModerators(_userIds: string[]) {
-        throw new Error("Method not implemented.");
-    }
-    async demoteModerators(_userIds: string[]) {
+    async demoteModerators(_channelId: string, _userIds: string[]) {
         throw new Error("Method not implemented.");
     }
     //#endregion
