@@ -20,7 +20,7 @@ export const ChatData = objectType({
     name: "ChatData",
     definition(t) {
         t.nonNull.string("streamUserId");
-        t.nonNull.string("token");
+        t.string("token");
     },
 });
 
