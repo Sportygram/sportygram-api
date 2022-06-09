@@ -11,7 +11,7 @@ type AuthOutput implements MutationOutput {
 
 type ChatData {
   streamUserId: String!
-  token: String!
+  token: String
 }
 
 enum ChatUserRoleType {
@@ -94,11 +94,6 @@ enum GameType {
   SEASON
   WEEKLY
 }
-
-"""
-A field whose value is a hex color code: https://en.wikipedia.org/wiki/Web_colors.
-"""
-scalar HexColorCode @specifiedBy(url: "https://en.wikipedia.org/wiki/Web_colors")
 
 """
 A field whose value is a IPv4 address: https://en.wikipedia.org/wiki/IPv4.
@@ -198,7 +193,6 @@ type PredictionOutput implements MutationOutput {
 }
 
 type Query {
-  chatToken: String!
   countries: [Country]!
   fixtures(date: String!): [Fixture!]!
   room(roomId: String!): Room!
@@ -256,7 +250,7 @@ input UpdateUserProfileInput {
   lastname: String
   onboarded: Boolean
   phone: String
-  profileColour: HexColorCode
+  profileColour: String
   username: String
 }
 
@@ -278,7 +272,7 @@ type User {
   lastname: String
   onboarded: Boolean!
   phone: PhoneNumber
-  profileColour: HexColorCode!
+  profileColour: String!
   profileImageUrl: String!
   referralCode: String!
   referralCount: Int!

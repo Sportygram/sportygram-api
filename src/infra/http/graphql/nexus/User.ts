@@ -55,7 +55,7 @@ export const UpdateUserProfileInput = inputObjectType({
         t.string("lastname");
         t.string("phone");
         t.string("country");
-        t.hexColor("profileColour");
+        t.string("profileColour");
         t.string("favoriteTeam");
         t.boolean("onboarded");
     },

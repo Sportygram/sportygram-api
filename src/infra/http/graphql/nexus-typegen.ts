@@ -36,10 +36,6 @@ declare global {
      * A field whose value is a IPv4 address: https://en.wikipedia.org/wiki/IPv4.
      */
     ipv4<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "IPv4";
-    /**
-     * A field whose value is a hex color code: https://en.wikipedia.org/wiki/Web_colors.
-     */
-    hexColor<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "HexColorCode";
   }
 }
 declare global {
@@ -72,10 +68,6 @@ declare global {
      * A field whose value is a IPv4 address: https://en.wikipedia.org/wiki/IPv4.
      */
     ipv4<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "IPv4";
-    /**
-     * A field whose value is a hex color code: https://en.wikipedia.org/wiki/Web_colors.
-     */
-    hexColor<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "HexColorCode";
   }
 }
 
@@ -108,7 +100,7 @@ export interface NexusGenInputs {
     lastname?: string | null; // String
     onboarded?: boolean | null; // Boolean
     phone?: string | null; // String
-    profileColour?: NexusGenScalars['HexColorCode'] | null; // HexColorCode
+    profileColour?: string | null; // String
     username?: string | null; // String
   }
 }
@@ -129,7 +121,6 @@ export interface NexusGenScalars {
   CountryCode: any
   DateTime: any
   EmailAddress: any
-  HexColorCode: any
   IPv4: any
   JSON: any
   JWT: any
@@ -145,7 +136,7 @@ export interface NexusGenObjects {
   }
   ChatData: { // root type
     streamUserId: string; // String!
-    token: string; // String!
+    token?: string | null; // String
   }
   CheckUsernameOutput: { // root type
     available: boolean; // Boolean!
@@ -263,7 +254,7 @@ export interface NexusGenObjects {
     lastname?: string | null; // String
     onboarded: boolean; // Boolean!
     phone?: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
-    profileColour: NexusGenScalars['HexColorCode']; // HexColorCode!
+    profileColour: string; // String!
     profileImageUrl: string; // String!
     referralCode: string; // String!
     referralCount: number; // Int!
@@ -299,7 +290,7 @@ export interface NexusGenFieldTypes {
   }
   ChatData: { // field return type
     streamUserId: string; // String!
-    token: string; // String!
+    token: string | null; // String
   }
   CheckUsernameOutput: { // field return type
     available: boolean; // Boolean!
@@ -390,7 +381,6 @@ export interface NexusGenFieldTypes {
     prediction: NexusGenRootTypes['Prediction']; // Prediction!
   }
   Query: { // field return type
-    chatToken: string; // String!
     countries: Array<NexusGenRootTypes['Country'] | null>; // [Country]!
     fixtures: NexusGenRootTypes['Fixture'][]; // [Fixture!]!
     room: NexusGenRootTypes['Room']; // Room!
@@ -442,7 +432,7 @@ export interface NexusGenFieldTypes {
     lastname: string | null; // String
     onboarded: boolean; // Boolean!
     phone: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
-    profileColour: NexusGenScalars['HexColorCode']; // HexColorCode!
+    profileColour: string; // String!
     profileImageUrl: string; // String!
     referralCode: string; // String!
     referralCount: number; // Int!
@@ -568,7 +558,6 @@ export interface NexusGenFieldTypeNames {
     prediction: 'Prediction'
   }
   Query: { // field return type name
-    chatToken: 'String'
     countries: 'Country'
     fixtures: 'Fixture'
     room: 'Room'
@@ -620,7 +609,7 @@ export interface NexusGenFieldTypeNames {
     lastname: 'String'
     onboarded: 'Boolean'
     phone: 'PhoneNumber'
-    profileColour: 'HexColorCode'
+    profileColour: 'String'
     profileImageUrl: 'String'
     referralCode: 'String'
     referralCount: 'Int'
