@@ -1,7 +1,7 @@
 import { AuthenticationError } from "apollo-server-core";
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../../../modules/iam/services/authService";
-// import { FirebaseService } from "../../../lib/services/firebase";
+import { FirebaseService } from "../../../lib/services/firebase";
 import { FetchRequestUser } from "../../../modules/iam/useCases/fetchRequestUser/fetchRequestUser";
 
 function getJWTFromBearerToken(token: string): string {
@@ -13,7 +13,7 @@ type TokenSource = "firebase" | "sgram_auth";
 export class AuthMiddleware {
     constructor(
         private authService: AuthService,
-        // private _firebaseService: FirebaseService,
+        private firebaseService: FirebaseService,
         private fetchRequestUserByUserId: FetchRequestUser
     ) {}
 
@@ -37,10 +37,10 @@ export class AuthMiddleware {
                 return this.endRequest(res, "No access token provided", 403);
             }
 
-            let tokenSource: TokenSource | undefined;
+            let tokenSource: TokenSource = "firebase";
             let decoded;
 
-            // decoded = await this.firebaseService.decodeToken(token);
+            decoded = await this.firebaseService.decodeToken(token);
             if (!decoded) {
                 decoded = await this.authService.decodeToken(token);
                 tokenSource = "sgram_auth";
@@ -80,10 +80,10 @@ export class AuthMiddleware {
         const token = getJWTFromBearerToken(req.headers["authorization"] || "");
         if (!token) return;
 
-        let tokenSource: TokenSource | undefined;
+        let tokenSource: TokenSource = "firebase";
         let decoded;
 
-        // decoded = await this.firebaseService.decodeToken(token);
+        decoded = await this.firebaseService.decodeToken(token);
         if (!decoded) {
             decoded = await this.authService.decodeToken(token);
             tokenSource = "sgram_auth";
