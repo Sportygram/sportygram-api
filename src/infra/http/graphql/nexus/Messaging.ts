@@ -11,7 +11,7 @@ import { ChatUserRole } from "../../../../modules/messaging/domain/chatUser";
 import { addUserToRoomResolver } from "../../../../modules/messaging/useCases/addUserToRoom/addUserToRoomResolver";
 import { createRoomResolver } from "../../../../modules/messaging/useCases/createRoom/createRoomResolver";
 import { roomQueryResolver } from "../../../../modules/messaging/useCases/fetchQueryRoom/fetchQueryRoomResolver";
-import { chatTokenResolver } from "../../../../modules/messaging/useCases/generateChatToken/chatTokenResolver";
+// import { chatTokenResolver } from "../../../../modules/messaging/useCases/generateChatToken/chatTokenResolver";
 import { updateChatUserRoleResolver } from "../../../../modules/messaging/useCases/updateChatUserRole/updateChatUserRoleResolver";
 import { updateRoomResolver } from "../../../../modules/messaging/useCases/updateRoom/updateRoomResolver";
 import { withUser } from "./utils";
