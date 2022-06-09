@@ -24,7 +24,7 @@ const isValidNumber = (value: any): value is number => {
 };
 
 const isValidHexColour = (value: string) => {
-    const re = /^#[0-9A-F]{6}$/i;
+    const re = /^[0-9A-F]{6}$/i;
     return re.test(value);
 };
 /* Type Predicate for filtering out any undefined or null values  from arrays*/

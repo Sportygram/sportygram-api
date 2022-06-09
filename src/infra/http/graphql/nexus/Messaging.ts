@@ -52,10 +52,10 @@ export const Room = objectType({
 export const MessagingQuery = extendType({
     type: "Query",
     definition(t) {
-        t.nonNull.field("chatToken", {
-            type: "String",
-            resolve: withUser(chatTokenResolver),
-        });
+        // t.nonNull.field("chatToken", {
+        //     type: "String",
+        //     resolve: withUser(chatTokenResolver),
+        // });
 
         t.nonNull.field("room", {
             type: "Room",

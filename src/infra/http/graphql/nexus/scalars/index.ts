@@ -7,7 +7,6 @@ import {
     GraphQLJWT,
     GraphQLJSON,
     GraphQLIPv4,
-    GraphQLHexColorCode,
 } from "graphql-scalars";
 
 export const GQLDate = asNexusMethod(GraphQLDateTime, "dateTime");
@@ -17,4 +16,3 @@ export const GQLPhoneNumber = asNexusMethod(GraphQLPhoneNumber, "phone");
 export const GQLJWT = asNexusMethod(GraphQLJWT, "jwt");
 export const GQLJSON = asNexusMethod(GraphQLJSON, "json");
 export const GQLIPv4 = asNexusMethod(GraphQLIPv4, "ipv4");
-export const GQLHexColor = asNexusMethod(GraphQLHexColorCode, "hexColor");

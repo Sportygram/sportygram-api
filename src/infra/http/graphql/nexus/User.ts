@@ -23,7 +23,7 @@ export const User = objectType({
         t.nonNull.string("referralCode");
         t.nonNull.int("referralCount");
         t.phone("phone");
-        t.nonNull.hexColor("profileColour");
+        t.nonNull.string("profileColour");
         t.nonNull.string("profileImageUrl");
         t.string("favoriteTeam");
         t.nonNull.boolean("onboarded");
