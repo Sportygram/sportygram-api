@@ -163,6 +163,7 @@ export class UpdateUserProfile
                     username: user.username?.value,
                     name: profile.displayName,
                     profileImageUrl: profile.profileImageUrl,
+                    profileColour: profile.profileColour,
                 }
             );
             if (updatedStream)
