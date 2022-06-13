@@ -5,7 +5,6 @@ import { UseCase } from "../../../../lib/core/UseCase";
 import { CreateRoomDTO } from "./createRoomDTO";
 import { Room } from "../../domain/room";
 import { ChatUserRepo, RoomRepo } from "../../repos/interfaces";
-import { RoomChatUsers } from "../../domain/roomChatUsers";
 import { UserProfileDoesNotExistError } from "../createChatUser/createChatUserErrors";
 import {
     GetStreamService,
