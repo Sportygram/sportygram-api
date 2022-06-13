@@ -60,7 +60,6 @@ export class CreateRoom implements UseCase<CreateRoomDTO, Promise<Response>> {
                 roomType,
                 joiningFee: 0,
                 metadata: {},
-                members: RoomChatUsers.create([chatUser]),
             });
 
             if (roomOrError.isFailure && roomOrError.error) {
@@ -68,6 +67,8 @@ export class CreateRoom implements UseCase<CreateRoomDTO, Promise<Response>> {
             }
 
             const room = roomOrError.getValue();
+            room.addNewMember(chatUser);
+
             const roomId = room.roomId.id.toString();
             const streamChannel = await this.streamService.createChannel(
                 StreamChannelType.Messaging,
