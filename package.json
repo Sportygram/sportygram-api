@@ -83,8 +83,8 @@
         "winston": "^3.7.2"
     },
     "engines": {
-        "node": "16.15.0",
-        "npm": "8.5.5"
+        "node": ">=16.x",
+        "npm": ">=8.x"
     },
     "lint-staged": {
         "*.js": "eslint --cache --fix",
