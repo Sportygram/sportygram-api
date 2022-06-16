@@ -5,7 +5,7 @@ import { UserId } from "./userId";
 import { Guard } from "../../../lib/core/Guard";
 import { GamesSummary, Settings } from "./valueObjects/settings";
 import { UserProfileId } from "./userProfileId";
-import { teams } from "../../../infra/http/graphql/nexus/mocks/data";
+import { teams } from "../../gaming/infra/database/seed/team.seed";
 import { config } from "../../../lib/config";
 
 interface UserProfileProps {
@@ -35,9 +35,7 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
         return this.props.displayName;
     }
     get profileColour(): string {
-        return (
-            this.props.profileColour || config.sportygram.defaultProfileColour
-        );
+        return this.props.profileColour || config.huddle.defaultProfileColour;
     }
     get profileImageUrl(): string | undefined {
         return this.props.profileImageUrl;

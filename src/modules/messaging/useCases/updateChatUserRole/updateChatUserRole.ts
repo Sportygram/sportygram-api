@@ -58,11 +58,11 @@ export class UpdateChatUserRole
             let updated: any;
             if (role === ChatUserRole.Moderator) {
                 updated = await this.streamService.addModerators(roomId, [
-                    chatUser.id.toString(),
+                    userId,
                 ]);
             } else {
                 updated = await this.streamService.demoteModerators(roomId, [
-                    chatUser.id.toString(),
+                    userId,
                 ]);
             }
 

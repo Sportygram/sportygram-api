@@ -36,6 +36,7 @@ export class AddUserToRoom
         const { userId, roomId } = request;
 
         try {
+            // TODO: Allow admin add user to room
             const chatUser = await this.chatUserRepo.getChatUserByUserId(
                 userId
             );
@@ -52,14 +53,14 @@ export class AddUserToRoom
             room.addNewMember(chatUser);
 
             const streamChannel = await this.streamService.addMembers(roomId, [
-                chatUser.id.toString(),
+                userId,
             ]);
 
             if (!streamChannel) {
                 return left(new StreamRoomUpdateError(roomId));
             }
             room.updateStreamData(streamChannel);
-            
+
             await this.roomRepo.save(room);
 
             return right(Result.ok<Room>(room));

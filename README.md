@@ -1,4 +1,4 @@
-# Sportygram API
+# Huddle API
 
 ### Quick start
 
@@ -22,4 +22,5 @@ TZ=UTC
 -   Navigate your browser to `localhost:3000/graphql` to run queries on the graphql server
 
 ### Staging
--   Staging API:  <https://sportygram-api.onrender.com/graphql>
+
+-   Staging API: <https://huddle-api.herokuapp.com/>

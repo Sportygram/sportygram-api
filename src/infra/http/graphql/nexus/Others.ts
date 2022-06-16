@@ -1,6 +1,6 @@
 import { extendType, objectType } from "nexus";
 import { countries } from "../../../../modules/iam/domain/countries";
-import { teams } from "./mocks/data";
+import { teams } from "../../../../modules/gaming/infra/database/seed/team.seed";
 
 export const Country = objectType({
     name: "Country",

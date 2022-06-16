@@ -6,25 +6,25 @@ import { UserPassword } from "../domain/valueObjects/userPassword";
 import { UserRoles } from "../domain/userRoles";
 import { UserTokens } from "../domain/userTokens";
 import { UserState } from "../../../lib/utils/permissions";
-import { sgramAdminRoleProp, userRoleProp } from "./role.mock";
+import { huddleAdminRoleProp, userRoleProp } from "./role.mock";
 import { ReferralCode } from "../domain/valueObjects/referralCode";
 
 const superAdminProp = {
     id: "1ef0d6ce-fb4b-4162-99a8-7b132c42b2a0",
-    email: "god@sgram.com",
+    email: "god@huddle.com",
     password: "Pa55w0rd",
     firstname: "God",
     lastname: "IAM",
     userState: UserState.Active,
     createdAt: "2020-10-22T07:47:17.984Z",
     updatedAt: "2020-10-22T07:47:17.984Z",
-    roles: [sgramAdminRoleProp],
+    roles: [huddleAdminRoleProp],
     permissions: [],
 };
 
 const userProp = {
     id: "3981de33-84a7-4bb9-8b7c-ec71ddd6be95",
-    email: "takumi@sgram.com",
+    email: "takumi@huddle.com",
     password: "Pa55w0rd",
     firstname: "Takumi",
     lastname: "Fujiwara",

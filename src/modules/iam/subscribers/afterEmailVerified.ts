@@ -29,9 +29,9 @@ export class AfterEmailVerified implements IHandle<EmailVerified> {
 
     private async onEmailVerified(event: EmailVerified): Promise<void> {
         const { user } = event;
-        const sgramConfig: any = config.sportygram;
-        const defaultRoleId: string = sgramConfig?.defaultUserRole;
-        const verifiedUserRole: string = sgramConfig?.verifiedUserRole;
+        const huddleConfig: any = config.huddle;
+        const defaultRoleId: string = huddleConfig?.defaultUserRole;
+        const verifiedUserRole: string = huddleConfig?.verifiedUserRole;
 
         try {
             await Promise.all([

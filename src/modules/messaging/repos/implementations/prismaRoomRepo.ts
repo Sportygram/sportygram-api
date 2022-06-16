@@ -26,7 +26,7 @@ export class PrismaRoomRepo implements RoomRepo {
         if (room.members) {
             roomChatUsers.createMany = {
                 data: room.members.getNewItems().map((member) => ({
-                    user_profile_id: member.id.toString(),
+                    userId: member.userId.toString(),
                     role: member.role,
                 })),
             };
@@ -34,15 +34,15 @@ export class PrismaRoomRepo implements RoomRepo {
 
         const updateMany = room.members?.getItems().map((member) => ({
             where: {
-                user_profile_id: {
-                    equals: member.id.toString(),
+                userId: {
+                    equals: member.userId.toString(),
                 },
-                room_id: {
+                roomId: {
                     equals: rawRoom.id,
                 },
             },
             data: {
-                user_profile_id: member.id.toString(),
+                userId: member.userId.toString(),
                 role: member.role,
             },
         }));
@@ -50,7 +50,7 @@ export class PrismaRoomRepo implements RoomRepo {
         const deletedMembers = room.members
             ?.getRemovedItems()
             .map((member) => ({
-                user_profile_id: member.id.toString(),
+                userId: member.userId.toString(),
                 role: member.role,
             }));
 

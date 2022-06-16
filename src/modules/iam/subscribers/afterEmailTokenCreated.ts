@@ -32,7 +32,7 @@ export class AfterEmailTokenCreated implements IHandle<EmailTokenCreated> {
             if (newToken.type === TokenType.PasswordReset) {
                 await this.emailService.sendMail({
                     to: user.email.value,
-                    subject: "Sportygram Password Reset",
+                    subject: "Huddle Password Reset",
                     templateName: EmailTypes.PasswordReset,
                     templateData: {
                         userId: user.userId.id.toString(),

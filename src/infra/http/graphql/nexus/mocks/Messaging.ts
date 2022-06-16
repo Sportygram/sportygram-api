@@ -13,8 +13,7 @@ let roomDefault: Room = {
     roomType: "public",
     games: [
         getGameMock(),
-        getGameMock({ gameType: "DAILY", name: "Wethepoppers' Daily Game" }),
-        getGameMock({ gameType: "SEASON", name: "Wethepoppers' Season Game" }),
+        getGameMock({ type: "season", name: "Wethepoppers' Season Game" }),
     ],
     createdAt: "2022-05-19T01:45:57.686Z",
     updatedAt: "2022-05-19T01:45:57.686Z",

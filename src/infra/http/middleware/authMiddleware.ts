@@ -8,7 +8,7 @@ function getJWTFromBearerToken(token: string): string {
     return token.split(" ")[1];
 }
 
-type TokenSource = "firebase" | "sgram_auth";
+type TokenSource = "firebase" | "huddle_auth";
 
 export class AuthMiddleware {
     constructor(
@@ -43,7 +43,7 @@ export class AuthMiddleware {
             decoded = await this.firebaseService.decodeToken(token);
             if (!decoded) {
                 decoded = await this.authService.decodeToken(token);
-                tokenSource = "sgram_auth";
+                tokenSource = "huddle_auth";
             }
             // Confirm that the token was signed with our signature.
             if (!decoded) {
@@ -52,7 +52,7 @@ export class AuthMiddleware {
 
             const { userId } = decoded;
 
-            if (tokenSource === "sgram_auth") {
+            if (tokenSource === "huddle_auth") {
                 const tokens = await this.authService.getTokens(userId);
                 // if the token was found, just continue the request.
                 if (!tokens.length) {
@@ -86,14 +86,14 @@ export class AuthMiddleware {
         decoded = await this.firebaseService.decodeToken(token);
         if (!decoded) {
             decoded = await this.authService.decodeToken(token);
-            tokenSource = "sgram_auth";
+            tokenSource = "huddle_auth";
         }
         if (!decoded) return;
 
         // See if the token was found
         const { userId } = decoded;
 
-        if (tokenSource === "sgram_auth") {
+        if (tokenSource === "huddle_auth") {
             const tokens = await this.authService.getTokens(userId);
             // if the token was found, just continue the request.
             if (!tokens.length) {

@@ -1,3 +1,5 @@
+import { Sport } from "@prisma/client";
+
 const raw = [
     {
         team: {
@@ -403,6 +405,7 @@ const raw = [
 
 export const teams = raw
     .map((tData) => ({
+        id: tData.team.code,
         code: tData.team.code,
         name: tData.team.name,
         logo: tData.team.logo,
@@ -411,3 +414,17 @@ export const teams = raw
     .sort((a, b) => {
         return a.name.localeCompare(b.name);
     });
+
+export const teamSeed = raw.map((tData, idx) => ({
+    id: idx + 1,
+    name: tData.team.name,
+    code: tData.team.code,
+    logo: tData.team.logo,
+    sport: "football" as Sport,
+    sources: { apiFootball: { id: tData.team.id } },
+}));
+
+export const teamLeagueSeed = teamSeed.map((t) => ({
+    teamId: t.id,
+    leagueId: 1,
+}));

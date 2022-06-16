@@ -1,5 +1,6 @@
-import { extendType, nonNull, objectType, stringArg } from "nexus";
-import { getFixtureMock } from "./mocks/Fixtures";
+import { booleanArg, extendType, objectType, stringArg } from "nexus";
+import { getMatchMock } from "./mocks/Fixtures";
+// import { fixturesResolver } from "../../../../modules/gaming/useCases/fetchFixtures/fetchFixturesResolver";
 
 export const MatchStatus = objectType({
     name: "MatchStatus",
@@ -7,6 +8,16 @@ export const MatchStatus = objectType({
         t.string("long");
         t.string("short");
         t.int("timeElapsed");
+    },
+});
+export const MatchPeriod = objectType({
+    name: "MatchPeriod",
+    definition(t) {
+        t.dateTime("first");
+        t.dateTime("firstExtra");
+        t.dateTime("second");
+        t.dateTime("secondExtra");
+        t.dateTime("penalties");
     },
 });
 
@@ -21,9 +32,10 @@ export const MatchStatistic = objectType({
 export const Team = objectType({
     name: "Team",
     definition(t) {
-        t.id("code");
-        t.string("name");
-        t.string("logo");
+        t.nonNull.id("id");
+        t.nonNull.string("name");
+        t.nonNull.string("code");
+        t.nonNull.string("logo");
         t.string("stadium");
         t.string("score");
         t.boolean("winner");
@@ -39,17 +51,20 @@ export const TeamData = objectType({
     },
 });
 
-export const Fixture = objectType({
-    name: "Fixture",
+export const Match = objectType({
+    name: "Match",
     definition(t) {
-        t.id("fixtureId");
-        t.nonNull.dateTime("date");
-        t.string("venue");
-        t.list.nonNull.int("periods");
+        t.id("id");
         t.nonNull.field("teams", { type: "TeamData" });
+        t.nonNull.field("status", { type: "MatchStatus" });
+        t.nonNull.dateTime("dateTime");
+        t.nonNull.field("periods", { type: "MatchPeriod" });
+        t.nonNull.string("season");
+        t.string("venue");
+        t.string("winner");
         t.json("scores");
-        t.list.field("predictions", { type: "Prediction" });
-        t.nonNull.json("misc");
+        t.list.field("questions", { type: "Prediction" });
+        t.json("misc");
     },
 });
 
@@ -57,12 +72,13 @@ export const FixturesQuery = extendType({
     type: "Query",
     definition(t) {
         t.nonNull.list.nonNull.field("fixtures", {
-            type: "Fixture",
+            type: "Match",
             args: {
-                date: nonNull(stringArg()),
+                date: stringArg(),
+                live: booleanArg(),
             },
             async resolve(_parent, _args, _context, _info) {
-                return [getFixtureMock()];
+                return [getMatchMock()];
             },
         });
     },

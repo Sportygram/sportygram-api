@@ -34,15 +34,15 @@ export class CreateUserWithFirebaseToken
                 On the client
                     signup / signin
                     getIdToken
-                    call a fn that checks claim contain sgram_uuid:
+                    call a fn that checks claim contain huddle_uuid:
                         if it doesn't call syncFirebaseUser endpoint,
                         on response refresh page and get new claims
-                        repeat till claim contains sgram_uuid
+                        repeat till claim contains huddle_uuid
 
                 Verify idToken to get claims {uid}
                 Get user data with the uid
-                Create sgram user, use uid as password
-                if successful, set user claims with sgram_uuid
+                Create huddle user, use uid as password
+                if successful, set user claims with huddle_uuid
 
             */
             const { token } = request;
@@ -61,7 +61,7 @@ export class CreateUserWithFirebaseToken
 
             //#region Validate DTO
             const role = await this.roleRepo.getRole(
-                config.sportygram.verifiedUserRole
+                config.huddle.verifiedUserRole
             );
             if (!role) {
                 return left(

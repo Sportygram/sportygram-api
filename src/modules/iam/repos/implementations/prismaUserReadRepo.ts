@@ -3,7 +3,7 @@ import { config } from "../../../../lib/config";
 import { QueryUser, UserReadRepo } from "../interfaces";
 import { get } from "lodash";
 
-const sgramConfig = config.sportygram;
+const huddleConfig = config.huddle;
 export class PrismaUserReadRepo implements UserReadRepo {
     async getUserById(userId: string): Promise<QueryUser | undefined> {
         const user = await prisma.user.findUnique({
@@ -19,8 +19,9 @@ export class PrismaUserReadRepo implements UserReadRepo {
         });
 
         if (!user || !user.profile) return undefined;
+        const { profile, userRoles, ...baseUser } = user;
         const baseUserWithRoles = {
-            ...user,
+            ...baseUser,
             ...user.profile,
             roles: user.userRoles.map((ur) => ur.role.name),
         };
@@ -29,12 +30,12 @@ export class PrismaUserReadRepo implements UserReadRepo {
             ...baseUserWithRoles,
             profileColour:
                 baseUserWithRoles.profileColour ||
-                sgramConfig.defaultProfileColour,
+                huddleConfig.defaultProfileColour,
             profileImageUrl:
                 baseUserWithRoles.profileImageUrl ||
-                sgramConfig.defaultProfileImage,
+                huddleConfig.defaultProfileImage,
             emailVerified: !baseUserWithRoles.roles.includes(
-                sgramConfig.defaultUserRole
+                huddleConfig.defaultUserRole
             ),
             coinBalance: baseUserWithRoles.coinBalance.toNumber(),
             chatData: {

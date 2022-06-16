@@ -43,7 +43,7 @@ export const Room = objectType({
         t.nonNull.field("roomType", { type: "RoomType" });
         t.string("roomImageUrl");
         t.nonNull.float("joiningFee");
-        t.list.field("games", { type: "Game" });
+        t.list.field("games", { type: "RoomGame" });
         t.nonNull.dateTime("createdAt");
         t.nonNull.dateTime("updatedAt");
     },

@@ -50,10 +50,10 @@ export interface GetStreamService {
         userId?: string
     ): Promise<any>;
 
-    addMembers(channelId: string, chatUserIds: string[]): Promise<any>;
-    removeMembers(channelId: string, chatUserIds: string[]): Promise<any>;
-    addModerators(channelId: string, chatUserIds: string[]): Promise<any>;
-    demoteModerators(channelId: string, chatUserIds: string[]): Promise<any>;
+    addMembers(channelId: string, userIds: string[]): Promise<any>;
+    removeMembers(channelId: string, userIds: string[]): Promise<any>;
+    addModerators(channelId: string, userIds: string[]): Promise<any>;
+    demoteModerators(channelId: string, userIds: string[]): Promise<any>;
 }
 
 export class GetStreamServiceImpl implements GetStreamService {
@@ -192,52 +192,52 @@ export class GetStreamServiceImpl implements GetStreamService {
     //#endregion
 
     //#region  Members
-    async addMembers(channelId: string, chatUserIds: string[]) {
+    async addMembers(channelId: string, userIds: string[]) {
         try {
             const channel = this.client.channel(
                 StreamChannelType.Messaging,
                 channelId
             );
-            const updatedChannel = await channel.addMembers(chatUserIds);
+            const updatedChannel = await channel.addMembers(userIds);
             return updatedChannel.channel;
         } catch (err) {
             this.log(err);
             return undefined;
         }
     }
-    async removeMembers(channelId: string, chatUserIds: string[]) {
+    async removeMembers(channelId: string, userIds: string[]) {
         try {
             const channel = this.client.channel(
                 StreamChannelType.Messaging,
                 channelId
             );
-            const updatedChannel = await channel.removeMembers(chatUserIds);
+            const updatedChannel = await channel.removeMembers(userIds);
             return updatedChannel.channel;
         } catch (err) {
             this.log(err);
             return undefined;
         }
     }
-    async addModerators(channelId: string, chatUserIds: string[]) {
+    async addModerators(channelId: string, userIds: string[]) {
         try {
             const channel = this.client.channel(
                 StreamChannelType.Messaging,
                 channelId
             );
-            const updatedChannel = await channel.addModerators(chatUserIds);
+            const updatedChannel = await channel.addModerators(userIds);
             return updatedChannel.channel;
         } catch (err) {
             this.log(err);
             return undefined;
         }
     }
-    async demoteModerators(channelId: string, chatUserIds: string[]) {
+    async demoteModerators(channelId: string, userIds: string[]) {
         try {
             const channel = this.client.channel(
                 StreamChannelType.Messaging,
                 channelId
             );
-            const updatedChannel = await channel.demoteModerators(chatUserIds);
+            const updatedChannel = await channel.demoteModerators(userIds);
             return updatedChannel.channel;
         } catch (err) {
             this.log(err);

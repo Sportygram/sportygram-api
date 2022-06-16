@@ -2,6 +2,7 @@ import { Guard } from "../../../lib/core/Guard";
 import { Result } from "../../../lib/core/Result";
 import { AggregateRoot } from "../../../lib/domain/AggregateRoot";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
+import { UserId } from "../../users/domain/userId";
 import { ChatUserId } from "./chatUserId";
 import { ChatUserCreated } from "./events/chatUserCreated";
 
@@ -18,6 +19,7 @@ export type ChatUserMetadata = {
 };
 
 interface ChatUserProps {
+    userId: UserId;
     displayName?: string;
     role?: string;
     coinBalance: number;
@@ -29,6 +31,9 @@ interface ChatUserProps {
 export class ChatUser extends AggregateRoot<ChatUserProps> {
     get chatUserId(): ChatUserId {
         return ChatUserId.create(this._id).getValue();
+    }
+    get userId() {
+        return this.props.userId;
     }
 
     get displayName(): string | undefined {

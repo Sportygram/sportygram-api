@@ -3,7 +3,7 @@ import { NexusGenObjects } from "../../nexus-typegen";
 
 type User = NexusGenObjects["User"];
 let userDefault: User = {
-    email: "hello@sgram.com",
+    email: "hello@huddle.com",
     userId: "3658e8d9-2027-4535-9770-d534dd6a8d9c",
     roles: ["user"],
     firstname: "Oluwaseun",
@@ -14,7 +14,7 @@ let userDefault: User = {
     referralCount: 0,
     coinBalance: 0.0,
     phone: "+2348031234567",
-    profileColour: config.sportygram.defaultProfileColour,
+    profileColour: config.huddle.defaultProfileColour,
     profileImageUrl:
         "https://i.pinimg.com/474x/65/25/a0/6525a08f1df98a2e3a545fe2ace4be47.jpg",
     onboarded: true,

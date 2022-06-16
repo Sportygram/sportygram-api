@@ -13,8 +13,9 @@ import { loginResolver } from "../../../../modules/iam/useCases/login/loginResol
 import { verifyEmailResolver } from "../../../../modules/iam/useCases/verifyUserEmail/verifyEmailResolver";
 import { withUser } from "./utils";
 import { resetPasswordResolver } from "../../../../modules/iam/useCases/resetPassword/resetPasswordResolver";
-import { syncFirebaseUserResolver } from "../../../../modules/iam/useCases/syncFirebaseUser/syncFirebaseUserResolver";
 import { logoutResolver } from "../../../../modules/iam/useCases/logout/logoutResolver";
+import { syncFirebaseUserResolver } from "../../../../modules/iam/useCases/syncFirebaseUser/syncFirebaseUserResolver";
+// import { getUserMock } from "./mocks/Auth";
 
 /* TODO Auth graphql
     - SSO Authentication
@@ -68,7 +69,7 @@ export const AuthMutation = extendType({
             },
             resolve: createUserResolver,
         });
-        
+
         t.nonNull.field("syncFirebaseUser", {
             type: "AuthOutput",
             args: {
@@ -76,6 +77,12 @@ export const AuthMutation = extendType({
                 referralCode: stringArg(),
             },
             resolve: syncFirebaseUserResolver,
+            // async resolve(_parent, _args, _context) {
+            //     return {
+            //         message: "Verification Email Sent",
+            //         user: getUserMock(),
+            //     };
+            // },
         });
 
         t.nonNull.field("changePassword", {
@@ -138,11 +145,10 @@ export const AuthMutation = extendType({
             },
             resolve: loginResolver,
         });
-        
+
         t.nonNull.field("logout", {
             type: "Boolean",
-            args: {
-            },
+            args: {},
             resolve: withUser(logoutResolver),
         });
 

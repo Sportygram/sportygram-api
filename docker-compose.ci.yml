@@ -1,22 +1,22 @@
 version: '3.7'
 
 services:
-  sgram-db:
+  huddle-db:
     image: postgres:latest
     restart: on-failure
-    container_name: sgram-db
+    container_name: huddle-db
     environment:
-      POSTGRES_DB: sgramtestdb
-      POSTGRES_USER: sgram
-      POSTGRES_PASSWORD: sgram
+      POSTGRES_DB: huddletestdb
+      POSTGRES_USER: huddle
+      POSTGRES_PASSWORD: huddle
     logging:
       driver: json-file
     ports:
       - 8001:5432
 
-  sgram-redis:
+  huddle-redis:
     image: redis
-    container_name: sgram-cache
+    container_name: huddle-cache
     logging:
       driver: json-file
     ports:
