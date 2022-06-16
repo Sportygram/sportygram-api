@@ -28,7 +28,7 @@ export class ChatUserMap {
                 metadata: (raw.metadata as ChatUserMetadata) || {},
                 userId,
             },
-            new UniqueEntityID(raw.userId)
+            new UniqueEntityID(raw.id)
         );
         return chatUserOrError.isSuccess
             ? chatUserOrError.getValue()

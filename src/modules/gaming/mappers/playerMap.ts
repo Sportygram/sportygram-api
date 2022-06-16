@@ -27,7 +27,7 @@ export class PlayerMap {
                 gamesSummary: (raw.metadata as GamesSummary) || {},
                 userId,
             },
-            new UniqueEntityID(raw.userId)
+            new UniqueEntityID(raw.id)
         );
         return playerOrError.isSuccess ? playerOrError.getValue() : undefined;
     }

@@ -1,4 +1,4 @@
-import { PrismaPlayerRepo } from "./implementations/prismaChatUserRepo";
+import { PrismaPlayerRepo } from "./implementations/prismaPlayerRepo";
 import { PrismaMatchPredictionReadRepoRepo } from "./implementations/prismaMatchPredictionReadRepo";
 import { PrismaMatchPredictionRepo } from "./implementations/prismaMatchPredictionRepo";
 import { PrismaMatchReadRepo } from "./implementations/prismaMatchReadRepo";
