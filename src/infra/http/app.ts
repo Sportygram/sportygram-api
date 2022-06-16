@@ -38,9 +38,9 @@ app.use(morganMiddleware);
 
 app.get("/", (_req, res) => {
     return res.status(200).send({
-        message: "Sportygram API",
+        message: "Huddle API",
         status: "success",
-        data: { url: "https://api.sportygram.io/v1" },
+        data: { url: "https://api.huddle.io/v1" },
     });
 });
 app.use("/v1", v1Router);

@@ -1,7 +1,11 @@
 import { v4 as uuid } from "uuid";
+import {
+    FootballQuestion,
+    MatchQuestionsMap,
+} from "../../../../../modules/gaming/domain/types";
 import { NexusGenObjects } from "../../nexus-typegen";
 
-type Fixture = NexusGenObjects["Fixture"];
+type Match = NexusGenObjects["Match"];
 type TeamData = NexusGenObjects["TeamData"];
 
 let matchStatusDefault = {
@@ -12,11 +16,12 @@ let matchStatusDefault = {
 
 let teamsDefault: TeamData = {
     home: {
-        code: "SOU",
+        id: "6",
         name: "Southampton",
+        code: "SOU",
         logo: "https://media.api-sports.io/football/teams/41.png",
-        winner: false,
         score: "1",
+        winner: false,
         statistics: [
             {
                 type: "Shots on Goal",
@@ -85,11 +90,12 @@ let teamsDefault: TeamData = {
         ],
     },
     away: {
-        code: "LIV",
+        id: "5",
         name: "Liverpool",
+        code: "LIV",
         logo: "https://media.api-sports.io/football/teams/40.png",
-        winner: true,
         score: "2",
+        winner: true,
         statistics: [
             {
                 type: "Shots on Goal",
@@ -159,34 +165,21 @@ let teamsDefault: TeamData = {
     },
 };
 
-let fixtureDefault: Fixture = {
-    fixtureId: uuid(),
-    date: "2022-05-17T18:45:00.346Z",
-    periods: [1652813100, 1652816700],
-    venue: "St. Mary's Stadium, Southampton, Hampshire",
-    misc: {
-        id: 710921,
-        referee: "Martin Atkinson, England",
-        timezone: "UTC",
-        timestamp: 1652813100,
-        venue: {
-            id: 585,
-            name: "St. Mary's Stadium",
-            city: "Southampton, Hampshire",
-        },
-        status: matchStatusDefault,
-        league: {
-            id: 39,
-            name: "Premier League",
-            country: "England",
-            logo: "https://media.api-sports.io/football/leagues/39.png",
-            flag: "https://media.api-sports.io/flags/gb.svg",
-            season: 2021,
-            round: "Regular Season - 37",
-        },
-    },
+let fixtureDefault: Match = {
+    id: uuid(),
     teams: teamsDefault,
-    predictions: [],
+    status: matchStatusDefault,
+    dateTime: new Date("2022-05-17T18:45:00.346Z"),
+    periods: {
+        first: new Date("2022-05-17T18:45:00.346Z"),
+        second: new Date("2022-05-17T18:45:00.346Z"),
+        firstExtra: undefined,
+        secondExtra: undefined,
+        penalties: undefined,
+    },
+    season: "2021/2022",
+    venue: "St. Mary's Stadium, Southampton, Hampshire",
+    winner: teamsDefault.away?.code,
     scores: {
         halftime: {
             home: 1,
@@ -205,9 +198,44 @@ let fixtureDefault: Fixture = {
             away: null,
         },
     },
+    questions: [
+        {
+            code: FootballQuestion.Winner,
+            type: "select",
+            question: MatchQuestionsMap[FootballQuestion.Winner],
+            options: [
+                { display: "Liverpool", value: "5" },
+                { display: "Southampton", value: "7" },
+            ],
+        },
+        {
+            code: FootballQuestion.FirstToScore,
+            type: "select",
+            question: MatchQuestionsMap[FootballQuestion.FirstToScore],
+            options: [
+                { display: "Liverpool", value: "5" },
+                { display: "Southampton", value: "7" },
+            ],
+        },
+        {
+            code: FootballQuestion.ManOfTheMatch,
+            type: "select",
+            question: MatchQuestionsMap[FootballQuestion.ManOfTheMatch],
+            options: [
+                { display: "Mohammed Salah", value: "23" },
+                { display: "Some other dudes", value: "40" },
+                { display: "More other dudes", value: "40" },
+            ],
+        },
+        {
+            code: FootballQuestion.FinalScore,
+            type: "input",
+            question: MatchQuestionsMap[FootballQuestion.FinalScore],
+        },
+    ],
 };
 
-export const getFixtureMock = (p?: Partial<Fixture>): Fixture => ({
+export const getMatchMock = (p?: Partial<Match>): Match => ({
     ...fixtureDefault,
     ...p,
 });

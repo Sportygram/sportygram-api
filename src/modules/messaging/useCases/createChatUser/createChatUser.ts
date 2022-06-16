@@ -38,11 +38,13 @@ export class CreateChatUser
                 return left(new UserProfileDoesNotExistError(userId));
             }
 
-            const streamId = chatUser.chatUserId.id.toString();
-            const response = await this.streamService.createOrReplaceUsers([{
-                id: streamId,
-                role: "user",
-            }]);
+            const streamId = chatUser.userId.id.toString();
+            const response = await this.streamService.createOrReplaceUsers([
+                {
+                    id: streamId,
+                    role: "user",
+                },
+            ]);
             const streamUser = get(response, streamId);
 
             if (!streamUser) {

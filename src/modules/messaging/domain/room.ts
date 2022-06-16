@@ -2,8 +2,8 @@ import { Guard } from "../../../lib/core/Guard";
 import { Result } from "../../../lib/core/Result";
 import { AggregateRoot } from "../../../lib/domain/AggregateRoot";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
+import { UserId } from "../../users/domain/userId";
 import { ChatUser } from "./chatUser";
-import { ChatUserId } from "./chatUserId";
 import { RoomCreated } from "./events/roomCreated";
 import { RoomChatUsers } from "./roomChatUsers";
 import { RoomId } from "./roomId";
@@ -16,7 +16,7 @@ export type RoomMetadata = {
 interface RoomProps {
     name: string;
     description?: string;
-    createdById: ChatUserId;
+    createdById: UserId;
     roomType: string;
     roomImageUrl?: string;
     joiningFee: number;
@@ -96,7 +96,7 @@ export class Room extends AggregateRoot<RoomProps> {
         super(roomProps, id);
     }
 
-    public static create(props: RoomProps, id?: UniqueEntityID): Result<Room> {
+    public static create(props: Omit<RoomProps, "members">, id?: UniqueEntityID): Result<Room> {
         const guardResult = Guard.againstNullOrUndefinedBulk([
             { argument: props.name, argumentName: "name" },
             { argument: props.roomType, argumentName: "roomType" },

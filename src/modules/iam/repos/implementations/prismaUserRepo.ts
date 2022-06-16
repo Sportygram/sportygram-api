@@ -118,7 +118,7 @@ export class PrismaUserRepo implements UserRepo {
                     .getItems()
                     .map(RoleMap.toPersistence)
                     .map((role) => {
-                        return { role_id: role.id };
+                        return { roleId: role.id };
                     }),
                 skipDuplicates: true,
             },
@@ -128,7 +128,7 @@ export class PrismaUserRepo implements UserRepo {
             .getRemovedItems()
             .map(RoleMap.toPersistence)
             .map((role) => {
-                return { role_id: role.id };
+                return { roleId: role.id };
             });
 
         const rawUserWithoutTokens: Partial<RawUser> = rawUser;
@@ -155,7 +155,10 @@ export class PrismaUserRepo implements UserRepo {
                         id: uuidv4(),
                         onboarded: false,
                         settings: {},
-                        gamesSummary: {},
+                        gamesSummary: {
+                            weekly: { score: 0 },
+                            season: { score: 0 },
+                        },
                         displayName: `${user.firstname || ""} ${
                             user.lastname || ""
                         }`.trim(),

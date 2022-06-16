@@ -1,6 +1,6 @@
 import { Room as PRoom } from "@prisma/client";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
-import { ChatUserId } from "../domain/chatUserId";
+import { UserId } from "../../users/domain/userId";
 import { Room, RoomMetadata } from "../domain/room";
 
 export type RawRoom = Pick<
@@ -13,13 +13,14 @@ export class RoomMap {
     // public static toDTO(chatUser: ChatUser): ChatUserDTO {
     //     return {
     //         id: chatUser.chatUserId.id.toString(),
+    //         userId: chatUser.userId.id.toString(),
     //         name: chatUser.name,
     //         description: chatUser.description,
     //     };
     // }
 
     public static toDomain(raw: RawRoom): Room | undefined {
-        const createdById = ChatUserId.create(
+        const createdById = UserId.create(
             new UniqueEntityID(raw.createdById)
         ).getValue();
 

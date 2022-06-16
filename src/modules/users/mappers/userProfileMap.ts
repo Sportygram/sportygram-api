@@ -36,9 +36,9 @@ export class UserProfileMap {
         return userOrError.getValue();
     }
 
-    public static async toPersistence(
+    public static toPersistence(
         profile: UserProfile
-    ): Promise<RawUserProfile> {
+    ): RawUserProfile {
         return {
             id: profile.userProfileId.id.toString(),
             displayName: profile.displayName || null,

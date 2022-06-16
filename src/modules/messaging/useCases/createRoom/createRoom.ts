@@ -55,7 +55,7 @@ export class CreateRoom implements UseCase<CreateRoomDTO, Promise<Response>> {
             const roomOrError: Result<Room> = Room.create({
                 name,
                 description,
-                createdById: chatUser.chatUserId,
+                createdById: chatUser.userId,
                 roomType,
                 joiningFee: 0,
                 metadata: {},
@@ -76,7 +76,7 @@ export class CreateRoom implements UseCase<CreateRoomDTO, Promise<Response>> {
                     name: room.name,
                     description,
                     created_by_id: config.getStream.defaultChannelOwnerId,
-                    members: [chatUser.chatUserId.id.toString()],
+                    members: [chatUser.userId.id.toString()],
                 }
             );
 

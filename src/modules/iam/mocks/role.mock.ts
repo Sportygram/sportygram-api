@@ -10,10 +10,10 @@ const userRoleProp = {
     description: "Normal user",
 };
 
-const sgramAdminRoleProp = {
+const huddleAdminRoleProp = {
     id: "dac79693-ca78-4051-b600-951ee07cc38b",
-    name: "sgram_admin",
-    description: "Sportygram Admin",
+    name: "huddle_admin",
+    description: "Huddle Admin",
 };
 
-export { unverifiedEmailUserRoleProp, userRoleProp, sgramAdminRoleProp };
+export { unverifiedEmailUserRoleProp, userRoleProp, huddleAdminRoleProp };

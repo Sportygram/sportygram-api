@@ -34,12 +34,12 @@ type JWTClaims = {
     state: string;
 };
 
-type RequestUserDTO = {
+interface RequestUserDTO {
     userId: string;
     roles: string[];
     state: string;
     permissions: string[];
-};
+}
 
 const RequestUserDTOSchema = Joi.object({
     userId: Joi.string().guid(),
@@ -49,15 +49,15 @@ const RequestUserDTOSchema = Joi.object({
     organizationId: Joi.string().guid(),
 });
 
-let sgramOrganizationId = "sgramOrganizationId";
+let huddleOrganizationId = "huddleOrganizationId";
 
 if (process.env.NODE_ENV) {
-    const sgramConfig: any = config.sportygram;
-    sgramOrganizationId = sgramConfig?.organizationId || "sgramOrganizationId";
+    const huddleConfig: any = config.huddle;
+    huddleOrganizationId = huddleConfig?.organizationId || "huddleOrganizationId";
 }
 
 const SystemRequestUser: RequestUserDTO = {
-    userId: sgramOrganizationId,
+    userId: huddleOrganizationId,
     roles: ["system"],
     state: "active",
     permissions: ["system"],

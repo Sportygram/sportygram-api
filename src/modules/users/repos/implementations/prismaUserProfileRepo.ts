@@ -21,7 +21,7 @@ export class PrismaUserProfileRepo implements UserProfileRepo {
 
     async save(userProfile: UserProfile): Promise<void> {
         const rawUserProfile: RawUserProfile =
-            await UserProfileMap.toPersistence(userProfile);
+            UserProfileMap.toPersistence(userProfile);
         const pUserProfile = {
             ...rawUserProfile,
             settings: rawUserProfile.settings as JsonObject,

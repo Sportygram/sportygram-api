@@ -12,8 +12,9 @@
       "prettier"
     ],
     "rules": { 
-      "no-console": 2, // Remember, this means error!
+      "no-console": 2, // means error!
       "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+      "no-constant-binary-expression": 2,
       "prettier/prettier": 2 // Means error
     }
   }

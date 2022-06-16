@@ -59,40 +59,21 @@ A field whose value conforms to the standard internet email address format as sp
 """
 scalar EmailAddress @specifiedBy(url: "https://www.w3.org/Protocols/rfc822/")
 
-type Fixture {
-  date: DateTime!
-  fixtureId: ID
-  misc: JSON!
-  periods: [Int!]
-  predictions: [Prediction]
-  scores: JSON
-  teams: TeamData!
-  venue: String
-}
-
-type Game {
-  createdAt: DateTime
-  data: JSON!
-  description: String
-  expiringAt: DateTime
-  gameId: ID!
-  gameType: GameType!
-  leaderBoard: [GamePlayer]!
-  name: String!
-  roomId: ID!
-  updatedAt: DateTime
-}
-
 type GamePlayer {
+  displayName: String!
   playerId: ID!
   score: Float!
   username: String!
 }
 
+enum GameStatus {
+  completed
+  in_progress
+}
+
 enum GameType {
-  DAILY
-  SEASON
-  WEEKLY
+  season
+  weekly
 }
 
 """
@@ -114,6 +95,36 @@ input LoginInput {
   emailOrUsername: String!
   ip: IPv4
   password: String!
+}
+
+type Match {
+  dateTime: DateTime!
+  id: ID
+  misc: JSON
+  periods: MatchPeriod!
+  questions: [Prediction]
+  scores: JSON
+  season: String!
+  status: MatchStatus!
+  teams: TeamData!
+  venue: String
+  winner: String
+}
+
+type MatchPeriod {
+  first: DateTime
+  firstExtra: DateTime
+  penalties: DateTime
+  second: DateTime
+  secondExtra: DateTime
+}
+
+type MatchPrediction {
+  createdAt: DateTime
+  id: ID!
+  matchId: String!
+  predictions: [Prediction]!
+  updatedAt: DateTime
 }
 
 type MatchStatistic {
@@ -173,28 +184,41 @@ A field whose value conforms to the standard E.164 format as specified in: https
 """
 scalar PhoneNumber
 
+input PlayerPredictionInput {
+  code: String!
+  type: String!
+  value: JSON
+}
+
 type Prediction {
-  fixtureId: String!
-  prediction: JSON!
-  predictionId: ID!
-  predictionType: String!
+  code: String!
+  options: [PredictionOption]
+  points: Int
+  question: String
+  solution: JSON
+  type: String!
+  value: JSON
 }
 
 input PredictionInput {
-  fixtureId: String!
-  prediction: JSON!
+  matchId: String!
   predictionId: String
-  predictionType: String!
+  predictions: [PlayerPredictionInput]!
+}
+
+type PredictionOption {
+  display: String
+  value: String
 }
 
 type PredictionOutput implements MutationOutput {
   message: String!
-  prediction: Prediction!
+  prediction: MatchPrediction!
 }
 
 type Query {
   countries: [Country]!
-  fixtures(date: String!): [Fixture!]!
+  fixtures(date: String, live: Boolean): [Match!]!
   room(roomId: String!): Room!
   teams: [Team]!
   viewer: User!
@@ -203,7 +227,7 @@ type Query {
 type Room {
   createdAt: DateTime!
   description: String
-  games: [Game]
+  games: [RoomGame]
   id: ID!
   joiningFee: Float!
   name: String!
@@ -212,15 +236,31 @@ type Room {
   updatedAt: DateTime!
 }
 
+type RoomGame {
+  createdAt: DateTime
+  description: String
+  expiringAt: DateTime
+  id: ID!
+  leaderBoard: [GamePlayer]!
+  name: String!
+  roomId: ID!
+  status: GameStatus!
+  summary: JSON!
+  type: GameType!
+  updatedAt: DateTime
+  winnerId: ID
+}
+
 enum RoomType {
   private
   public
 }
 
 type Team {
-  code: ID
-  logo: String
-  name: String
+  code: String!
+  id: ID!
+  logo: String!
+  name: String!
   score: String
   stadium: String
   statistics: [MatchStatistic]

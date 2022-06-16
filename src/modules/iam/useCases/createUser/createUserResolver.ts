@@ -13,7 +13,7 @@ export const createUserResolver: FieldResolver<"Mutation", "signup"> = async (
     args,
     ctx
 ) => {
-    const sgConfig = config.sportygram;
+    const sgConfig = config.huddle;
     const dto = {
         ...args,
         password: args.password || args.email,

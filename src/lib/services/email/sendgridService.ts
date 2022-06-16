@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import logger from "../../core/Logger";
 import { config } from "../../config";
 
-const { domain } = config.sportygram;
+const { domain } = config.huddle;
 const templateNameIDMap: Record<string, string[]> = {
     [EmailTypes.Welcome]: [
         "65ae786b0256477dbad152f06aca857d",
@@ -47,7 +47,7 @@ export class SendgridService implements EmailService {
                 to,
                 from: {
                     email: email || `no-reply@${domain}`,
-                    name: "Sportygram",
+                    name: "Huddle",
                 },
                 cc,
                 bcc,
