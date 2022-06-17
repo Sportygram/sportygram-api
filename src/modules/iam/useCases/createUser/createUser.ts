@@ -121,6 +121,7 @@ export class CreateUser implements UseCase<CreateUserDTO, Promise<Response>> {
                 roles,
                 tokens: UserTokens.create([]),
                 referrerId: referrer?.userId,
+                metadata: {}
             });
 
             if (userOrError.isFailure && userOrError.error) {

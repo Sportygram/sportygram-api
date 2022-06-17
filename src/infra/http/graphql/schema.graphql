@@ -150,6 +150,7 @@ type Mutation {
   sendEmailVerification(email: String!): TokenSendOutput!
   sendPasswordReset(email: String!): TokenSendOutput!
   signup(email: String!, password: String, referralCode: String): AuthOutput!
+  syncFCMToken(fcmToken: String!, platform: String!): MutationOutput!
   syncFirebaseUser(referralCode: String, token: String!): AuthOutput!
   updateChatUserRole(role: ChatUserRoleType!, roomId: String!): CreateRoomOutput!
   updatePrediction(input: PredictionInput!): PredictionOutput!

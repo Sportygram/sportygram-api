@@ -21,9 +21,19 @@ import { countries } from "./countries";
 import { ReferralCode } from "./valueObjects/referralCode";
 import { Phone } from "./valueObjects/phone";
 import { Username } from "./valueObjects/username";
+import { Platform } from "../../../lib/@types";
+import { isConstArrayType } from "../../../lib/utils/typeUtils";
+import { FCMTokenUpdated } from "../../users/domain/events/fcmTokenUpdated";
+import { FCMTopic } from "../../../lib/services/firebase";
 
 type UserMetadata = {
     firebase?: any;
+    fcm?: {
+        token: string;
+        dateCreated: string;
+        platform: Platform;
+        topics: FCMTopic[];
+    };
 };
 
 interface UserProps {
@@ -39,7 +49,7 @@ interface UserProps {
     referrerId?: UserId;
     referralCode: ReferralCode;
     userState: string;
-    metadata?: UserMetadata;
+    metadata: UserMetadata;
     lastLoginIp?: string;
     lastLoginTime?: Date;
     createdAt?: Date;
@@ -201,6 +211,38 @@ export class User extends AggregateRoot<UserProps> {
     public delete(): Result<void> {
         this.props.userState = UserState.Deleted;
         this.addDomainEvent(new UserDeleted(this));
+        return Result.ok();
+    }
+
+    public updateFCMToken(platform: string, token: string): Result<void> {
+        if (!isConstArrayType(platform, Platform))
+            return Result.fail("Invalid platform");
+
+        const current = this.metadata.fcm;
+        this.props.metadata.fcm = {
+            ...current,
+            topics: current?.topics || [],
+            token,
+            platform,
+            dateCreated: new Date().toISOString(),
+        };
+        this.addDomainEvent(new FCMTokenUpdated(this));
+
+        return Result.ok();
+    }
+
+    public addSubscribedFCMTopic(topic: FCMTopic): Result<void> {
+        this.props.metadata.fcm?.topics.push(topic);
+        return Result.ok();
+    }
+
+    public removeUnsubscribedFCMTopic(topic: FCMTopic): Result<void> {
+        if (!this.props.metadata.fcm) return Result.fail("Missing FCM data");
+        const topics = this.props.metadata.fcm.topics.filter(
+            (t) => t !== topic
+        );
+        this.props.metadata.fcm.topics = topics;
+
         return Result.ok();
     }
 

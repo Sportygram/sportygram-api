@@ -54,6 +54,8 @@ export class UpdateUserProfile
             country,
             profileColour,
             profileImageUrl,
+            fcmToken,
+            platform,
         } = request;
 
         try {
@@ -147,6 +149,13 @@ export class UpdateUserProfile
                         changes
                     );
                 else return left(new AppError.InputError(phoneOrError.error));
+            }
+
+            if (fcmToken) {
+                this.addChange(
+                    user.updateFCMToken(platform || "", fcmToken),
+                    changes
+                );
             }
 
             const updateOrError = this.getChangesResult(changes);

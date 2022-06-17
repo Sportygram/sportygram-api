@@ -1,5 +1,13 @@
-import { arg, extendType, inputObjectType, nonNull, objectType } from "nexus";
+import {
+    arg,
+    extendType,
+    inputObjectType,
+    nonNull,
+    objectType,
+    stringArg,
+} from "nexus";
 import { viewerResolver } from "../../../../modules/users/useCases/fetchQueryUser/fetchQueryUserResolver";
+import { syncFCMTokenResolver } from "../../../../modules/users/useCases/updateUserProfile/syncFCMTokenResolver";
 import { updateUserProfileResolver } from "../../../../modules/users/useCases/updateUserProfile/updateUserProfileResolver";
 import { withUser } from "./utils";
 
@@ -78,6 +86,15 @@ export const UserMutation = extendType({
                 input: arg({ type: nonNull(UpdateUserProfileInput) }),
             },
             resolve: withUser(updateUserProfileResolver),
+        });
+
+        t.nonNull.field("syncFCMToken", {
+            type: "MutationOutput",
+            args: {
+                fcmToken: nonNull(stringArg()),
+                platform: nonNull(stringArg()),
+            },
+            resolve: withUser(syncFCMTokenResolver),
         });
     },
 });
