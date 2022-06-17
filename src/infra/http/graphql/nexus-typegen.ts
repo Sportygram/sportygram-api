@@ -396,6 +396,7 @@ export interface NexusGenFieldTypes {
     sendEmailVerification: NexusGenRootTypes['TokenSendOutput']; // TokenSendOutput!
     sendPasswordReset: NexusGenRootTypes['TokenSendOutput']; // TokenSendOutput!
     signup: NexusGenRootTypes['AuthOutput']; // AuthOutput!
+    syncFCMToken: NexusGenRootTypes['MutationOutput']; // MutationOutput!
     syncFirebaseUser: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     updateChatUserRole: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     updatePrediction: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
@@ -601,6 +602,7 @@ export interface NexusGenFieldTypeNames {
     sendEmailVerification: 'TokenSendOutput'
     sendPasswordReset: 'TokenSendOutput'
     signup: 'AuthOutput'
+    syncFCMToken: 'MutationOutput'
     syncFirebaseUser: 'AuthOutput'
     updateChatUserRole: 'CreateRoomOutput'
     updatePrediction: 'PredictionOutput'
@@ -762,6 +764,10 @@ export interface NexusGenArgTypes {
       email: string; // String!
       password?: string | null; // String
       referralCode?: string | null; // String
+    }
+    syncFCMToken: { // args
+      fcmToken: string; // String!
+      platform: string; // String!
     }
     syncFirebaseUser: { // args
       referralCode?: string | null; // String

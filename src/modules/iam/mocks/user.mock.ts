@@ -58,6 +58,7 @@ const createMockUser = (testUserProp: any) => {
             userState: testUserProp.userState,
             roles,
             tokens,
+            metadata: {}
         },
         new UniqueEntityID(testUserProp.id)
     );

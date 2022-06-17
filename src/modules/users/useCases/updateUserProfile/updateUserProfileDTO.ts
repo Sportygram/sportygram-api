@@ -12,5 +12,7 @@ export interface UpdateUserProfileDTO {
     country?: string;
     profileColour?: string;
     profileImageUrl?: string;
+    fcmToken?: string;
+    platform?: string;
     requestUser: RequestUserDTO;
 }
