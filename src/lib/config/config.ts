@@ -15,6 +15,14 @@ export const config = {
     redis: {
         url: process.env.REDIS_URL || "redis://localhost:6379",
     },
+    grafana: {
+        loki: {
+            url: process.env.LOKI_URL || "http://127.0.0.1:3100",
+            username: process.env.LOKI_USERNAME,
+            password: process.env.LOKI_PASSWORD,
+            label: process.env.LOKI_LABEL || "huddle_dev_api",
+        },
+    },
     sendgrid: {
         apiKey: process.env.SENDGRID_KEY || "SG.",
     },

@@ -9,13 +9,15 @@ import { LoginDTO } from "./loginDTO";
 export const loginResolver: FieldResolver<"Mutation", "login"> = async (
     _parent,
     args,
-    _ctx
+    ctx
 ) => {
     const dto = {
         ...args.input,
     } as LoginDTO;
-
     const result = await loginUseCase.execute(dto);
+
+    args.input.password = "";
+    ctx.reqLogInfo.variables = JSON.stringify(args);
 
     if (result.isRight()) {
         const { accessToken, refreshToken, userId } = result.value.getValue();

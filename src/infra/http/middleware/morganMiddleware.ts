@@ -21,21 +21,23 @@ morgan.token<MorganRequestWithError>("user_id", userIdTokenCallback);
 
 export const morganMiddleware = morgan(
     function (tokens, req, res) {
-        return JSON.stringify({
-            remote_addr: tokens["remote-addr"](req, res),
-            remote_user: tokens["remote-user"](req, res),
-            time: tokens["date"](req, res, "iso"),
-            method: tokens["method"](req, res),
-            url: tokens["url"](req, res),
-            http_version: tokens["http-version"](req, res),
-            status: tokens["status"](req, res),
-            content_length: tokens["res"](req, res, "content-length"),
-            duration: `${tokens["response-time"](req, res)} ms`,
-            referrer: tokens["referrer"](req, res),
-            user_agent: tokens["user-agent"](req, res),
-            message: tokens["message"](req, res),
-            user_id: tokens["user_id"](req, res),
-        });
+        return tokens["url"](req, res) === "/graphql"
+            ? null
+            : JSON.stringify({
+                  remote_addr: tokens["remote-addr"](req, res),
+                  remote_user: tokens["remote-user"](req, res),
+                  time: tokens["date"](req, res, "iso"),
+                  method: tokens["method"](req, res),
+                  url: tokens["url"](req, res),
+                  http_version: tokens["http-version"](req, res),
+                  status: tokens["status"](req, res),
+                  content_length: tokens["res"](req, res, "content-length"),
+                  duration: `${tokens["response-time"](req, res)} ms`,
+                  referrer: tokens["referrer"](req, res),
+                  user_agent: tokens["user-agent"](req, res),
+                  message: tokens["message"](req, res),
+                  user_id: tokens["user_id"](req, res),
+              });
     },
     { stream }
 );
