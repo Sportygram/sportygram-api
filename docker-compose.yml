@@ -3,49 +3,49 @@
 version: "3.7"
 
 services:
-    sgram-db:
+    huddle-db:
         image: postgres:latest
         restart: on-failure
-        container_name: sgram-db
+        container_name: huddle-db
         environment:
-            POSTGRES_DB: sgramdevdb
-            POSTGRES_USER: sgram
-            POSTGRES_PASSWORD: sgram
+            POSTGRES_DB: huddledevdb
+            POSTGRES_USER: huddle
+            POSTGRES_PASSWORD: huddle
         volumes:
-            - sgram-pgdata:/var/lib/postgresql/data
+            - huddle-pgdata:/var/lib/postgresql/data
         logging:
             driver: json-file
         ports:
             - 8001:5432
 
-    sgram-redis:
+    huddle-redis:
         image: redis
-        container_name: sgram-cache
+        container_name: huddle-cache
         logging:
             driver: json-file
         ports:
             - 6379:6379
 
-    sgram-loki:
+    huddle-loki:
         image: grafana/loki:latest
-        container_name: sgram-loki
+        container_name: huddle-loki
         ports:
             - "3100:3100"
         command: -config.file=/etc/loki/local-config.yaml
 
-    sgram-promtail:
+    huddle-promtail:
         image: grafana/promtail:latest
-        container_name: sgram-promtail
+        container_name: huddle-promtail
         volumes:
-            - sgram-promtaildata:/var/log
+            - huddle-promtaildata:/var/log
         command: -config.file=/etc/promtail/docker-config.yaml
 
-    sgram-grafana:
+    huddle-grafana:
         image: grafana/grafana:master
-        container_name: sgram-grafana
+        container_name: huddle-grafana
         ports:
             - "3200:3000"
 
 volumes:
-    sgram-pgdata:
-    sgram-promtaildata:
+    huddle-pgdata:
+    huddle-promtaildata:

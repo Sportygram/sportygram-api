@@ -1,6 +1,15 @@
 import { createLogger, transports, format } from "winston";
+import LokiTransport from "winston-loki";
+import { config } from "../config";
+import jc from "json-cycle";
 
 const { combine, timestamp, prettyPrint, json } = format;
+const { url, username, password, label } = config.grafana.loki;
+
+// Create a format to decycle the object
+const decycleFormat = format((info, _opts) => jc.decycle(info));
+// Combine the decycleFormat with the built-in json format.
+const circularJsonFormat = combine(decycleFormat(), json());
 
 const options = {
     file: {
@@ -15,9 +24,16 @@ const options = {
     console: {
         level: "debug",
         handleExceptions: true,
-        json: false,
         colorize: true,
+        json: false,
         format: combine(timestamp(), prettyPrint()),
+    },
+    loki: {
+        host: url,
+        json: true,
+        basicAuth: `${username}:${password}`,
+        labels: { job: label },
+        format: circularJsonFormat,
     },
 };
 
@@ -29,7 +45,10 @@ if (
     process.env.NODE_ENV === "production"
 ) {
     logger = createLogger({
-        transports: [new transports.File(options.file)],
+        transports: [
+            new transports.File(options.file),
+            new LokiTransport(options.loki),
+        ],
         exceptionHandlers: [
             new transports.File({ filename: "./logs/exceptions.log" }),
         ],

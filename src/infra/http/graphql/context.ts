@@ -5,6 +5,7 @@ import { authMiddleware } from "../middleware";
 export interface Context {
     req: Request;
     reqUser?: RequestUserDTO;
+    reqLogInfo?: any
 }
 
 export const context = async ({ req }: { req: Request }): Promise<Context> => {
