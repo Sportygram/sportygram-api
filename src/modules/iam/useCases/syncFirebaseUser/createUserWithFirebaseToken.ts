@@ -107,9 +107,14 @@ export class CreateUserWithFirebaseToken
                 return left(new EmailAlreadyExistsError(email.value));
             }
 
+            const [firstname, lastname] = (
+                firebaseUserRecord.displayName || ""
+            ).trim().split(" ");
             const userOrError: Result<User> = User.create({
                 email,
                 passwordHash,
+                firstname,
+                lastname,
                 referralCode,
                 userState: UserState.Active,
                 roles,

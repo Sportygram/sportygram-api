@@ -43,6 +43,7 @@ export class CreateChatUser
                 {
                     id: streamId,
                     role: "user",
+                    name: chatUser.displayName,
                 },
             ]);
             const streamUser = get(response, streamId);
