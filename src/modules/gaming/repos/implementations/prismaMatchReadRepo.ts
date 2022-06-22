@@ -21,6 +21,7 @@ export class PrismaMatchReadRepo implements MatchReadRepo {
 
         const matchWithTeams: RawMatch = {
             ...match,
+            sources: match.sources as Record<string, any>,
             teams: match.matchTeams.map((mt) => mt.team),
         };
         return MatchMap.rawToQueryMatch(matchWithTeams);
@@ -56,6 +57,7 @@ export class PrismaMatchReadRepo implements MatchReadRepo {
 
         const matchesWithTeams: RawMatch[] = matches.map((match) => ({
             ...match,
+            sources: match.sources as Record<string, any>,
             teams: match.matchTeams.map((mt) => mt.team),
         }));
         return matchesWithTeams.map(MatchMap.rawToQueryMatch);

@@ -23,6 +23,7 @@ export class UploadMiddleware {
                 );
 
             const roomId = req.params?.roomId;
+            // TODO Check if room exists
             if (keyType === "room" && !roomId) {
                 return this.endRequest(res, "roomId required", 401);
             }

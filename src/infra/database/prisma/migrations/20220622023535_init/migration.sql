@@ -11,7 +11,7 @@ CREATE TYPE "TokenType" AS ENUM ('email_verify', 'password_reset');
 CREATE TYPE "Sport" AS ENUM ('football', 'basketball', 'baseball', 'cricket', 'american_football', 'f1', 'nascar', 'running');
 
 -- CreateEnum
-CREATE TYPE "MatchStatus" AS ENUM ('scheduled', 'in_progress', 'suspended', 'cancelled', 'completed');
+CREATE TYPE "MatchStatus" AS ENUM ('unscheduled', 'scheduled', 'in_progress', 'break', 'suspended', 'cancelled', 'completed');
 
 -- CreateEnum
 CREATE TYPE "RoomGameType" AS ENUM ('weekly', 'season');
@@ -144,6 +144,7 @@ CREATE TABLE "leagues" (
     "logo" TEXT NOT NULL,
     "sport" "Sport" NOT NULL,
     "country" VARCHAR(30) NOT NULL,
+    "country_code" VARCHAR(2) NOT NULL,
     "season" TEXT NOT NULL,
     "sources" JSONB NOT NULL DEFAULT '{}',
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,

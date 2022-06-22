@@ -7,10 +7,12 @@ export const leagueSeed = [
         logo: "https://media.api-sports.io/football/leagues/39.png",
         sport: "football" as Sport,
         country: "england",
+        countryCode: "GB",
         season: "2022",
         sources: {
             apiFootball: {
                 id: 39,
+                type: "League"
             },
         } as Prisma.JsonObject,
     },

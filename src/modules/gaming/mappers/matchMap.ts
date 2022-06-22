@@ -7,7 +7,10 @@ import { LeagueId } from "../domain/leagueId";
 import { MatchQuestions } from "../domain/valueObjects/matchQuestions";
 import { MatchQuestion, MatchQuestionsMap } from "../domain/types";
 
-export type RawMatch = PMatch & { teams: PTeam[] };
+export type RawMatch = PMatch & {
+    teams: PTeam[];
+    sources: Record<string, any>;
+};
 export class MatchMap {
     public static rawToQueryMatch(raw: RawMatch): QueryMatch {
         const status = {

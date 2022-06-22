@@ -37,9 +37,23 @@ export interface Team {
     updatedAt: Date;
 }
 
+export interface Athlete {
+    id?: number;
+    name: string;
+    firstname: string;
+    lastname: string;
+    nationality: string;
+    photo: string;
+    sources: Record<string, any>;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
 export const MatchStatus = {
+    Unscheduled: "unscheduled",
     Scheduled: "scheduled",
     InProgress: "in_progress",
+    Break: "break",
     Suspended: "suspended",
     Cancelled: "cancelled",
     Completed: "completed",
