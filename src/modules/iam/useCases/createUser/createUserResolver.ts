@@ -45,6 +45,10 @@ export const createUserResolver: FieldResolver<"Mutation", "signup"> = async (
 
         if (loginResult.isRight()) {
             const { accessToken, refreshToken } = loginResult.value.getValue();
+
+            args.password = "";
+            ctx.reqLogInfo.variables = JSON.stringify(args);
+
             return {
                 message: "User Account created",
                 accessToken,
