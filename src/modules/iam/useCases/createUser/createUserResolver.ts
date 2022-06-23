@@ -26,9 +26,6 @@ export const createUserResolver: FieldResolver<"Mutation", "signup"> = async (
 
     const result = await createUser.execute(dto);
 
-    args.password = "";
-    ctx.reqLogInfo.variables = JSON.stringify(args);
-
     if (result.isRight()) {
         const createdUser = result.value.getValue();
         const user = await userReadRepo.getUserById(
