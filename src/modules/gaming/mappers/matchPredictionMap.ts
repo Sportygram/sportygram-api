@@ -14,7 +14,7 @@ export class MatchPredictionMap {
 
         const predictions = PlayerPredictions.create(
             raw.predictions as any,
-            true
+            false,
         ).getValue();
 
         const predictionOrError = MatchPrediction.create(

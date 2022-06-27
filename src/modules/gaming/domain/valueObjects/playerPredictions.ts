@@ -19,11 +19,11 @@ export class PlayerPredictions extends ValueObject<PlayerPredictionsProps> {
 
     public static create(
         predictions: PlayerPrediction[],
-        skipValidation: boolean,
+        validate = true,
         matchQuestions?: MatchQuestions
     ): Result<PlayerPredictions> {
         // check each question and confirm they have an appropriate answer
-        if (skipValidation)
+        if (!validate)
             return Result.ok<PlayerPredictions>(
                 new PlayerPredictions({ value: predictions })
             );

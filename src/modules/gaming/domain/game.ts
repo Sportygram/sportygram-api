@@ -2,36 +2,56 @@ import { Guard } from "../../../lib/core/Guard";
 import { Result } from "../../../lib/core/Result";
 import { AggregateRoot } from "../../../lib/domain/AggregateRoot";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
-import { UserId } from "../../users/domain/userId";
-import { MatchId } from "./matchId";
-import { PredictionId } from "./predictionId";
-import { PlayerPredictions } from "./valueObjects/playerPredictions";
+import { RoomId } from "../../messaging/domain/roomId";
+import { GameId } from "./gameId";
+import { LeagueId } from "./leagueId";
+import { LeaderboardPlayer } from "./types";
 
-interface MatchPredictionProps {
-    userId: UserId;
-    matchId: MatchId;
-    points?: number;
-    predictions: PlayerPredictions;
+interface GameProps {
+    name: string;
+    description: string;
+    roomId: RoomId;
+    leagueId: LeagueId;
+    type: "weekly" | "season";
+    status: "completed" | "in_progress";
+    summary: any;
+    leaderboard: LeaderboardPlayer[];
+    expiringAt: Date;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export class Game extends AggregateRoot<MatchPredictionProps> {
-    get predictionId(): PredictionId {
-        return PredictionId.create(this._id).getValue();
+export class Game extends AggregateRoot<GameProps> {
+    get gameId(): GameId {
+        return GameId.create(this._id).getValue();
     }
 
-    get userId(): UserId {
-        return this.props.userId;
+    get name() {
+        return this.props.name;
     }
-    get matchId(): MatchId {
-        return this.props.matchId;
+    get description() {
+        return this.props.description;
     }
-    get points(): number {
-        return this.props.points || 0;
+    get roomId(): RoomId {
+        return this.props.roomId
     }
-    get predictions(): PlayerPredictions {
-        return this.props.predictions;
+    get leagueId(): LeagueId {
+        return this.props.leagueId;
+    }
+    get type() {
+        return this.props.type;
+    }
+    get status() {
+        return this.props.status;
+    }
+    get summary() {
+        return this.props.summary;
+    }
+    get leaderboard() {
+        return this.props.leaderboard;
+    }
+    get expiringAt(): Date {
+        return this.props.expiringAt
     }
     get createdAt(): Date {
         return this.props.createdAt || new Date();
@@ -40,18 +60,17 @@ export class Game extends AggregateRoot<MatchPredictionProps> {
         return this.props.updatedAt || new Date();
     }
 
-    private constructor(roleProps: MatchPredictionProps, id?: UniqueEntityID) {
+    private constructor(roleProps: GameProps, id?: UniqueEntityID) {
         super(roleProps, id);
     }
 
-    public static create(
-        props: MatchPredictionProps,
-        id?: UniqueEntityID
-    ): Result<Game> {
+    public static create(props: GameProps, id?: UniqueEntityID): Result<Game> {
         const guardResult = Guard.againstNullOrUndefinedBulk([
-            { argument: props.userId, argumentName: "playerId" },
-            { argument: props.matchId, argumentName: "matchId" },
-            { argument: props.predictions, argumentName: "predictions" },
+            { argument: props.name, argumentName: "name" },
+            { argument: props.roomId, argumentName: "roomId" },
+            { argument: props.leagueId, argumentName: "leagueId" },
+            { argument: props.type, argumentName: "type" },
+            { argument: props.expiringAt, argumentName: "expiringAt" },
         ]);
 
         if (!guardResult.succeeded) {

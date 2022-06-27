@@ -53,4 +53,13 @@ export const config = {
         apiSecret: process.env.STREAM_SECRET,
         defaultChannelOwnerId: "e3a2060e-51a4-4852-bbdc-582da830df89",
     },
+    apiFootball: {
+        rapidAPIKey:
+            process.env.API_FOOTBALL_RAPID_API_KEY || "",
+        rapidAPIHost: "api-football-v1.p.rapidapi.com",
+        baseURL: "https://api-football-v1.p.rapidapi.com/v3/",
+    },
+    sportsdata: {
+        apiKey: process.env.SPORTSDATA_KEY || "",
+    },
 };

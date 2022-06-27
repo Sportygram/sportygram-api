@@ -67,9 +67,13 @@ export class FirebaseService {
         Server would unsubscribe clients that have been inactive for months from topics
             (faster fanouts cos fewer stale tokens and better success metrics tracking)
         
+
+        while handling live match notofications, we should create different notifications
+        for the different matches and push updates to each notification 
     */
 
     private async sendNotification(message: any) {
+        // TODO: Debounce or check logs before sending notification
         try {
             getMessaging().send(message);
             // console.log("Successfully sent message:", response);

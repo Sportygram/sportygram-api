@@ -43,22 +43,42 @@ const raw = [
     },
     {
         team: {
-            id: 38,
-            name: "Watford",
-            code: "WAT",
+            id: 35,
+            name: "Bournemouth",
+            code: "BOU",
             country: "England",
-            founded: 1881,
+            founded: 1899,
             national: false,
-            logo: "https://media.api-sports.io/football/teams/38.png",
+            logo: "https://media.api-sports.io/football/teams/35.png",
         },
         venue: {
-            id: 596,
-            name: "Vicarage Road",
-            address: "Vicarage Road",
-            city: "Watford",
-            capacity: 22200,
+            id: 504,
+            name: "Vitality Stadium",
+            address: "Dean Court, Kings Park",
+            city: "Bournemouth, Dorset",
+            capacity: 12000,
             surface: "grass",
-            image: "https://media.api-sports.io/football/venues/596.png",
+            image: "https://media.api-sports.io/football/venues/504.png",
+        },
+    },
+    {
+        team: {
+            id: 36,
+            name: "Fulham",
+            code: "FUL",
+            country: "England",
+            founded: 1879,
+            national: false,
+            logo: "https://media.api-sports.io/football/teams/36.png",
+        },
+        venue: {
+            id: 535,
+            name: "Craven Cottage",
+            address: "Stevenage Road",
+            city: "London",
+            capacity: 25700,
+            surface: "grass",
+            image: "https://media.api-sports.io/football/venues/535.png",
         },
     },
     {
@@ -139,26 +159,6 @@ const raw = [
             capacity: 60383,
             surface: "grass",
             image: "https://media.api-sports.io/football/venues/494.png",
-        },
-    },
-    {
-        team: {
-            id: 44,
-            name: "Burnley",
-            code: "BUR",
-            country: "England",
-            founded: 1882,
-            national: false,
-            logo: "https://media.api-sports.io/football/teams/44.png",
-        },
-        venue: {
-            id: 512,
-            name: "Turf Moor",
-            address: "Harry Potts Way",
-            city: "Burnley",
-            capacity: 22546,
-            surface: "grass",
-            image: "https://media.api-sports.io/football/venues/512.png",
         },
     },
     {
@@ -363,6 +363,26 @@ const raw = [
     },
     {
         team: {
+            id: 65,
+            name: "Nottingham Forest",
+            code: "NOT",
+            country: "England",
+            founded: 1865,
+            national: false,
+            logo: "https://media.api-sports.io/football/teams/65.png",
+        },
+        venue: {
+            id: 566,
+            name: "The City Ground",
+            address: "Pavilion Road",
+            city: "Nottingham, Nottinghamshire",
+            capacity: 30576,
+            surface: "grass",
+            image: "https://media.api-sports.io/football/venues/566.png",
+        },
+    },
+    {
+        team: {
             id: 66,
             name: "Aston Villa",
             code: "AST",
@@ -379,26 +399,6 @@ const raw = [
             capacity: 42788,
             surface: "grass",
             image: "https://media.api-sports.io/football/venues/495.png",
-        },
-    },
-    {
-        team: {
-            id: 71,
-            name: "Norwich",
-            code: "NOR",
-            country: "England",
-            founded: 1902,
-            national: false,
-            logo: "https://media.api-sports.io/football/teams/71.png",
-        },
-        venue: {
-            id: 565,
-            name: "Carrow Road",
-            address: "Carrow Road",
-            city: "Norwich, Norfolk",
-            capacity: 27606,
-            surface: "grass",
-            image: "https://media.api-sports.io/football/venues/565.png",
         },
     },
 ];
@@ -424,7 +424,7 @@ export const teamSeed = raw.map((tData, idx) => ({
     sources: { apiFootball: { id: tData.team.id } },
 }));
 
-export const teamLeagueSeed = teamSeed.map((t) => ({
+export const teamCompetitionSeed = teamSeed.map((t) => ({
     teamId: t.id,
-    leagueId: 1,
+    competitionId: 1,
 }));

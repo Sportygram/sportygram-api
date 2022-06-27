@@ -35,7 +35,6 @@ export class MakePrediction
         const { matchId, userId } = request;
 
         try {
-            // Check if Role exists
             const match = await this.matchRepo.getMatchById(matchId);
             if (!match) {
                 return left(new MatchDoesNotExistError(matchId));
@@ -48,7 +47,7 @@ export class MakePrediction
 
             const playerPredictionOrError = PlayerPredictions.create(
                 request.predictions,
-                false,
+                true,
                 match.questions
             );
 

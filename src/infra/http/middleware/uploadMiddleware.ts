@@ -23,6 +23,7 @@ export class UploadMiddleware {
                 );
 
             const roomId = req.params?.roomId;
+            // TODO Check if room exists
             if (keyType === "room" && !roomId) {
                 return this.endRequest(res, "roomId required", 401);
             }
@@ -31,6 +32,8 @@ export class UploadMiddleware {
                     ? `users/${req.requestUser.userId}/avatar`
                     : `rooms/${roomId}/avatar`;
 
+                    // TODO: Compress image and create scaled down version using lambda
+                    // with suffix -thumbnail
             return multer({
                 storage: S3Storage({ key }),
                 fileFilter: function fileFilter(_req, file, cb) {

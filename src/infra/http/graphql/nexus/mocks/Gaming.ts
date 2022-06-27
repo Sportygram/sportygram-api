@@ -30,7 +30,7 @@ let gameDefault: RoomGame = {
     roomId: uuid(),
     type: "weekly",
     status: "in_progress",
-    leaderBoard: [
+    leaderboard: [
         getPlayerMock(),
         getPlayerMock({ username: "204070" }),
         getPlayerMock({ username: "tomiwalker" }),

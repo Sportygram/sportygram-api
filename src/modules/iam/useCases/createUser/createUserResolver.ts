@@ -40,6 +40,9 @@ export const createUserResolver: FieldResolver<"Mutation", "signup"> = async (
         };
         const loginResult = await loginUseCase.execute(loginDto);
 
+        args.password = "";
+        ctx.reqLogInfo.variables = JSON.stringify(args);
+
         if (loginResult.isRight()) {
             const { accessToken, refreshToken } = loginResult.value.getValue();
 

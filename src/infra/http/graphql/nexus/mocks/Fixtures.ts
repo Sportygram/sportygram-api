@@ -1,8 +1,5 @@
 import { v4 as uuid } from "uuid";
-import {
-    FootballQuestion,
-    MatchQuestionsMap,
-} from "../../../../../modules/gaming/domain/types";
+import { FootballQuestion } from "../../../../../modules/gaming/domain/types";
 import { NexusGenObjects } from "../../nexus-typegen";
 
 type Match = NexusGenObjects["Match"];
@@ -88,6 +85,10 @@ let teamsDefault: TeamData = {
                 value: "89%",
             },
         ],
+        lineup: {
+            startingXI: [],
+            substitutes: [],
+        },
     },
     away: {
         id: "5",
@@ -162,11 +163,16 @@ let teamsDefault: TeamData = {
                 value: "89%",
             },
         ],
+        lineup: {
+            startingXI: [],
+            substitutes: [],
+        },
     },
 };
 
 let fixtureDefault: Match = {
     id: uuid(),
+    name: "Liverpool vs Southampton",
     teams: teamsDefault,
     status: matchStatusDefault,
     dateTime: new Date("2022-05-17T18:45:00.346Z"),
@@ -180,57 +186,49 @@ let fixtureDefault: Match = {
     season: "2021/2022",
     venue: "St. Mary's Stadium, Southampton, Hampshire",
     winner: teamsDefault.away?.code,
-    scores: {
-        halftime: {
-            home: 1,
-            away: 1,
-        },
-        fulltime: {
-            home: 1,
-            away: 2,
-        },
-        extratime: {
-            home: null,
-            away: null,
-        },
-        penalty: {
-            home: null,
-            away: null,
-        },
-    },
-    questions: [
+    userPoints: 6,
+    predictions: [
         {
             code: FootballQuestion.Winner,
-            type: "select",
-            question: MatchQuestionsMap[FootballQuestion.Winner],
-            options: [
-                { display: "Liverpool", value: "5" },
-                { display: "Southampton", value: "7" },
-            ],
+            solution: "DRAW",
+            value: "LIV",
+            points: 0,
         },
         {
             code: FootballQuestion.FirstToScore,
-            type: "select",
-            question: MatchQuestionsMap[FootballQuestion.FirstToScore],
-            options: [
-                { display: "Liverpool", value: "5" },
-                { display: "Southampton", value: "7" },
-            ],
+            solution: "LIV",
+            value: "LIV",
+            points: 2,
         },
         {
             code: FootballQuestion.ManOfTheMatch,
-            type: "select",
-            question: MatchQuestionsMap[FootballQuestion.ManOfTheMatch],
-            options: [
-                { display: "Mohammed Salah", value: "23" },
-                { display: "Some other dudes", value: "40" },
-                { display: "More other dudes", value: "40" },
-            ],
+            solution: "5",
+            value: "5",
+            points: 2,
+        },
+        {
+            code: FootballQuestion.BothTeamsScore,
+            solution: true,
+            value: false,
+            points: 0,
+        },
+        {
+            code: FootballQuestion.NoOfGoals,
+            solution: 2,
+            value: 2,
+            points: 2,
         },
         {
             code: FootballQuestion.FinalScore,
-            type: "input",
-            question: MatchQuestionsMap[FootballQuestion.FinalScore],
+            solution: {
+                home: 1,
+                away: 1,
+            },
+            value: {
+                home: 2,
+                away: 0,
+            },
+            points: 0,
         },
     ],
 };

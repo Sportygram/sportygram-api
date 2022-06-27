@@ -1,6 +1,7 @@
 import { extendType, objectType } from "nexus";
 import { countries } from "../../../../modules/iam/domain/countries";
 import { teams } from "../../../../modules/gaming/infra/database/seed/team.seed";
+import { CacheScope } from "apollo-server-types";
 
 export const Country = objectType({
     name: "Country",
@@ -27,7 +28,11 @@ export const OtherQuery = extendType({
         t.nonNull.list.field("countries", {
             type: "Country",
             args: {},
-            async resolve(_parent, _args, _context, _info) {
+            async resolve(_parent, _args, _context, info) {
+                info.cacheControl.setCacheHint({
+                    maxAge: 3600,
+                    scope: CacheScope.Public,
+                });
                 return countriesWithEmojis;
             },
         });
@@ -35,7 +40,11 @@ export const OtherQuery = extendType({
         t.nonNull.list.field("teams", {
             type: "Team",
             args: {},
-            async resolve(_parent, _args, _context, _info) {
+            async resolve(_parent, _args, _context, info) {
+                info.cacheControl.setCacheHint({
+                    maxAge: 3600,
+                    scope: CacheScope.Public,
+                });
                 return teams;
             },
         });

@@ -15,7 +15,7 @@ export type Sport = typeof Sport[number];
 
 export type CountryCode = string;
 
-export interface League {
+export interface Competition {
     id: string;
     name: string;
     logo: string;
@@ -25,21 +25,41 @@ export interface League {
     sources: Record<string, any>; // source: { sourceId: string }
 }
 
+export type TeamCode = Partial<string>;
+export type TeamMetadata = { coach?: { name: string; photo: string } };
 export interface Team {
     id: number;
     name: string;
     code: string;
     logo: string;
     sport: Sport;
-    leagues?: League[]; // same team can play in different leagues so this should be in a relation table
+    competition?: Competition[]; // same team can play in different competitions so this should be in a relation table
     sources: Record<string, any>;
+    metadata: TeamMetadata
+    formation?: string;
+    colours?: any;
+    lineup?: LineUpPlayer[];
     createdAt: Date;
     updatedAt: Date;
 }
 
+export interface Athlete {
+    id?: number;
+    name: string;
+    firstname: string;
+    lastname: string;
+    nationality: string;
+    photo: string;
+    sources: Record<string, any>;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
 export const MatchStatus = {
+    Unscheduled: "unscheduled",
     Scheduled: "scheduled",
     InProgress: "in_progress",
+    Break: "break",
     Suspended: "suspended",
     Cancelled: "cancelled",
     Completed: "completed",
@@ -48,19 +68,46 @@ export type MatchStatus = typeof MatchStatus[keyof typeof MatchStatus];
 
 export type Statistic = { type: string; value: any };
 
+export const FootballPeriod = [
+    "first",
+    "second",
+    "firstExtra",
+    "secondExtra",
+    "penalties",
+] as const;
+export type FootballPeriod = typeof FootballPeriod[number];
+
+export type Goal = {
+    teamCode: TeamCode;
+    goal: number;
+    scorer?: { id: number; name: string };
+    minute?: string;
+};
+
+export type Summary = {
+    scores: Record<TeamCode, number>;
+    scoresByPeriodEnd: Record<
+        FootballPeriod,
+        Record<TeamCode, number | null> | undefined
+    >;
+    statistics: Record<TeamCode, Statistic[] | undefined>;
+    goals?: Record<TeamCode, Goal[]>;
+};
+
+export type Periods = Record<Partial<FootballPeriod>, string>;
 export interface Match {
     id: string;
     teams: Team[];
     sport: Sport;
     status: MatchStatus;
     date: Date;
-    periods: Record<string, Date>; // { first: "", firstExtra: "", second: "", secondExtra: "", penalties: "" }
+    periods: Periods;
     season: string;
-    leagueId: number;
+    competitionId: number;
     venue: string;
     winner?: Team;
-    summary: Record<string, any>; // scores, teamId-StatisticsObj
-    sources: Record<string, any>;
+    summary: Summary; // scores, teamId-StatisticsObj
+    sources: Sources;
     questions: MatchQuestion[]; // store only solutions
     metadata: any; // home: "MUN", away: "CHE", periodNames(could be in code)
 }
@@ -86,13 +133,40 @@ export const FootballQuestion = {
 export type FootballQuestion =
     typeof FootballQuestion[keyof typeof FootballQuestion];
 
-export const MatchQuestionsMap = {
-    [FootballQuestion.Winner]: "Who will win the match?",
-    [FootballQuestion.FirstToScore]: "What team scores first?",
-    [FootballQuestion.ManOfTheMatch]: "Who is the the match?",
-    [FootballQuestion.BothTeamsScore]: "Do both teams score?",
-    [FootballQuestion.NoOfGoals]: "How many goals will be the scored?",
-    [FootballQuestion.FinalScore]: "Correct score?",
+export const MatchQuestionsMap: Record<
+    MatchQuestionCode,
+    Omit<MatchQuestion, "code">
+> = {
+    [FootballQuestion.Winner]: {
+        question: "Who will win the match?",
+        type: "select",
+        correctPoints: 2,
+    },
+    [FootballQuestion.FirstToScore]: {
+        question: "What team scores first?",
+        type: "select",
+        correctPoints: 2,
+    },
+    [FootballQuestion.ManOfTheMatch]: {
+        question: "Who is the man of the match?",
+        type: "select",
+        correctPoints: 2,
+    },
+    [FootballQuestion.BothTeamsScore]: {
+        question: "Do both teams score?",
+        type: "select",
+        correctPoints: 2,
+    },
+    [FootballQuestion.NoOfGoals]: {
+        question: "How many goals will be scored?",
+        type: "input",
+        correctPoints: 2,
+    },
+    [FootballQuestion.FinalScore]: {
+        question: "Correct score?",
+        type: "customData",
+        correctPoints: 5,
+    },
 };
 
 export type MatchQuestionCode = FootballQuestion;
@@ -102,6 +176,7 @@ export type PlayerPrediction = MatchQuestion & { value: any; points: number };
 export interface MatchQuestion {
     code: MatchQuestionCode;
     type: MatchQuestionType;
+    correctPoints: number;
     question?: string;
     options?: { value: string; display: string }[];
     solution?: any;
@@ -114,23 +189,71 @@ export interface RoomGame {
     roomId: string;
     type: "weekly" | "season";
     status: "completed" | "in_progress";
-    summary: any; // might include an array of players and points
+    summary: any; // week: number; might include an array of players and points
     leaderBoard: Player[];
     createdAt: Date;
     expiringAt: Date;
     updatedAt: Date;
 }
 
-// Not necessary
-// user_profile will contain a weekly score and season score instead
-// Group Game will be created and updated instead
-// Weekly/Season Group Game will be created immediately after a weekly/season game is completed
-// There can be only one open weekly/season game
+export const MatchEvent = [
+    "kickoff",
+    "goal",
+    "penalty",
+    "substitution",
+    "red_card",
+    "period_complete",
+    "period_started",
+    "completed",
+];
+export type MatchEvent = typeof MatchEvent[number];
 
-// interface GroupGamePoints {
-//     id: string;
-//     userId: string;
-//     groupGameId: string;
-//     points: number
-//     summary: any;
-// }
+export interface MatchEventData {
+    type: MatchEvent;
+    message: string;
+    data: any;
+}
+
+export const DataSource = {
+    ApiFootball: "apiFootball",
+} as const;
+export type DataSource = typeof DataSource[keyof typeof DataSource];
+
+export type Sources = Record<Partial<DataSource>, { id: any }>;
+
+type HomeAway<T> = {
+    home: T;
+    away: T;
+};
+
+type FootballTeams = HomeAway<{ id: number; name: string; code: string }>;
+// type AthleticsTeams = {
+//     lane1: { id: number; name: string; code: string };
+//     lane2: { id: number; name: string; code: string };
+//     ...
+// };
+export type MatchMetadata = {
+    status: {
+        long: string;
+        short: string;
+        elapsed: number | null;
+    };
+    teams: FootballTeams;
+};
+
+type LineUpPlayer = {
+    id: number;
+    name: string;
+    pos: string;
+    num: number;
+    start: boolean;
+};
+
+export type LeaderboardPlayer = {
+    playerId: string;
+    name: string;
+    username: string;
+    score: number;
+    rank: number;
+    prevRank: number;
+};

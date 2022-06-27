@@ -1,8 +1,11 @@
-import { PrismaClient } from "@prisma/client";
-import { athleteSeed, teamAthleteSeed } from "../../../modules/gaming/infra/database/seed/athlete.seed";
-import { leagueSeed } from "../../../modules/gaming/infra/database/seed/gaming.seed";
+import * as dotenv from "dotenv";
+dotenv.config();
+
+import { athletesSeed } from "../../../modules/gaming/infra/database/seed/athlete.seed";
+import { seedMatches } from "../../../modules/gaming/infra/database/seed/match.seed";
+import { competitionSeed } from "../../../modules/gaming/infra/database/seed/gaming.seed";
 import {
-    teamLeagueSeed,
+    teamCompetitionSeed,
     teamSeed,
 } from "../../../modules/gaming/infra/database/seed/team.seed";
 import { permissionSeed } from "../../../modules/iam/infra/database/seed/permission.seed";
@@ -10,7 +13,8 @@ import {
     rolePermissionsSeed,
     roleSeed,
 } from "../../../modules/iam/infra/database/seed/role.seed";
-const prisma = new PrismaClient();
+import { prisma } from "./client";
+import { teamsAthleteSeed } from "../../../modules/gaming/infra/database/seed/teamsAthletes.seed";
 
 async function main() {
     await prisma.permission.createMany({
@@ -25,26 +29,29 @@ async function main() {
         data: rolePermissionsSeed,
         skipDuplicates: true,
     });
-    await prisma.league.createMany({
-        data: leagueSeed,
+    await prisma.competition.createMany({
+        data: competitionSeed,
         skipDuplicates: true,
     });
     await prisma.team.createMany({
         data: teamSeed,
         skipDuplicates: true,
     });
-    await prisma.teamLeague.createMany({
-        data: teamLeagueSeed,
+    await prisma.teamCompetition.createMany({
+        data: teamCompetitionSeed,
         skipDuplicates: true,
     });
+    await seedMatches();
+    // await seedAthletesFromApi();
     await prisma.athlete.createMany({
-        data: athleteSeed,
+        data: athletesSeed(),
         skipDuplicates: true,
     });
     await prisma.teamAthlete.createMany({
-        data: teamAthleteSeed,
+        data: teamsAthleteSeed,
         skipDuplicates: true,
     });
+    return;
 }
 
 main()
@@ -54,4 +61,5 @@ main()
     })
     .finally(async () => {
         await prisma.$disconnect();
+        process.exit(0);
     });

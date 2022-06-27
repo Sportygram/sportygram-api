@@ -1,9 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-// TODO Singularize all related model names
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["filterJson"]
+
 }
 
 datasource db {
@@ -23,21 +21,13 @@ model Role {
   @@map("roles")
 }
 
-enum AccessMode {
-  create
-  read
-  update
-  delete
-  edit
-}
-
 model RolePermission {
   roleId       String     @map("role_id") @db.Uuid
   permissionId String     @map("permission_id") @db.Uuid
-  role         Role       @relation(fields: [roleId], references: [id])
-  permission   Permission @relation(fields: [permissionId], references: [id])
   createdAt    DateTime?  @default(now()) @map("created_at")
   updatedAt    DateTime?  @updatedAt @map("updated_at")
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  role         Role       @relation(fields: [roleId], references: [id])
 
   @@unique([roleId, permissionId], map: "role_id_permission_id_unique")
   @@map("roles_permissions")
@@ -53,12 +43,6 @@ model Permission {
   permissionRoles RolePermission[]
 
   @@map("permissions")
-}
-
-enum UserState {
-  active
-  inactive
-  deleted
 }
 
 model User {
@@ -77,10 +61,10 @@ model User {
   lastLoginIp   String?      @map("last_login_ip") @db.Inet
   lastLoginTime DateTime?    @map("last_login_time")
   userState     UserState    @default(active) @map("user_state")
-  profile       UserProfile?
-  tokens        Token[]
-  userRoles     UserRole[]
   metadata      Json         @default("{}")
+  tokens        Token[]
+  profile       UserProfile?
+  userRoles     UserRole[]
 
   @@map("users")
 }
@@ -88,40 +72,35 @@ model User {
 model UserRole {
   roleId    String    @map("role_id") @db.Uuid
   userId    String    @map("user_id") @db.Uuid
-  role      Role      @relation(fields: [roleId], references: [id])
-  user      User      @relation(fields: [userId], references: [id])
   createdAt DateTime? @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
+  role      Role      @relation(fields: [roleId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
 
   @@unique([roleId, userId], map: "role_id_user_id_unique")
   @@map("users_roles")
 }
 
 model UserProfile {
-  id              String            @id @db.Uuid
-  displayName     String?           @map("display_name")
-  onboarded       Boolean
-  favoriteTeam    String?           @map("favorite_team")
-  profileColour   String?           @map("profile_colour")
-  profileImageUrl String?           @map("profile_image_url")
-  referralCount   Int               @default(0) @map("referral_count")
-  coinBalance     Decimal           @default(0) @db.Decimal(18, 4)
-  userId          String            @unique @map("user_id") @db.Uuid
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
-  settings        Json              @default("{}")
-  gamesSummary    Json              @default("{}")
-  metadata        Json              @default("{}")
-  user            User              @relation(fields: [userId], references: [id])
-  chatUserRooms   RoomChatUser[]
-  MatchPrediction MatchPrediction[]
+  id               String            @id @db.Uuid
+  displayName      String?           @map("display_name")
+  onboarded        Boolean
+  favoriteTeam     String?           @map("favorite_team")
+  profileColour    String?           @map("profile_colour")
+  profileImageUrl  String?           @map("profile_image_url")
+  referralCount    Int               @default(0) @map("referral_count")
+  coinBalance      Decimal           @default(0) @db.Decimal(18, 4)
+  userId           String            @unique @map("user_id") @db.Uuid
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  settings         Json              @default("{}")
+  gamesSummary     Json              @default("{}")
+  metadata         Json              @default("{}")
+  user             User              @relation(fields: [userId], references: [id])
+  chatUserRooms    RoomChatUser[]
+  matchPredictions MatchPrediction[]
 
   @@map("user_profiles")
-}
-
-enum TokenType {
-  email_verify
-  password_reset
 }
 
 model Token {
@@ -137,19 +116,18 @@ model Token {
 }
 
 model Room {
-  id           String   @id @db.Uuid
-  name         String   @db.VarChar(100)
-  description  String?
-  roomType     String   @default("public") @map("room_type")
-  roomImageUrl String?  @map("room_image_url")
-  joiningFee   Int      @default(0) @map("joining_fee")
-  createdById  String   @map("created_by_id") @db.Uuid
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  metadata     Json     @default("{}")
-
+  id            String         @id @db.Uuid
+  name          String         @db.VarChar(100)
+  description   String?
+  roomType      String         @default("public") @map("room_type")
+  roomImageUrl  String?        @map("room_image_url")
+  joiningFee    Int            @default(0) @map("joining_fee")
+  createdById   String         @map("created_by_id") @db.Uuid
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  metadata      Json           @default("{}")
+  roomGames     RoomGame[]
   roomChatUsers RoomChatUser[]
-  RoomGames     RoomGame[]
 
   @@map("rooms")
 }
@@ -158,68 +136,59 @@ model RoomChatUser {
   roomId    String      @map("room_id") @db.Uuid
   userId    String      @map("user_id") @db.Uuid
   role      String
-  rooom     Room        @relation(fields: [roomId], references: [id])
-  chatUser  UserProfile @relation(fields: [userId], references: [userId])
   createdAt DateTime?   @default(now()) @map("created_at")
   updatedAt DateTime?   @updatedAt @map("updated_at")
+  rooom     Room        @relation(fields: [roomId], references: [id])
+  chatUser  UserProfile @relation(fields: [userId], references: [userId])
 
   @@unique([roomId, userId], map: "room_id_user_id_unique")
   @@map("rooms_chat_users")
 }
 
-enum Sport {
-  football
-  basketball
-  baseball
-  cricket
-  american_football
-  f1
-  nascar
-  running
-}
+model Competition {
+  id               Int               @id @default(autoincrement())
+  name             String
+  logo             String
+  sport            Sport
+  country          String            @db.VarChar(30)
+  countryCode      String            @map("country_code") @db.VarChar(2)
+  season           String
+  sources          Json              @default("{}")
+  createdAt        DateTime?         @default(now()) @map("created_at")
+  updatedAt        DateTime?         @updatedAt @map("updated_at")
+  matches          Match[]
+  competitionTeams TeamCompetition[]
 
-model League {
-  id          Int          @id @default(autoincrement())
-  name        String
-  logo        String
-  sport       Sport
-  country     String       @db.VarChar(30)
-  season      String
-  sources     Json         @default("{}")
-  createdAt   DateTime?    @default(now()) @map("created_at")
-  updatedAt   DateTime?    @updatedAt @map("updated_at")
-  leagueTeams TeamLeague[]
-  matches     Match[]
-
-  @@map("leagues")
+  @@map("competitions")
 }
 
 model Team {
-  id          Int          @id @default(autoincrement())
-  name        String
-  code        String
-  logo        String
-  sport       Sport
-  sources     Json         @default("{}")
-  createdAt   DateTime?    @default(now()) @map("created_at")
-  updatedAt   DateTime?    @updatedAt @map("updated_at")
-  teamLeagues TeamLeague[]
+  id               Int               @id @default(autoincrement())
+  name             String
+  code             String
+  logo             String
+  sport            Sport
+  sources          Json              @default("{}")
+  metadata         Json              @default("{}")
+  createdAt        DateTime?         @default(now()) @map("created_at")
+  updatedAt        DateTime?         @updatedAt @map("updated_at")
+  teamMatches      MatchTeam[]
+  teamAthletes     TeamAthlete[]
+  teamCompetitions TeamCompetition[]
 
-  teamMatches  MatchTeam[]
-  teamAthletes TeamAthlete[]
   @@map("teams")
 }
 
-model TeamLeague {
-  teamId    Int       @map("team_id")
-  leagueId  Int       @map("league_id")
-  team      Team      @relation(fields: [teamId], references: [id])
-  league    League    @relation(fields: [leagueId], references: [id])
-  createdAt DateTime? @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
+model TeamCompetition {
+  teamId        Int         @map("team_id")
+  competitionId Int         @map("competition_id")
+  createdAt     DateTime?   @default(now()) @map("created_at")
+  updatedAt     DateTime?   @updatedAt @map("updated_at")
+  competition   Competition @relation(fields: [competitionId], references: [id])
+  team          Team        @relation(fields: [teamId], references: [id])
 
-  @@unique([teamId, leagueId], map: "team_id_league_id_unique")
-  @@map("teams_leagues")
+  @@unique([teamId, competitionId], map: "team_id_competition_id_unique")
+  @@map("teams_competitions")
 }
 
 model Athlete {
@@ -240,41 +209,33 @@ model Athlete {
 model TeamAthlete {
   teamId    Int       @map("team_id")
   athleteId Int       @map("athlete_id")
-  team      Team      @relation(fields: [teamId], references: [id])
-  athlete   Athlete   @relation(fields: [athleteId], references: [id])
   createdAt DateTime? @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
+  athlete   Athlete   @relation(fields: [athleteId], references: [id])
+  team      Team      @relation(fields: [teamId], references: [id])
 
   @@unique([teamId, athleteId], map: "team_id_athlete_id_unique")
   @@map("teams_athletes")
 }
 
-enum MatchStatus {
-  scheduled
-  in_progress
-  suspended
-  cancelled
-  completed
-}
-
 model Match {
-  id        String      @id @db.Uuid
-  sport     Sport
-  status    MatchStatus
-  dateTime  DateTime
-  periods   Json        @default("{}")
-  season    String
-  leagueId  Int         @map("league_id")
-  venue     String
-  winner    String?
-  summary   Json        @default("{}")
-  sources   Json        @default("{}")
-  questions Json        @default("[]")
-  metadata  Json        @default("{}")
-  createdAt DateTime?   @default(now()) @map("created_at")
-  updatedAt DateTime?   @updatedAt @map("updated_at")
-  league    League      @relation(fields: [leagueId], references: [id])
-
+  id               String            @id @db.Uuid
+  name             String
+  sport            Sport
+  status           MatchStatus
+  dateTime         DateTime
+  periods          Json              @default("{}")
+  season           String
+  competitionId    Int               @map("competition_id")
+  venue            String
+  winner           String?
+  summary          Json              @default("{}")
+  sources          Json              @default("{}")
+  questions        Json              @default("[]")
+  metadata         Json              @default("{}")
+  createdAt        DateTime?         @default(now()) @map("created_at")
+  updatedAt        DateTime?         @updatedAt @map("updated_at")
+  competition      Competition       @relation(fields: [competitionId], references: [id])
   matchTeams       MatchTeam[]
   matchPredictions MatchPrediction[]
 
@@ -284,28 +245,91 @@ model Match {
 model MatchTeam {
   teamId    Int       @map("team_id")
   matchId   String    @map("match_id") @db.Uuid
-  team      Team      @relation(fields: [teamId], references: [id])
-  match     Match     @relation(fields: [matchId], references: [id])
+  formation String?
+  colours   Json      @default("{}")
+  lineup    Json      @default("{}")
+  sources   Json      @default("{}")
   createdAt DateTime? @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
+  match     Match     @relation(fields: [matchId], references: [id])
+  team      Team      @relation(fields: [teamId], references: [id])
 
   @@unique([teamId, matchId], map: "team_id_match_id_unique")
   @@map("matches_teams")
 }
 
 model MatchPrediction {
-  id          String    @id @db.Uuid
-  userId      String    @map("user_id") @db.Uuid
-  matchId     String    @map("match_id") @db.Uuid
+  id          String      @id @db.Uuid
+  userId      String      @map("user_id") @db.Uuid
+  matchId     String      @map("match_id") @db.Uuid
   points      Int
-  predictions Json      @default("[]")
-  createdAt   DateTime? @default(now()) @map("created_at")
-  updatedAt   DateTime? @updatedAt @map("updated_at")
+  predictions Json        @default("[]")
+  createdAt   DateTime?   @default(now()) @map("created_at")
+  updatedAt   DateTime?   @updatedAt @map("updated_at")
+  match       Match       @relation(fields: [matchId], references: [id])
+  player      UserProfile @relation(fields: [userId], references: [userId])
 
-  match  Match       @relation(fields: [matchId], references: [id])
-  player UserProfile @relation(fields: [userId], references: [userId])
-
+  @@unique([userId, matchId], map: "user_id_match_id_unique")
   @@map("user_match_predictions")
+}
+
+model RoomGame {
+  id          String         @id @db.Uuid
+  name        String
+  description String?
+  roomId      String         @map("room_id") @db.Uuid
+  leagueId    String         @map("league_id") @db.Uuid
+  type        RoomGameType
+  status      RoomGameStatus
+  leaderboard Json           @default("[]")
+  summary     Json           @default("{}")
+  createdAt   DateTime?      @default(now()) @map("created_at")
+  expiringAt  DateTime       @map("expiring_at")
+  updatedAt   DateTime?      @updatedAt @map("updated_at")
+  room        Room           @relation(fields: [roomId], references: [id])
+
+  @@index([roomId], map: "room_id_index")
+  @@map("room_games")
+}
+
+enum AccessMode {
+  create
+  read
+  update
+  delete
+  edit
+}
+
+enum UserState {
+  active
+  inactive
+  deleted
+}
+
+enum TokenType {
+  email_verify
+  password_reset
+}
+
+enum Sport {
+  football
+  basketball
+  baseball
+  cricket
+  american_football
+  f1
+  nascar
+  running
+}
+
+enum MatchStatus {
+  unscheduled
+  scheduled
+  in_progress
+  break
+  suspended
+  cancelled
+  completed
 }
 
 enum RoomGameType {
@@ -316,21 +340,4 @@ enum RoomGameType {
 enum RoomGameStatus {
   in_progress
   completed
-}
-
-model RoomGame {
-  id          String         @id @db.Uuid
-  name        String
-  description String?
-  roomId      String         @map("room_id") @db.Uuid
-  type        RoomGameType
-  status      RoomGameStatus
-  summary     Json           @default("{}")
-  createdAt   DateTime?      @default(now()) @map("created_at")
-  expiringAt  DateTime       @map("expiring_at")
-  updatedAt   DateTime?      @updatedAt @map("updated_at")
-
-  room Room @relation(fields: [roomId], references: [id])
-
-  @@map("room_games")
 }
