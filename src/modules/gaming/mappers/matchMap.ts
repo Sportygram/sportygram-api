@@ -1,36 +1,52 @@
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
-import { Match as PMatch, Team as PTeam } from "@prisma/client";
+import {
+    Match as PMatch,
+    MatchPrediction,
+    Team as PTeam,
+} from "@prisma/client";
 import { QueryMatch } from "../repos/interfaces";
 import { teams } from "../infra/database/seed/team.seed";
 import { Match } from "../domain/match";
-import { LeagueId } from "../domain/leagueId";
+import { CompetitionId } from "../domain/competitionId";
 import { MatchQuestions } from "../domain/valueObjects/matchQuestions";
-import { MatchQuestion, MatchQuestionsMap } from "../domain/types";
+import {
+    MatchMetadata,
+    MatchQuestion,
+    MatchQuestionsMap,
+    Periods,
+    Sources,
+    Summary,
+    TeamMetadata,
+} from "../domain/types";
 
 export type RawMatch = PMatch & {
     teams: PTeam[];
-    sources: Record<string, any>;
+    periods: Periods;
+    sources: Sources;
+    summary: Summary;
+    metadata: MatchMetadata;
+    predictions?: MatchPrediction;
 };
 export class MatchMap {
-    public static rawToQueryMatch(raw: RawMatch): QueryMatch {
+    public static footballRawToQueryMatch(raw: RawMatch): QueryMatch {
         const status = {
             long: "Match Finished",
             short: "FT",
             elapsed: 90,
         };
-        const metadata = raw.metadata as any;
-        const summary = raw.summary as any;
-        const periods = raw.periods as any;
+        const metadata = raw.metadata;
+        const summary = raw.summary;
+        const periods = raw.periods;
 
-        const homeId = metadata?.teams?.home.id;
-        const awayId = metadata?.teams?.away.id;
+        const homeCode = metadata.teams.home.code;
+        const awayCode = metadata.teams.away.code;
 
         const winner =
             raw.winner === "draw"
                 ? raw.winner
                 : teams.find((t) => t.id === raw.winner)?.code;
 
-        const questions = (raw.questions as any as MatchQuestion[]).map(
+        const predictions = (raw.questions as any as MatchQuestion[]).map(
             (q) => ({
                 ...q,
                 question: MatchQuestionsMap[q.code],
@@ -39,35 +55,35 @@ export class MatchMap {
 
         return {
             ...raw,
-            periods,
+            periods, // TODO: Maybe add endOfPeriod scores here
             status, // : metadata.status
-            scores: summary?.scores,
             winner,
             teams: {
                 home: {
-                    id: homeId,
-                    ...raw.teams.find((t) => t.id === homeId),
+                    ...raw.teams.find((t) => t.code === homeCode),
                     winner: winner === "home",
-                    statistics: summary.statistics[homeId],
+                    statistics: summary.statistics[homeCode],
+                    score: summary.scores[homeCode],
                 } as any,
                 away: {
-                    id: awayId,
-                    ...raw.teams.find((t) => t.id === awayId),
+                    ...raw.teams.find((t) => t.code === awayCode),
                     winner: winner === "away",
-                    statistics: summary.statistics[homeId],
+                    statistics: summary.statistics[awayCode],
+                    score: summary.scores[awayCode],
                 } as any,
             },
-            questions,
+            predictions,
         };
     }
 
     public static toDomain(raw: RawMatch): Match {
-        const leagueId = LeagueId.create(
-            new UniqueEntityID(raw.leagueId)
+        const competitionId = CompetitionId.create(
+            new UniqueEntityID(raw.competitionId)
         ).getValue();
         const teams = raw.teams.map((t) => ({
             ...t,
             sources: raw.sources as Record<string, any>,
+            metadata: raw.metadata as TeamMetadata,
             createdAt: raw.createdAt || new Date(),
             updatedAt: raw.updatedAt || new Date(),
         }));
@@ -81,15 +97,15 @@ export class MatchMap {
                 sport: raw.sport,
                 status: raw.status,
                 dateTime: raw.dateTime,
-                periods: raw.periods as Record<string, string>,
+                periods: raw.periods,
                 season: raw.season,
-                leagueId,
+                competitionId: competitionId,
                 venue: raw.venue,
                 winner: raw.winner || undefined,
-                summary: raw.summary as Record<string, any>,
-                sources: raw.sources as Record<string, any>,
+                summary: raw.summary,
+                sources: raw.sources,
                 questions,
-                metadata: raw.metadata as Record<string, any>,
+                metadata: raw.metadata,
                 createdAt: raw.createdAt || undefined,
                 updatedAt: raw.updatedAt || undefined,
             },
@@ -105,18 +121,19 @@ export class MatchMap {
     public static toPersistence(match: Match): RawMatch {
         return {
             id: match.matchId.id.toString(),
+            name: match.name,
             teams: match.teams,
             sport: match.sport,
             status: match.status,
             dateTime: match.dateTime,
             periods: match.periods,
             season: match.season,
-            leagueId: Number(match.leagueId.id.toString()),
+            competitionId: Number(match.competitionId.id.toString()),
             venue: match.venue,
             winner: match.winner || null,
             summary: match.summary,
             sources: match.sources,
-            questions: match.questions as any,
+            questions: match.questions.value as any,
             metadata: match.metadata,
             createdAt: match.createdAt,
             updatedAt: match.updatedAt,

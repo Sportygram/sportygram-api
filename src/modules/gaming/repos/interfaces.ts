@@ -9,11 +9,16 @@ export interface PlayerRepo {
 }
 export interface MatchRepo {
     getMatchById(matchId: string): Promise<Match | undefined>;
+    getMatchByApiFootballId(apiFootballId: string): Promise<Match | undefined>;
+    getLiveMatches(lastUpdatedMinutes?: number): Promise<Match[]>;
     save(match: Match): Promise<void>;
 }
 export type QueryMatch = NexusGenObjects["Match"];
 export interface MatchReadRepo {
-    getMatchById(matchId: string): Promise<QueryMatch | undefined>;
+    getMatchById(
+        matchId: string,
+        userId: string
+    ): Promise<QueryMatch | undefined>;
     getMatchesByDate(date: Date): Promise<QueryMatch[]>;
 }
 

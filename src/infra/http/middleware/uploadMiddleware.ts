@@ -32,6 +32,8 @@ export class UploadMiddleware {
                     ? `users/${req.requestUser.userId}/avatar`
                     : `rooms/${roomId}/avatar`;
 
+                    // TODO: Compress image and create scaled down version using lambda
+                    // with suffix -thumbnail
             return multer({
                 storage: S3Storage({ key }),
                 fileFilter: function fileFilter(_req, file, cb) {

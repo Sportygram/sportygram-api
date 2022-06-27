@@ -424,7 +424,7 @@ export const teamSeed = raw.map((tData, idx) => ({
     sources: { apiFootball: { id: tData.team.id } },
 }));
 
-export const teamLeagueSeed = teamSeed.map((t) => ({
+export const teamCompetitionSeed = teamSeed.map((t) => ({
     teamId: t.id,
-    leagueId: 1,
+    competitionId: 1,
 }));

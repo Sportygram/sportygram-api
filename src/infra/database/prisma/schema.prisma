@@ -145,49 +145,50 @@ model RoomChatUser {
   @@map("rooms_chat_users")
 }
 
-model League {
-  id          Int          @id @default(autoincrement())
-  name        String
-  logo        String
-  sport       Sport
-  country     String       @db.VarChar(30)
-  countryCode String       @map("country_code") @db.VarChar(2)
-  season      String
-  sources     Json         @default("{}")
-  createdAt   DateTime?    @default(now()) @map("created_at")
-  updatedAt   DateTime?    @updatedAt @map("updated_at")
-  matches     Match[]
-  leagueTeams TeamLeague[]
+model Competition {
+  id               Int               @id @default(autoincrement())
+  name             String
+  logo             String
+  sport            Sport
+  country          String            @db.VarChar(30)
+  countryCode      String            @map("country_code") @db.VarChar(2)
+  season           String
+  sources          Json              @default("{}")
+  createdAt        DateTime?         @default(now()) @map("created_at")
+  updatedAt        DateTime?         @updatedAt @map("updated_at")
+  matches          Match[]
+  competitionTeams TeamCompetition[]
 
-  @@map("leagues")
+  @@map("competitions")
 }
 
 model Team {
-  id           Int           @id @default(autoincrement())
-  name         String
-  code         String
-  logo         String
-  sport        Sport
-  sources      Json          @default("{}")
-  createdAt    DateTime?     @default(now()) @map("created_at")
-  updatedAt    DateTime?     @updatedAt @map("updated_at")
-  teamMatches  MatchTeam[]
-  teamAthletes TeamAthlete[]
-  teamLeagues  TeamLeague[]
+  id               Int               @id @default(autoincrement())
+  name             String
+  code             String
+  logo             String
+  sport            Sport
+  sources          Json              @default("{}")
+  metadata         Json              @default("{}")
+  createdAt        DateTime?         @default(now()) @map("created_at")
+  updatedAt        DateTime?         @updatedAt @map("updated_at")
+  teamMatches      MatchTeam[]
+  teamAthletes     TeamAthlete[]
+  teamCompetitions TeamCompetition[]
 
   @@map("teams")
 }
 
-model TeamLeague {
-  teamId    Int       @map("team_id")
-  leagueId  Int       @map("league_id")
-  createdAt DateTime? @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
-  league    League    @relation(fields: [leagueId], references: [id])
-  team      Team      @relation(fields: [teamId], references: [id])
+model TeamCompetition {
+  teamId        Int         @map("team_id")
+  competitionId Int         @map("competition_id")
+  createdAt     DateTime?   @default(now()) @map("created_at")
+  updatedAt     DateTime?   @updatedAt @map("updated_at")
+  competition   Competition @relation(fields: [competitionId], references: [id])
+  team          Team        @relation(fields: [teamId], references: [id])
 
-  @@unique([teamId, leagueId], map: "team_id_league_id_unique")
-  @@map("teams_leagues")
+  @@unique([teamId, competitionId], map: "team_id_competition_id_unique")
+  @@map("teams_competitions")
 }
 
 model Athlete {
@@ -219,12 +220,13 @@ model TeamAthlete {
 
 model Match {
   id               String            @id @db.Uuid
+  name             String
   sport            Sport
   status           MatchStatus
   dateTime         DateTime
   periods          Json              @default("{}")
   season           String
-  leagueId         Int               @map("league_id")
+  competitionId    Int               @map("competition_id")
   venue            String
   winner           String?
   summary          Json              @default("{}")
@@ -233,7 +235,7 @@ model Match {
   metadata         Json              @default("{}")
   createdAt        DateTime?         @default(now()) @map("created_at")
   updatedAt        DateTime?         @updatedAt @map("updated_at")
-  league           League            @relation(fields: [leagueId], references: [id])
+  competition      Competition       @relation(fields: [competitionId], references: [id])
   matchTeams       MatchTeam[]
   matchPredictions MatchPrediction[]
 
@@ -243,6 +245,10 @@ model Match {
 model MatchTeam {
   teamId    Int       @map("team_id")
   matchId   String    @map("match_id") @db.Uuid
+  formation String?
+  colours   Json      @default("{}")
+  lineup    Json      @default("{}")
+  sources   Json      @default("{}")
   createdAt DateTime? @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
   match     Match     @relation(fields: [matchId], references: [id])
@@ -263,6 +269,7 @@ model MatchPrediction {
   match       Match       @relation(fields: [matchId], references: [id])
   player      UserProfile @relation(fields: [userId], references: [userId])
 
+  @@unique([userId, matchId], map: "user_id_match_id_unique")
   @@map("user_match_predictions")
 }
 
@@ -271,14 +278,17 @@ model RoomGame {
   name        String
   description String?
   roomId      String         @map("room_id") @db.Uuid
+  leagueId    String         @map("league_id") @db.Uuid
   type        RoomGameType
   status      RoomGameStatus
+  leaderboard Json           @default("[]")
   summary     Json           @default("{}")
   createdAt   DateTime?      @default(now()) @map("created_at")
   expiringAt  DateTime       @map("expiring_at")
   updatedAt   DateTime?      @updatedAt @map("updated_at")
   room        Room           @relation(fields: [roomId], references: [id])
 
+  @@index([roomId], map: "room_id_index")
   @@map("room_games")
 }
 

@@ -1,6 +1,6 @@
 import { Prisma, Sport } from "@prisma/client";
 
-export const leagueSeed = [
+export const competitionSeed = [
     {
         id: 1,
         name: "English Premier League",
@@ -12,7 +12,7 @@ export const leagueSeed = [
         sources: {
             apiFootball: {
                 id: 39,
-                type: "League"
+                type: "League",
             },
         } as Prisma.JsonObject,
     },

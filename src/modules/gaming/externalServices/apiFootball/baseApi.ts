@@ -65,12 +65,16 @@ export async function apiFootballRequest(endpoint: string, params = {}) {
     try {
         // check if apiFootball hasReachedToday's limit on redis
         const response = await baseApi.get<any>(endpoint, { params });
+        const errorKeys = Object.keys(response.data.errors);
+        if (errorKeys.length) {
+            throw new Error(response.data.errors[errorKeys[0]]);
+        }
         logger.info("ApiFootballSuccess", {
             request: response.config.url,
             params,
         });
         return response.data;
-        // use to set hasReachedToday's limit X-RateLimit-requests-Remaining
+        // use to set hasReachedToday's limit: X-RateLimit-requests-Remaining
     } catch (error) {
         return errorHandler(error);
     }

@@ -4,7 +4,7 @@ import * as AppError from "../../../../lib/core/AppError";
 import { MatchRepo } from "../../repos/interfaces";
 import { UseCase } from "../../../../lib/core/UseCase";
 import { Match } from "../../domain/match";
-import { LeagueId } from "../../domain/leagueId";
+import { CompetitionId } from "../../domain/competitionId";
 import { UniqueEntityID } from "../../../../lib/domain/UniqueEntityID";
 import { MatchQuestions } from "../../domain/valueObjects/matchQuestions";
 
@@ -14,9 +14,7 @@ type Response = Either<
 >;
 
 export class CreateMatch implements UseCase<MatchDTO, Promise<Response>> {
-    constructor(private matchRepo: MatchRepo) {
-        this.matchRepo = matchRepo;
-    }
+    constructor(private matchRepo: MatchRepo) {}
 
     async execute(request: MatchDTO): Promise<Response> {
         const {
@@ -35,6 +33,16 @@ export class CreateMatch implements UseCase<MatchDTO, Promise<Response>> {
         } = request;
 
         try {
+            if (sources.apiFootball?.id) {
+                const match = await this.matchRepo.getMatchByApiFootballId(
+                    sources.apiFootball.id
+                );
+                if (match)
+                    return left(
+                        new AppError.InputError("Match already exists")
+                    );
+            }
+
             const matchOrError: Result<Match> = Match.create({
                 teams,
                 sport,
@@ -42,7 +50,9 @@ export class CreateMatch implements UseCase<MatchDTO, Promise<Response>> {
                 dateTime: new Date(dateTime),
                 periods,
                 season,
-                leagueId: LeagueId.create(new UniqueEntityID(1)).getValue(),
+                competitionId: CompetitionId.create(
+                    new UniqueEntityID(1)
+                ).getValue(),
                 venue,
                 winner,
                 summary,

@@ -8,6 +8,7 @@ export interface RoomRepo {
 }
 
 export type QueryRoom = NexusGenObjects["Room"];
+export type QueryRoomGame = NexusGenObjects["RoomGame"];
 export interface RoomReadRepo {
     getRoomById(roomId: string): Promise<QueryRoom | undefined>;
 }

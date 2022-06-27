@@ -40,7 +40,7 @@ export const RoomGame = objectType({
         t.id("winnerId");
         t.nonNull.field("type", { type: "GameType" });
         t.nonNull.field("status", { type: "GameStatus" });
-        t.nonNull.list.field("leaderBoard", { type: "GamePlayer" });
+        t.nonNull.list.field("leaderboard", { type: "GamePlayer" });
         t.nonNull.json("summary");
         t.dateTime("createdAt");
         t.dateTime("updatedAt");
@@ -60,20 +60,8 @@ export const Prediction = objectType({
     name: "Prediction",
     definition(t) {
         t.nonNull.string("code");
-        t.nonNull.string("type");
-        t.string("question");
-        t.list.field("options", { type: "PredictionOption" });
         t.json("solution"); // any
         t.int("points");
-        t.json("value"); // any
-    },
-});
-
-export const PlayerPredictionInput = inputObjectType({
-    name: "PlayerPredictionInput",
-    definition(t) {
-        t.nonNull.string("code");
-        t.nonNull.string("type");
         t.json("value"); // any
     },
 });
@@ -94,7 +82,7 @@ export const PredictionInput = inputObjectType({
     definition(t) {
         t.string("predictionId");
         t.nonNull.string("matchId");
-        t.nonNull.list.field("predictions", { type: "PlayerPredictionInput" });
+        t.json("predictions"); // Record<MatchQuestionCode, any>
     },
 });
 

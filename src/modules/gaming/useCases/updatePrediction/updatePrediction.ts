@@ -55,7 +55,7 @@ export class UpdatePrediction
 
             const playerPredictionOrError = PlayerPredictions.create(
                 request.predictions,
-                false,
+                true,
                 match.questions
             );
 

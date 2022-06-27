@@ -1,6 +1,7 @@
 import { booleanArg, extendType, objectType, stringArg } from "nexus";
-import { getMatchMock } from "./mocks/Fixtures";
-// import { fixturesResolver } from "../../../../modules/gaming/useCases/fetchFixtures/fetchFixturesResolver";
+// import { getMatchMock } from "./mocks/Fixtures";
+import { fixturesResolver } from "../../../../modules/gaming/useCases/fetchFixtures/fetchFixturesResolver";
+import { withUser } from "./utils";
 
 export const MatchStatus = objectType({
     name: "MatchStatus",
@@ -29,6 +30,24 @@ export const MatchStatistic = objectType({
     },
 });
 
+export const LineUpPlayer = objectType({
+    name: "LineUpPlayer",
+    definition(t) {
+        t.string("id");
+        t.string("name");
+        t.string("pos");
+        t.string("number");
+    },
+});
+
+export const LineUp = objectType({
+    name: "LineUp",
+    definition(t) {
+        t.nonNull.list.field("startingXI", { type: "LineUpPlayer" });
+        t.nonNull.list.field("substitutes", { type: "LineUpPlayer" });
+    },
+});
+
 export const Team = objectType({
     name: "Team",
     definition(t) {
@@ -40,6 +59,8 @@ export const Team = objectType({
         t.string("score");
         t.boolean("winner");
         t.list.field("statistics", { type: "MatchStatistic" });
+        t.field("lineup", { type: "LineUp" });
+        t.json("colours");
     },
 });
 
@@ -55,6 +76,7 @@ export const Match = objectType({
     name: "Match",
     definition(t) {
         t.id("id");
+        t.nonNull.string("name");
         t.nonNull.field("teams", { type: "TeamData" });
         t.nonNull.field("status", { type: "MatchStatus" });
         t.nonNull.dateTime("dateTime");
@@ -62,8 +84,8 @@ export const Match = objectType({
         t.nonNull.string("season");
         t.string("venue");
         t.string("winner");
-        t.json("scores");
-        t.list.field("questions", { type: "Prediction" });
+        t.int("userPoints");
+        t.list.field("predictions", { type: "Prediction" });
         t.json("misc");
     },
 });
@@ -77,9 +99,10 @@ export const FixturesQuery = extendType({
                 date: stringArg(),
                 live: booleanArg(),
             },
-            async resolve(_parent, _args, _context, _info) {
-                return [getMatchMock()];
-            },
+            // async resolve(_parent, _args, _context, _info) {
+            //     return [getMatchMock()];
+            // },
+            resolve: withUser(fixturesResolver),
         });
     },
 });

@@ -91,6 +91,18 @@ A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
 """
 scalar JWT
 
+type LineUp {
+  startingXI: [LineUpPlayer]!
+  substitutes: [LineUpPlayer]!
+}
+
+type LineUpPlayer {
+  id: String
+  name: String
+  number: String
+  pos: String
+}
+
 input LoginInput {
   emailOrUsername: String!
   ip: IPv4
@@ -101,12 +113,13 @@ type Match {
   dateTime: DateTime!
   id: ID
   misc: JSON
+  name: String!
   periods: MatchPeriod!
-  questions: [Prediction]
-  scores: JSON
+  predictions: [Prediction]
   season: String!
   status: MatchStatus!
   teams: TeamData!
+  userPoints: Int
   venue: String
   winner: String
 }
@@ -185,26 +198,17 @@ A field whose value conforms to the standard E.164 format as specified in: https
 """
 scalar PhoneNumber
 
-input PlayerPredictionInput {
-  code: String!
-  type: String!
-  value: JSON
-}
-
 type Prediction {
   code: String!
-  options: [PredictionOption]
   points: Int
-  question: String
   solution: JSON
-  type: String!
   value: JSON
 }
 
 input PredictionInput {
   matchId: String!
   predictionId: String
-  predictions: [PlayerPredictionInput]!
+  predictions: JSON
 }
 
 type PredictionOption {
@@ -242,7 +246,7 @@ type RoomGame {
   description: String
   expiringAt: DateTime
   id: ID!
-  leaderBoard: [GamePlayer]!
+  leaderboard: [GamePlayer]!
   name: String!
   roomId: ID!
   status: GameStatus!
@@ -259,7 +263,9 @@ enum RoomType {
 
 type Team {
   code: String!
+  colours: JSON
   id: ID!
+  lineup: LineUp
   logo: String!
   name: String!
   score: String

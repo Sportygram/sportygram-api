@@ -1,3 +1,4 @@
+import logger from "../../../../../lib/core/Logger";
 import { apiFootballService } from "../../../services/footballService";
 import { createMatch } from "../../../useCases/createMatch";
 
@@ -46,6 +47,6 @@ export async function seedMatches() {
         total: fixturesDTO.length,
         ...summary,
     };
-    console.log(result);
+    logger.info("Match seed results", result);
     return result;
 }

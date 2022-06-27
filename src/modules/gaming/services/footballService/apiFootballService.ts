@@ -1,8 +1,16 @@
 import { prisma } from "../../../../infra/database/prisma/client";
 import logger from "../../../../lib/core/Logger";
-import { Athlete, MatchStatus, Team } from "../../domain/types";
+import { Match } from "../../domain/match";
+import {
+    Athlete,
+    FootballPeriod,
+    MatchMetadata,
+    MatchStatus,
+    Team,
+} from "../../domain/types";
 import {
     getFixtures,
+    getLiveFixture,
     getTeamPlayers,
 } from "../../externalServices/apiFootball";
 import {
@@ -14,7 +22,7 @@ import { MatchDTO } from "../../useCases/createMatch/createMatchDTO";
 import { FootballService } from "./footballService.types";
 
 export class ApiFootballService implements FootballService {
-    getLeagues(): Promise<any> {
+    getCompetitions(): Promise<any> {
         throw new Error("Method not implemented.");
     }
     getTeams(): Promise<Team[]> {
@@ -54,8 +62,24 @@ export class ApiFootballService implements FootballService {
     getMatchLineUp(): Promise<any> {
         throw new Error("Method not implemented.");
     }
-    getLiveMatchUpdates(): Promise<any> {
-        throw new Error("Method not implemented.");
+
+    async getLiveMatch(match: Match): Promise<MatchDTO> {
+        const afId = match.sources?.apiFootball?.id;
+        try {
+            let fixture = await getLiveFixture(afId);
+            if (!fixture) {
+                const fixtures = await getFixtures({
+                    id: afId,
+                    league: 39,
+                    season: 2022,
+                });
+                fixture = fixtures[0];
+            }
+            return fixtureDataToMatchDTOMap(fixture);
+        } catch (error) {
+            logger.info(`Error fetching fixtures from apiFootball`, error);
+            throw error;
+        }
     }
     getMatchStatistics(): Promise<any> {
         throw new Error("Method not implemented.");
@@ -125,16 +149,18 @@ async function fixtureDataToMatchDTOMap(
         else winner = "draw";
     }
 
-    const statistics = [
-        fixtureData.teams.home.statistics,
-        fixtureData.teams.away.statistics,
-    ];
+    const statistics = {
+        [homeTeam.code]: fixtureData.teams.home.statistics,
+        [awayTeam.code]: fixtureData.teams.away.statistics,
+    };
 
     return {
         teams,
         sport: "football",
         status,
         dateTime: fixtureData.fixture.date,
+        // TODO: Checkout periods for apiFootbal match that extended to penalties
+        // It's okay for now, premier league does not extend to penalties
         periods: {
             first: (fixtureData.fixture.periods.first
                 ? new Date(fixtureData.fixture.periods.first * 1000)
@@ -145,11 +171,24 @@ async function fixtureDataToMatchDTOMap(
                     fixtureData.fixture.periods.second * 1000
                 ).toISOString(),
             }),
-        },
+        } as Record<Partial<FootballPeriod>, string>,
         season: `${fixtureData.league.season}`,
         venue: fixtureData.fixture.venue.name,
         winner: winner ? `${winner}` : undefined,
-        summary: { score: fixtureData.score, statistics },
+        summary: {
+            scores: {
+                [homeTeam.code]: fixtureData.goals.home || 0,
+                [awayTeam.code]: fixtureData.goals.away || 0,
+            },
+            scoresByPeriodEnd: {
+                first: fixtureData.score.halftime,
+                second: fixtureData.score.fulltime,
+                firstExtra: undefined,
+                secondExtra: fixtureData.score.extratime,
+                penalties: fixtureData.score.penalty,
+            },
+            statistics,
+        },
         questions: [],
         sources: { apiFootball: { id: fixtureData.fixture.id } },
         metadata: {
@@ -166,6 +205,6 @@ async function fixtureDataToMatchDTOMap(
                     code: awayTeam.code,
                 },
             },
-        },
+        } as MatchMetadata,
     };
 }

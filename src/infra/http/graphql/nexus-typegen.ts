@@ -82,15 +82,10 @@ export interface NexusGenInputs {
     ip?: NexusGenScalars['IPv4'] | null; // IPv4
     password: string; // String!
   }
-  PlayerPredictionInput: { // input type
-    code: string; // String!
-    type: string; // String!
-    value?: NexusGenScalars['JSON'] | null; // JSON
-  }
   PredictionInput: { // input type
     matchId: string; // String!
     predictionId?: string | null; // String
-    predictions: Array<NexusGenInputs['PlayerPredictionInput'] | null>; // [PlayerPredictionInput]!
+    predictions?: NexusGenScalars['JSON'] | null; // JSON
   }
   UpdateRoomInput: { // input type
     description?: string | null; // String
@@ -166,16 +161,27 @@ export interface NexusGenObjects {
     score: number; // Float!
     username: string; // String!
   }
+  LineUp: { // root type
+    startingXI: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
+    substitutes: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
+  }
+  LineUpPlayer: { // root type
+    id?: string | null; // String
+    name?: string | null; // String
+    number?: string | null; // String
+    pos?: string | null; // String
+  }
   Match: { // root type
     dateTime: NexusGenScalars['DateTime']; // DateTime!
     id?: string | null; // ID
     misc?: NexusGenScalars['JSON'] | null; // JSON
+    name: string; // String!
     periods: NexusGenRootTypes['MatchPeriod']; // MatchPeriod!
-    questions?: Array<NexusGenRootTypes['Prediction'] | null> | null; // [Prediction]
-    scores?: NexusGenScalars['JSON'] | null; // JSON
+    predictions?: Array<NexusGenRootTypes['Prediction'] | null> | null; // [Prediction]
     season: string; // String!
     status: NexusGenRootTypes['MatchStatus']; // MatchStatus!
     teams: NexusGenRootTypes['TeamData']; // TeamData!
+    userPoints?: number | null; // Int
     venue?: string | null; // String
     winner?: string | null; // String
   }
@@ -211,11 +217,8 @@ export interface NexusGenObjects {
   }
   Prediction: { // root type
     code: string; // String!
-    options?: Array<NexusGenRootTypes['PredictionOption'] | null> | null; // [PredictionOption]
     points?: number | null; // Int
-    question?: string | null; // String
     solution?: NexusGenScalars['JSON'] | null; // JSON
-    type: string; // String!
     value?: NexusGenScalars['JSON'] | null; // JSON
   }
   PredictionOption: { // root type
@@ -243,7 +246,7 @@ export interface NexusGenObjects {
     description?: string | null; // String
     expiringAt?: NexusGenScalars['DateTime'] | null; // DateTime
     id: string; // ID!
-    leaderBoard: Array<NexusGenRootTypes['GamePlayer'] | null>; // [GamePlayer]!
+    leaderboard: Array<NexusGenRootTypes['GamePlayer'] | null>; // [GamePlayer]!
     name: string; // String!
     roomId: string; // ID!
     status: NexusGenEnums['GameStatus']; // GameStatus!
@@ -254,7 +257,9 @@ export interface NexusGenObjects {
   }
   Team: { // root type
     code: string; // String!
+    colours?: NexusGenScalars['JSON'] | null; // JSON
     id: string; // ID!
+    lineup?: NexusGenRootTypes['LineUp'] | null; // LineUp
     logo: string; // String!
     name: string; // String!
     score?: string | null; // String
@@ -348,16 +353,27 @@ export interface NexusGenFieldTypes {
     score: number; // Float!
     username: string; // String!
   }
+  LineUp: { // field return type
+    startingXI: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
+    substitutes: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
+  }
+  LineUpPlayer: { // field return type
+    id: string | null; // String
+    name: string | null; // String
+    number: string | null; // String
+    pos: string | null; // String
+  }
   Match: { // field return type
     dateTime: NexusGenScalars['DateTime']; // DateTime!
     id: string | null; // ID
     misc: NexusGenScalars['JSON'] | null; // JSON
+    name: string; // String!
     periods: NexusGenRootTypes['MatchPeriod']; // MatchPeriod!
-    questions: Array<NexusGenRootTypes['Prediction'] | null> | null; // [Prediction]
-    scores: NexusGenScalars['JSON'] | null; // JSON
+    predictions: Array<NexusGenRootTypes['Prediction'] | null> | null; // [Prediction]
     season: string; // String!
     status: NexusGenRootTypes['MatchStatus']; // MatchStatus!
     teams: NexusGenRootTypes['TeamData']; // TeamData!
+    userPoints: number | null; // Int
     venue: string | null; // String
     winner: string | null; // String
   }
@@ -412,11 +428,8 @@ export interface NexusGenFieldTypes {
   }
   Prediction: { // field return type
     code: string; // String!
-    options: Array<NexusGenRootTypes['PredictionOption'] | null> | null; // [PredictionOption]
     points: number | null; // Int
-    question: string | null; // String
     solution: NexusGenScalars['JSON'] | null; // JSON
-    type: string; // String!
     value: NexusGenScalars['JSON'] | null; // JSON
   }
   PredictionOption: { // field return type
@@ -450,7 +463,7 @@ export interface NexusGenFieldTypes {
     description: string | null; // String
     expiringAt: NexusGenScalars['DateTime'] | null; // DateTime
     id: string; // ID!
-    leaderBoard: Array<NexusGenRootTypes['GamePlayer'] | null>; // [GamePlayer]!
+    leaderboard: Array<NexusGenRootTypes['GamePlayer'] | null>; // [GamePlayer]!
     name: string; // String!
     roomId: string; // ID!
     status: NexusGenEnums['GameStatus']; // GameStatus!
@@ -461,7 +474,9 @@ export interface NexusGenFieldTypes {
   }
   Team: { // field return type
     code: string; // String!
+    colours: NexusGenScalars['JSON'] | null; // JSON
     id: string; // ID!
+    lineup: NexusGenRootTypes['LineUp'] | null; // LineUp
     logo: string; // String!
     name: string; // String!
     score: string | null; // String
@@ -554,16 +569,27 @@ export interface NexusGenFieldTypeNames {
     score: 'Float'
     username: 'String'
   }
+  LineUp: { // field return type name
+    startingXI: 'LineUpPlayer'
+    substitutes: 'LineUpPlayer'
+  }
+  LineUpPlayer: { // field return type name
+    id: 'String'
+    name: 'String'
+    number: 'String'
+    pos: 'String'
+  }
   Match: { // field return type name
     dateTime: 'DateTime'
     id: 'ID'
     misc: 'JSON'
+    name: 'String'
     periods: 'MatchPeriod'
-    questions: 'Prediction'
-    scores: 'JSON'
+    predictions: 'Prediction'
     season: 'String'
     status: 'MatchStatus'
     teams: 'TeamData'
+    userPoints: 'Int'
     venue: 'String'
     winner: 'String'
   }
@@ -618,11 +644,8 @@ export interface NexusGenFieldTypeNames {
   }
   Prediction: { // field return type name
     code: 'String'
-    options: 'PredictionOption'
     points: 'Int'
-    question: 'String'
     solution: 'JSON'
-    type: 'String'
     value: 'JSON'
   }
   PredictionOption: { // field return type name
@@ -656,7 +679,7 @@ export interface NexusGenFieldTypeNames {
     description: 'String'
     expiringAt: 'DateTime'
     id: 'ID'
-    leaderBoard: 'GamePlayer'
+    leaderboard: 'GamePlayer'
     name: 'String'
     roomId: 'ID'
     status: 'GameStatus'
@@ -667,7 +690,9 @@ export interface NexusGenFieldTypeNames {
   }
   Team: { // field return type name
     code: 'String'
+    colours: 'JSON'
     id: 'ID'
+    lineup: 'LineUp'
     logo: 'String'
     name: 'String'
     score: 'String'
