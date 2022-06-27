@@ -10,6 +10,8 @@ on:
 
 env:
   DATABASE_URL: postgresql://huddle:huddle@localhost:8001/huddletestdb?schema=public
+  API_FOOTBALL_RAPID_API_KEY: 79176980ecmsh2362c18cb2a82e7p1c79ebjsn6f6fb482c713
+
 
 jobs:
   build:
