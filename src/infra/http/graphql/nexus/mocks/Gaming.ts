@@ -16,9 +16,12 @@ function getPlayerMock(p?: Partial<GamePlayer>): GamePlayer {
     const username = p?.username || "olucurious";
     return {
         username,
-        displayName: username,
+        name: username,
         playerId: uuid(),
         score,
+        profileImageUrl: "",
+        rank: 1,
+        rankStatus: "up",
         ...p,
     };
 }

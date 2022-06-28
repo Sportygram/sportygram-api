@@ -159,6 +159,7 @@ model Competition {
   matches          Match[]
   competitionTeams TeamCompetition[]
 
+  RoomGame RoomGame[]
   @@map("competitions")
 }
 
@@ -274,21 +275,24 @@ model MatchPrediction {
 }
 
 model RoomGame {
-  id          String         @id @db.Uuid
-  name        String
-  description String?
-  roomId      String         @map("room_id") @db.Uuid
-  leagueId    String         @map("league_id") @db.Uuid
-  type        RoomGameType
-  status      RoomGameStatus
-  leaderboard Json           @default("[]")
-  summary     Json           @default("{}")
-  createdAt   DateTime?      @default(now()) @map("created_at")
-  expiringAt  DateTime       @map("expiring_at")
-  updatedAt   DateTime?      @updatedAt @map("updated_at")
-  room        Room           @relation(fields: [roomId], references: [id])
+  id            String         @id @db.Uuid
+  name          String
+  description   String?
+  roomId        String         @map("room_id") @db.Uuid
+  competitionId Int            @map("competition_id")
+  type          RoomGameType
+  status        RoomGameStatus
+  leaderboard   Json           @default("[]")
+  summary       Json           @default("{}")
+  createdAt     DateTime?      @default(now()) @map("created_at")
+  expiringAt    DateTime       @map("expiring_at")
+  updatedAt     DateTime?      @updatedAt @map("updated_at")
+  room          Room           @relation(fields: [roomId], references: [id])
+  competition   Competition    @relation(fields: [competitionId], references: [id])
+
 
   @@index([roomId], map: "room_id_index")
+  @@index([competitionId], map: "competition_id_index")
   @@map("room_games")
 }
 

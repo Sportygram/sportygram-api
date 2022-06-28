@@ -67,6 +67,7 @@ export class Room extends AggregateRoot<RoomProps> {
         return Result.ok();
     }
     public addNewMember(member: ChatUser): Result<void> {
+        // TODO: dispatch member added and add member to RoomGames leaderboards
         if (!this.members) this.props.members = RoomChatUsers.create([]);
         this.members?.add(member);
         return Result.ok();
@@ -96,7 +97,10 @@ export class Room extends AggregateRoot<RoomProps> {
         super(roomProps, id);
     }
 
-    public static create(props: Omit<RoomProps, "members">, id?: UniqueEntityID): Result<Room> {
+    public static create(
+        props: Omit<RoomProps, "members">,
+        id?: UniqueEntityID
+    ): Result<Room> {
         const guardResult = Guard.againstNullOrUndefinedBulk([
             { argument: props.name, argumentName: "name" },
             { argument: props.roomType, argumentName: "roomType" },

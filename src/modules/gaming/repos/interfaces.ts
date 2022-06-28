@@ -1,4 +1,5 @@
 import { NexusGenObjects } from "../../../infra/http/graphql/nexus-typegen";
+import { Game } from "../domain/game";
 import { Match } from "../domain/match";
 import { MatchPrediction } from "../domain/matchPrediction";
 import { Player } from "../domain/player";
@@ -34,4 +35,8 @@ export interface MatchPredictionReadRepo {
     getMatchPredictionById(
         predictionId: string
     ): Promise<QueryMatchPrediction | undefined>;
+}
+
+export interface RoomGameRepo {
+    save(roomGame: Game): Promise<void>;
 }

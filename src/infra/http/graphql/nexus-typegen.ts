@@ -108,6 +108,7 @@ export interface NexusGenEnums {
   ChatUserRoleType: "admin" | "channel_member" | "channel_moderator" | "user"
   GameStatus: "completed" | "in_progress"
   GameType: "season" | "weekly"
+  RankStatus: "down" | "same" | "up"
   RoomType: "private" | "public"
   sort: "ASC" | "DESC"
 }
@@ -156,8 +157,11 @@ export interface NexusGenObjects {
     prev?: string | null; // String
   }
   GamePlayer: { // root type
-    displayName: string; // String!
+    name: string; // String!
     playerId: string; // ID!
+    profileImageUrl: string; // String!
+    rank: number; // Int!
+    rankStatus: NexusGenEnums['RankStatus']; // RankStatus!
     score: number; // Float!
     username: string; // String!
   }
@@ -348,8 +352,11 @@ export interface NexusGenFieldTypes {
     prev: string | null; // String
   }
   GamePlayer: { // field return type
-    displayName: string; // String!
+    name: string; // String!
     playerId: string; // ID!
+    profileImageUrl: string; // String!
+    rank: number; // Int!
+    rankStatus: NexusGenEnums['RankStatus']; // RankStatus!
     score: number; // Float!
     username: string; // String!
   }
@@ -564,8 +571,11 @@ export interface NexusGenFieldTypeNames {
     prev: 'String'
   }
   GamePlayer: { // field return type name
-    displayName: 'String'
+    name: 'String'
     playerId: 'ID'
+    profileImageUrl: 'String'
+    rank: 'Int'
+    rankStatus: 'RankStatus'
     score: 'Float'
     username: 'String'
   }

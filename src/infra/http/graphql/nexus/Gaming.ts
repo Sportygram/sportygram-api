@@ -20,13 +20,21 @@ export const GameStatus = enumType({
     members: ["completed", "in_progress"],
 });
 
+export const RankStatus = enumType({
+    name: "RankStatus",
+    members: ["up", "same", "down"],
+});
+
 export const GamePlayer = objectType({
     name: "GamePlayer",
     definition(t) {
         t.nonNull.id("playerId");
+        t.nonNull.string("name");
         t.nonNull.string("username");
-        t.nonNull.string("displayName");
         t.nonNull.float("score");
+        t.nonNull.int("rank");
+        t.nonNull.field("rankStatus", { type: "RankStatus" }); // up, down, same
+        t.nonNull.string("profileImageUrl");
     },
 });
 

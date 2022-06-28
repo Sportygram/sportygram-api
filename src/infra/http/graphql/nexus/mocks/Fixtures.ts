@@ -86,8 +86,22 @@ let teamsDefault: TeamData = {
             },
         ],
         lineup: {
-            startingXI: [],
-            substitutes: [],
+            startingXI: [
+                {
+                    id: "2",
+                    name: "Lacazette",
+                    pos: "DM",
+                    number: "6",
+                },
+            ],
+            substitutes: [
+                {
+                    id: "2",
+                    name: "Lacazette",
+                    pos: "DM",
+                    number: "6",
+                },
+            ],
         },
     },
     away: {

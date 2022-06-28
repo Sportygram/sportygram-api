@@ -20,6 +20,7 @@ export type ChatUserMetadata = {
 
 interface ChatUserProps {
     userId: UserId;
+    username?: string;
     displayName?: string;
     role?: string;
     coinBalance: number;
@@ -36,6 +37,9 @@ export class ChatUser extends AggregateRoot<ChatUserProps> {
         return this.props.userId;
     }
 
+    get username(): string | undefined {
+        return this.props.username;
+    }
     get displayName(): string | undefined {
         return this.props.displayName;
     }

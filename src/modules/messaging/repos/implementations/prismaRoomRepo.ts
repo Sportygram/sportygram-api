@@ -1,8 +1,12 @@
+import dayjs from "dayjs";
 import { JsonObject } from "swagger-ui-express";
 import { prisma } from "../../../../infra/database/prisma/client";
+import { LeaderboardPlayer } from "../../../gaming/domain/types";
 import { Room } from "../../domain/room";
 import { RoomMap } from "../../mappers/roomMap";
 import { RoomRepo } from "../interfaces";
+import { v4 as uuidv4 } from "uuid";
+import { RoomGameStatus, RoomGameType } from "@prisma/client";
 
 export class PrismaRoomRepo implements RoomRepo {
     async getRoomById(roomId: string): Promise<Room | undefined> {
@@ -17,6 +21,21 @@ export class PrismaRoomRepo implements RoomRepo {
 
     async save(room: Room): Promise<void> {
         const rawRoom = RoomMap.toPersistence(room);
+        const defaultRoomGame = {
+            id: uuidv4(),
+            name: `EPL weekly game`,
+            competitionId: 1,
+            type: "weekly" as RoomGameType,
+            status: "in_progress" as RoomGameStatus,
+            summary: {},
+            leaderboard: [] as LeaderboardPlayer[],
+            expiringAt: dayjs()
+                .add(1, "week")
+                .startOf("week")
+                .add(1, "day")
+                .toISOString(),
+        };
+
         const roomEntity = {
             ...rawRoom,
             metadata: rawRoom.metadata as JsonObject,
@@ -30,6 +49,17 @@ export class PrismaRoomRepo implements RoomRepo {
                     role: member.role,
                 })),
             };
+
+            defaultRoomGame.leaderboard = [
+                ...defaultRoomGame.leaderboard,
+                ...room.members.getNewItems().map((member) => ({
+                    playerId: member.userId.id.toString(),
+                    username: member.username,
+                    rank: 1,
+                    prevRank: 1,
+                    score: 0,
+                })),
+            ];
         }
 
         const updateMany = room.members?.getItems().map((member) => ({
@@ -67,6 +97,20 @@ export class PrismaRoomRepo implements RoomRepo {
             create: {
                 ...roomEntity,
                 roomChatUsers,
+                roomGames: {
+                    createMany: {
+                        data: [
+                            defaultRoomGame,
+                            {
+                                ...defaultRoomGame,
+                                id: uuidv4(),
+                                name: `EPL season game`,
+                                type: "season",
+                                expiringAt: new Date("2023-05-29"),
+                            },
+                        ],
+                    },
+                },
             },
         });
     }

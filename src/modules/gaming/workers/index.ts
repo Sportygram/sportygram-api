@@ -24,9 +24,7 @@ Every 2 minutes,
     - live matches: matches status=in_progress that have not been updated in the last 1min.
 - Prioritize using APIs that allow fetching all live match update in a request
     NOTE (They may be slower so check speed and monetary cost of fetch)
-- This will serve as a backup strategy if APIs with a notification system for updates fail
-
-
+- This will serve as a backup strategy if APIs with a notification system for updates fail 
 After Live Match Updated,
 - For each scorable event, update corresponding questions 
     (question that can be solved by event and does not have solution yet) solution and 

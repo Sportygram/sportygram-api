@@ -29,11 +29,6 @@ export type RawMatch = PMatch & {
 };
 export class MatchMap {
     public static footballRawToQueryMatch(raw: RawMatch): QueryMatch {
-        const status = {
-            long: "Match Finished",
-            short: "FT",
-            elapsed: 90,
-        };
         const metadata = raw.metadata;
         const summary = raw.summary;
         const periods = raw.periods;
@@ -56,7 +51,7 @@ export class MatchMap {
         return {
             ...raw,
             periods, // TODO: Maybe add endOfPeriod scores here
-            status, // : metadata.status
+            status: metadata.status,
             winner,
             teams: {
                 home: {

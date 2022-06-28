@@ -24,7 +24,7 @@ export class PlayerMap {
                 displayName: raw.displayName || undefined,
                 coinBalance: raw.coinBalance.toNumber(),
                 metadata: (raw.metadata as ChatUserMetadata) || {},
-                gamesSummary: (raw.metadata as GamesSummary) || {},
+                gamesSummary: (raw.gamesSummary as GamesSummary) || {},
                 userId,
             },
             new UniqueEntityID(raw.id)

@@ -8,7 +8,7 @@ export type RawChatUser = Pick<
     PChatUser,
     "id" | "metadata" | "coinBalance" | "displayName" | "userId"
 > &
-    Partial<PChatUser>;
+    Partial<PChatUser> & { username?: string };
 
 export class ChatUserMap {
     // public static toDTO(chatUser: ChatUser): ChatUserDTO {
@@ -23,6 +23,7 @@ export class ChatUserMap {
         const userId = UserId.create(new UniqueEntityID(raw.userId)).getValue();
         const chatUserOrError = ChatUser.create(
             {
+                username: raw.username,
                 displayName: raw.displayName || undefined,
                 coinBalance: raw.coinBalance.toNumber(),
                 metadata: (raw.metadata as ChatUserMetadata) || {},

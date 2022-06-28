@@ -3,19 +3,25 @@ import { Result } from "../../../lib/core/Result";
 import { AggregateRoot } from "../../../lib/domain/AggregateRoot";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
 import { RoomId } from "../../messaging/domain/roomId";
+import { CompetitionId } from "./competitionId";
 import { GameId } from "./gameId";
-import { LeagueId } from "./leagueId";
 import { LeaderboardPlayer } from "./types";
+
+const GameType = ["weekly", "season"] as const;
+type GameType = typeof GameType[number];
+
+const GameStatus = ["completed", "in_progress"] as const;
+type GameStatus = typeof GameStatus[number];
 
 interface GameProps {
     name: string;
-    description: string;
+    description?: string;
     roomId: RoomId;
-    leagueId: LeagueId;
-    type: "weekly" | "season";
-    status: "completed" | "in_progress";
-    summary: any;
-    leaderboard: LeaderboardPlayer[];
+    competitionId: CompetitionId;
+    type: string;
+    status?: string;
+    summary?: any;
+    leaderboard?: LeaderboardPlayer[];
     expiringAt: Date;
     createdAt?: Date;
     updatedAt?: Date;
@@ -33,16 +39,16 @@ export class Game extends AggregateRoot<GameProps> {
         return this.props.description;
     }
     get roomId(): RoomId {
-        return this.props.roomId
+        return this.props.roomId;
     }
-    get leagueId(): LeagueId {
-        return this.props.leagueId;
+    get competitionId(): CompetitionId {
+        return this.props.competitionId;
     }
-    get type() {
-        return this.props.type;
+    get type(): GameType {
+        return this.props.type as GameType;
     }
-    get status() {
-        return this.props.status;
+    get status(): GameStatus {
+        return this.props.status as GameStatus;
     }
     get summary() {
         return this.props.summary;
@@ -51,7 +57,7 @@ export class Game extends AggregateRoot<GameProps> {
         return this.props.leaderboard;
     }
     get expiringAt(): Date {
-        return this.props.expiringAt
+        return this.props.expiringAt;
     }
     get createdAt(): Date {
         return this.props.createdAt || new Date();
@@ -68,7 +74,7 @@ export class Game extends AggregateRoot<GameProps> {
         const guardResult = Guard.againstNullOrUndefinedBulk([
             { argument: props.name, argumentName: "name" },
             { argument: props.roomId, argumentName: "roomId" },
-            { argument: props.leagueId, argumentName: "leagueId" },
+            { argument: props.competitionId, argumentName: "competitionId" },
             { argument: props.type, argumentName: "type" },
             { argument: props.expiringAt, argumentName: "expiringAt" },
         ]);
@@ -77,12 +83,24 @@ export class Game extends AggregateRoot<GameProps> {
             return Result.fail<Game>(guardResult.message || "");
         }
 
-        const prediction = new Game(props, id);
+        const type = props.type.toLowerCase() as GameType;
+        const status = "in_progress";
+        const gameTypeGuard = Guard.isValidValueOfType<GameType>(
+            type,
+            GameType,
+            "type"
+        );
+
+        if (!gameTypeGuard.succeeded) {
+            return Result.fail<Game>("Invalid game type");
+        }
+
+        const game = new Game({ ...props, type, status }, id);
         // const isNewPrediction = !id;
 
         // if (isNewPrediction) {
         //     prediction.addDomainEvent(new MatchPredictionCreated(prediction));
         // }
-        return Result.ok<Game>(prediction);
+        return Result.ok<Game>(game);
     }
 }

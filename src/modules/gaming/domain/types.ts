@@ -1,5 +1,3 @@
-import { Player } from "./player";
-
 // f1 and nascar can be differnt sports if they have different enough rules for their matches
 export const Sport = [
     "football",
@@ -35,7 +33,7 @@ export interface Team {
     sport: Sport;
     competition?: Competition[]; // same team can play in different competitions so this should be in a relation table
     sources: Record<string, any>;
-    metadata: TeamMetadata
+    metadata: TeamMetadata;
     formation?: string;
     colours?: any;
     lineup?: LineUpPlayer[];
@@ -187,12 +185,13 @@ export interface RoomGame {
     name: string;
     description: string;
     roomId: string;
+    competitionId: string;
     type: "weekly" | "season";
     status: "completed" | "in_progress";
     summary: any; // week: number; might include an array of players and points
-    leaderBoard: Player[];
-    createdAt: Date;
+    leaderboard: LeaderboardPlayer[];
     expiringAt: Date;
+    createdAt: Date;
     updatedAt: Date;
 }
 
@@ -251,8 +250,7 @@ type LineUpPlayer = {
 
 export type LeaderboardPlayer = {
     playerId: string;
-    name: string;
-    username: string;
+    username?: string;
     score: number;
     rank: number;
     prevRank: number;

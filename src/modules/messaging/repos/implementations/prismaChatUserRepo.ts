@@ -9,10 +9,20 @@ export class PrismaChatUserRepo implements ChatUserRepo {
         if (!userId) return undefined;
         const chatUserEntity = await prisma.userProfile.findUnique({
             where: { userId },
+            include: {
+                user: {
+                    select: {
+                        username: true,
+                    },
+                },
+            },
         });
         if (!chatUserEntity) return undefined;
 
-        return ChatUserMap.toDomain(chatUserEntity);
+        return ChatUserMap.toDomain({
+            ...chatUserEntity,
+            username: chatUserEntity.user.username || undefined,
+        });
     }
 
     async save(chatUser: ChatUser): Promise<void> {
