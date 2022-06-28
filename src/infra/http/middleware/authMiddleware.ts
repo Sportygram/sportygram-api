@@ -1,4 +1,4 @@
-import { AuthenticationError } from "apollo-server-core";
+// import { AuthenticationError } from "apollo-server-core";
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../../../modules/iam/services/authService";
 import { FirebaseService } from "../../../lib/services/firebase";
@@ -50,19 +50,19 @@ export class AuthMiddleware {
                 return this.endRequest(res, "Token signature expired.", 401);
             }
 
-            const { userId } = decoded;
+            // const { userId } = decoded;
 
-            if (tokenSource === "huddle_auth") {
-                const tokens = await this.authService.getTokens(userId);
-                // if the token was found, just continue the request.
-                if (!tokens.length) {
-                    return this.endRequest(
-                        res,
-                        "Auth token not found. User is probably not logged in. Please login again.",
-                        403
-                    );
-                }
-            }
+            // if (tokenSource === "huddle_auth") {
+            //     const tokens = await this.authService.getTokens(userId);
+            //     // if the token was found, just continue the request.
+            //     if (!tokens.length) {
+            //         return this.endRequest(
+            //             res,
+            //             "Auth token not found. User is probably not logged in. Please login again.",
+            //             403
+            //         );
+            //     }
+            // }
             // If Token, Get full User Details
             const result = await this.fetchRequestUserByUserId.execute(decoded);
             if (result.isRight()) {
@@ -80,28 +80,28 @@ export class AuthMiddleware {
         const token = getJWTFromBearerToken(req.headers["authorization"] || "");
         if (!token) return;
 
-        let tokenSource: TokenSource = "firebase";
+        // let tokenSource: TokenSource = "firebase";
         let decoded;
 
         decoded = await this.firebaseService.decodeToken(token);
         if (!decoded) {
             decoded = await this.authService.decodeToken(token);
-            tokenSource = "huddle_auth";
+            // tokenSource = "huddle_auth";
         }
         if (!decoded) return;
 
         // See if the token was found
-        const { userId } = decoded;
+        // const { userId } = decoded;
 
-        if (tokenSource === "huddle_auth") {
-            const tokens = await this.authService.getTokens(userId);
-            // if the token was found, just continue the request.
-            if (!tokens.length) {
-                throw new AuthenticationError(
-                    "Auth token not found. User is probably not logged in. Please login again."
-                );
-            }
-        }
+        // if (tokenSource === "huddle_auth") {
+        //     const tokens = await this.authService.getTokens(userId);
+        //     // if the token was found, just continue the request.
+        //     if (!tokens.length) {
+        //         throw new AuthenticationError(
+        //             "Auth token not found. User is probably not logged in. Please login again."
+        //         );
+        //     }
+        // }
 
         // If Token, Get full User Details
         const result = await this.fetchRequestUserByUserId.execute(decoded);
