@@ -8,7 +8,7 @@ function getJWTFromBearerToken(token: string): string {
     return token.split(" ")[1];
 }
 
-type TokenSource = "firebase" | "huddle_auth";
+// type TokenSource = "firebase" | "huddle_auth";
 
 export class AuthMiddleware {
     constructor(
@@ -37,13 +37,13 @@ export class AuthMiddleware {
                 return this.endRequest(res, "No access token provided", 403);
             }
 
-            let tokenSource: TokenSource = "firebase";
+            // let tokenSource: TokenSource = "firebase";
             let decoded;
 
             decoded = await this.firebaseService.decodeToken(token);
             if (!decoded) {
                 decoded = await this.authService.decodeToken(token);
-                tokenSource = "huddle_auth";
+                // tokenSource = "huddle_auth";
             }
             // Confirm that the token was signed with our signature.
             if (!decoded) {
