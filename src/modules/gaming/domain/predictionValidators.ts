@@ -3,13 +3,8 @@ import { FootballQuestion, MatchQuestionCode } from "./types";
 
 export type PredictionValidator = (answer: any) => boolean;
 
-const finalScoreValidator: PredictionValidator = (answer) => {
-    return (
-        answer.home &&
-        answer.away &&
-        isValidNumber(answer.home) &&
-        isValidNumber(answer.away)
-    );
+const correctScoreValidator: PredictionValidator = (answer) => {
+    return isValidNumber(answer.home) && isValidNumber(answer.away);
 };
 
 const noOfGoalsValidator: PredictionValidator = (answer) => {
@@ -20,8 +15,8 @@ export const getPredictionValidator = (
     code: MatchQuestionCode
 ): PredictionValidator => {
     switch (code) {
-        case FootballQuestion.FinalScore:
-            return finalScoreValidator;
+        case FootballQuestion.CorrectScore:
+            return correctScoreValidator;
         case FootballQuestion.NoOfGoals:
             return noOfGoalsValidator;
         default:

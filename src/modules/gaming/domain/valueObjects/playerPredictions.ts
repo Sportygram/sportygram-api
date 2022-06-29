@@ -1,8 +1,8 @@
 import { Result } from "../../../../lib/core/Result";
 import { ValueObject } from "../../../../lib/domain/ValueObject";
+import { Match } from "../match";
 import { getPredictionValidator } from "../predictionValidators";
 import { PlayerPrediction } from "../types";
-import { MatchQuestions } from "./matchQuestions";
 
 export interface PlayerPredictionsProps {
     value: PlayerPrediction[];
@@ -20,7 +20,7 @@ export class PlayerPredictions extends ValueObject<PlayerPredictionsProps> {
     public static create(
         predictions: PlayerPrediction[],
         validate = true,
-        matchQuestions?: MatchQuestions
+        match?: Match
     ): Result<PlayerPredictions> {
         // check each question and confirm they have an appropriate answer
         if (!validate)
@@ -30,9 +30,16 @@ export class PlayerPredictions extends ValueObject<PlayerPredictionsProps> {
 
         let valid = false;
         let currentCode = "";
-        const questions = matchQuestions?.value;
-        if (!questions || !questions.length)
-            return Result.fail<PlayerPredictions>("Match questions required");
+        if (!match)
+            return Result.fail<PlayerPredictions>("Match teams required");
+
+        const questionsOrError = match.getQuestionsWithOptions();
+        if (questionsOrError.isFailure && questionsOrError.error)
+            return Result.fail<PlayerPredictions>(
+                questionsOrError.error.toString()
+            );
+
+        const questions = questionsOrError.getValue();
 
         for (let question of questions) {
             const { code, type, options } = question;
@@ -49,7 +56,11 @@ export class PlayerPredictions extends ValueObject<PlayerPredictionsProps> {
                         `${code} question options missing`
                     );
 
-                valid = !!options.find((o) => o.value === prediction.value);
+                valid = !!options.find(
+                    (o) =>
+                        o.value.toLowerCase() ===
+                        `${prediction.value}`.toLowerCase()
+                );
                 if (!valid) break;
             } else {
                 // get validator with code and validate

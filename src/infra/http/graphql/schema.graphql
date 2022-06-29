@@ -94,16 +94,11 @@ A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
 """
 scalar JWT
 
-type LineUp {
-  startingXI: [LineUpPlayer]!
-  substitutes: [LineUpPlayer]!
-}
-
 type LineUpPlayer {
   id: String
   name: String
   number: String
-  pos: String
+  position: String
 }
 
 input LoginInput {
@@ -201,6 +196,13 @@ A field whose value conforms to the standard E.164 format as specified in: https
 """
 scalar PhoneNumber
 
+type PlayerPositions {
+  D: [LineUpPlayer]!
+  F: [LineUpPlayer]!
+  GK: [LineUpPlayer]!
+  M: [LineUpPlayer]!
+}
+
 type Prediction {
   code: String!
   points: Int
@@ -274,9 +276,9 @@ type Team {
   code: String!
   colours: JSON
   id: ID!
-  lineup: LineUp
   logo: String!
   name: String!
+  players: PlayerPositions
   score: String
   stadium: String
   statistics: [MatchStatistic]

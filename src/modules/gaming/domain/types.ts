@@ -24,19 +24,22 @@ export interface Competition {
 }
 
 export type TeamCode = Partial<string>;
-export type TeamMetadata = { coach?: { name: string; photo: string } };
+export type TeamMetadata = {
+    coach?: { name: string; photo: string };
+    stadium: string;
+};
 export interface Team {
     id: number;
     name: string;
     code: string;
     logo: string;
     sport: Sport;
-    competition?: Competition[]; // same team can play in different competitions so this should be in a relation table
+    competitions?: Competition[]; // same team can play in different competitions so this should be in a relation table
     sources: Record<string, any>;
     metadata: TeamMetadata;
     formation?: string;
     colours?: any;
-    lineup?: LineUpPlayer[];
+    athletes?: { id: number }[];
     createdAt: Date;
     updatedAt: Date;
 }
@@ -126,41 +129,44 @@ export const FootballQuestion = {
     ManOfTheMatch: "man_of_the_match",
     BothTeamsScore: "both_teams_score",
     NoOfGoals: "no_of_goals",
-    FinalScore: "final_score",
+    CorrectScore: "correct_score",
 } as const;
 export type FootballQuestion =
     typeof FootballQuestion[keyof typeof FootballQuestion];
 
-export const MatchQuestionsMap: Record<
-    MatchQuestionCode,
-    Omit<MatchQuestion, "code">
-> = {
+export const MatchQuestionsMap: Record<MatchQuestionCode, MatchQuestion> = {
     [FootballQuestion.Winner]: {
+        code: FootballQuestion.Winner,
         question: "Who will win the match?",
         type: "select",
         correctPoints: 2,
     },
     [FootballQuestion.FirstToScore]: {
+        code: FootballQuestion.FirstToScore,
         question: "What team scores first?",
         type: "select",
         correctPoints: 2,
     },
     [FootballQuestion.ManOfTheMatch]: {
+        code: FootballQuestion.ManOfTheMatch,
         question: "Who is the man of the match?",
         type: "select",
         correctPoints: 2,
     },
     [FootballQuestion.BothTeamsScore]: {
+        code: FootballQuestion.BothTeamsScore,
         question: "Do both teams score?",
         type: "select",
         correctPoints: 2,
     },
     [FootballQuestion.NoOfGoals]: {
+        code: FootballQuestion.NoOfGoals,
         question: "How many goals will be scored?",
         type: "input",
         correctPoints: 2,
     },
-    [FootballQuestion.FinalScore]: {
+    [FootballQuestion.CorrectScore]: {
+        code: FootballQuestion.CorrectScore,
         question: "Correct score?",
         type: "customData",
         correctPoints: 5,
@@ -240,7 +246,7 @@ export type MatchMetadata = {
     teams: FootballTeams;
 };
 
-type LineUpPlayer = {
+export type LineUpPlayer = {
     id: number;
     name: string;
     pos: string;

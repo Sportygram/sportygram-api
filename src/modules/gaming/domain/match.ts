@@ -16,6 +16,9 @@ import {
     Sport,
     Team,
     Goal,
+    MatchQuestion,
+    FootballQuestion,
+    MatchQuestionsMap,
 } from "./types";
 import { MatchQuestions } from "./valueObjects/matchQuestions";
 
@@ -226,6 +229,40 @@ export class Match extends AggregateRoot<MatchProps> {
         // solve questions here or dispatch a MatchCompleted event that will handle
         this.addDomainEvent(new LiveMatchUpdated(this, events));
         return Result.ok();
+    }
+
+    public getQuestionsWithOptions(): Result<MatchQuestion[]> {
+        try {
+            const teamCodes = this.teams.map((t) => ({
+                value: t.code,
+                display: t.name,
+            }));
+
+            const questions = Object.assign({}, MatchQuestionsMap);
+            questions[FootballQuestion.Winner].options = [
+                ...teamCodes,
+                { value: "DRAW", display: "DRAW" },
+            ];
+            questions[FootballQuestion.FirstToScore].options = teamCodes;
+            questions[FootballQuestion.ManOfTheMatch].options = this.teams
+                .map((t) => {
+                    if (!t.athletes) throw new Error("Athletes not loaded");
+                    return t.athletes.map((a) => ({
+                        value: `${a.id}`,
+                        display: `${a.id}`,
+                    }));
+                })
+                .flat();
+
+            questions[FootballQuestion.BothTeamsScore].options = [
+                { value: "true", display: "true" },
+                { value: "false", display: "false" },
+            ];
+
+            return Result.ok(Object.values(questions));
+        } catch (e) {
+            return Result.fail(e);
+        }
     }
 
     private constructor(roleProps: MatchProps, id?: UniqueEntityID) {

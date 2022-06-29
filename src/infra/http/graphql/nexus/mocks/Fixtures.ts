@@ -57,7 +57,7 @@ let teamsDefault: TeamData = {
                 value: "2",
             },
             {
-                type: "Ball Possession",
+                type: "Ball positionsession",
                 value: "71%",
             },
             {
@@ -85,20 +85,36 @@ let teamsDefault: TeamData = {
                 value: "89%",
             },
         ],
-        lineup: {
-            startingXI: [
+        players: {
+            GK: [
                 {
                     id: "2",
                     name: "Lacazette",
-                    pos: "DM",
+                    position: "DM",
                     number: "6",
                 },
             ],
-            substitutes: [
+            D: [
                 {
                     id: "2",
                     name: "Lacazette",
-                    pos: "DM",
+                    position: "DM",
+                    number: "6",
+                },
+            ],
+            M: [
+                {
+                    id: "2",
+                    name: "Lacazette",
+                    position: "DM",
+                    number: "6",
+                },
+            ],
+            F: [
+                {
+                    id: "2",
+                    name: "Lacazette",
+                    position: "DM",
                     number: "6",
                 },
             ],
@@ -149,7 +165,7 @@ let teamsDefault: TeamData = {
                 value: "2",
             },
             {
-                type: "Ball Possession",
+                type: "Ball positionsession",
                 value: "71%",
             },
             {
@@ -177,9 +193,11 @@ let teamsDefault: TeamData = {
                 value: "89%",
             },
         ],
-        lineup: {
-            startingXI: [],
-            substitutes: [],
+        players: {
+            GK: [],
+            D: [],
+            M: [],
+            F: [],
         },
     },
 };
@@ -233,7 +251,7 @@ let fixtureDefault: Match = {
             points: 2,
         },
         {
-            code: FootballQuestion.FinalScore,
+            code: FootballQuestion.CorrectScore,
             solution: {
                 home: 1,
                 away: 1,

@@ -66,7 +66,32 @@ export class PrismaMatchReadRepo implements MatchReadRepo {
             include: {
                 matchTeams: {
                     select: {
-                        team: true,
+                        team: {
+                            select: {
+                                id: true,
+                                name: true,
+                                code: true,
+                                logo: true,
+                                sport: true,
+                                sources: true,
+                                metadata: true,
+                                createdAt: true,
+                                updatedAt: true,
+                                teamAthletes: {
+                                    select: {
+                                        position: true,
+                                        number: true,
+                                        athlete: {
+                                            select: {
+                                                id: true,
+                                                name: true,
+                                                metadata: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
             },

@@ -48,7 +48,7 @@ export class MakePrediction
             const playerPredictionOrError = PlayerPredictions.create(
                 request.predictions,
                 true,
-                match.questions
+                match 
             );
 
             if (

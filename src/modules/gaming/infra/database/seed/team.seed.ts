@@ -422,6 +422,7 @@ export const teamSeed = raw.map((tData, idx) => ({
     logo: tData.team.logo,
     sport: "football" as Sport,
     sources: { apiFootball: { id: tData.team.id } },
+    metadata: { stadium: tData.venue.name },
 }));
 
 export const teamCompetitionSeed = teamSeed.map((t) => ({

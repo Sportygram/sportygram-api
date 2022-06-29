@@ -20,7 +20,11 @@ export class PrismaMatchRepo implements MatchRepo {
             include: {
                 matchTeams: {
                     select: {
-                        team: true,
+                        team: {
+                            include: {
+                                teamAthletes: true,
+                            },
+                        },
                     },
                 },
             },
@@ -33,29 +37,40 @@ export class PrismaMatchRepo implements MatchRepo {
             summary: matchEntity.summary as Summary,
             sources: matchEntity.sources as Sources,
             metadata: matchEntity.sources as MatchMetadata,
-            teams: matchEntity.matchTeams.map((mt) => mt.team),
+            teams: matchEntity.matchTeams.map((mt) => {
+                return {
+                    ...mt.team,
+                    athletes: mt.team.teamAthletes.map((ta) => ({
+                        id: ta.athleteId,
+                    })),
+                };
+            }),
         };
 
         return MatchMap.toDomain(matchWithTeams);
     }
 
-    async getMatchByApiFootballId(apiFootballId: string): Promise<Match | undefined> {
+    async getMatchByApiFootballId(
+        apiFootballId: string
+    ): Promise<Match | undefined> {
         if (!apiFootballId) return undefined;
-        const matchEntity = (await prisma.match.findMany({
-            where: {
-                sources: {
-                    path: ["apiFootball", "id"],
-                    equals: apiFootballId,
-                },
-            },
-            include: {
-                matchTeams: {
-                    select: {
-                        team: true,
+        const matchEntity = (
+            await prisma.match.findMany({
+                where: {
+                    sources: {
+                        path: ["apiFootball", "id"],
+                        equals: apiFootballId,
                     },
                 },
-            },
-        }))[0];
+                include: {
+                    matchTeams: {
+                        select: {
+                            team: true,
+                        },
+                    },
+                },
+            })
+        )[0];
 
         if (!matchEntity) return undefined;
 
@@ -106,7 +121,7 @@ export class PrismaMatchRepo implements MatchRepo {
         const rawMatch = MatchMap.toPersistence(match);
 
         const matchTeamsData = {
-            data: match.teams.map((t) => ({ teamId: t.id     })),
+            data: match.teams.map((t) => ({ teamId: t.id })),
         };
 
         const pMatch = {

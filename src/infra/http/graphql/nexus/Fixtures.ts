@@ -35,16 +35,18 @@ export const LineUpPlayer = objectType({
     definition(t) {
         t.string("id");
         t.string("name");
-        t.string("pos");
+        t.string("position");
         t.string("number");
     },
 });
 
-export const LineUp = objectType({
-    name: "LineUp",
+export const PlayerPositions = objectType({
+    name: "PlayerPositions",
     definition(t) {
-        t.nonNull.list.field("startingXI", { type: "LineUpPlayer" });
-        t.nonNull.list.field("substitutes", { type: "LineUpPlayer" });
+        t.nonNull.list.field("GK", { type: "LineUpPlayer" });
+        t.nonNull.list.field("D", { type: "LineUpPlayer" });
+        t.nonNull.list.field("M", { type: "LineUpPlayer" });
+        t.nonNull.list.field("F", { type: "LineUpPlayer" });
     },
 });
 
@@ -59,7 +61,7 @@ export const Team = objectType({
         t.string("score");
         t.boolean("winner");
         t.list.field("statistics", { type: "MatchStatistic" });
-        t.field("lineup", { type: "LineUp" });
+        t.field("players", { type: "PlayerPositions" });
         t.json("colours");
     },
 });

@@ -3,6 +3,7 @@ import logger from "../../../../lib/core/Logger";
 import { Match } from "../../domain/match";
 import {
     Athlete,
+    Competition,
     FootballPeriod,
     MatchMetadata,
     MatchStatus,
@@ -33,7 +34,7 @@ export class ApiFootballService implements FootballService {
         const afId = team.sources?.apiFootball?.id;
         let teamPlayers: PlayerData[] = [];
 
-        let { response, paging } = await getTeamPlayers(afId);
+        let { response, paging } = await getTeamPlayers(afId, {});
         teamPlayers = [...teamPlayers, ...response];
 
         while (paging.current < paging.total) {
@@ -49,9 +50,10 @@ export class ApiFootballService implements FootballService {
         return teamPlayers.map(playerDataToAthleteMap);
     }
 
-    async getFixtures(): Promise<MatchDTO[]> {
+    async getFixtures(competition?: Competition): Promise<MatchDTO[]> {
         try {
-            const fixtures = await getFixtures();
+            const afId = competition?.sources?.apiFootball?.id;
+            const fixtures = await getFixtures({ league: afId });
             return await Promise.all(fixtures.map(fixtureDataToMatchDTOMap));
         } catch (error) {
             logger.info(`Error fetching fixtures from apiFootball`, error);
@@ -59,7 +61,7 @@ export class ApiFootballService implements FootballService {
         }
     }
 
-    getMatchLineUp(): Promise<any> {
+    async getMatchLineUp(_match: Match): Promise<any> {
         throw new Error("Method not implemented.");
     }
 

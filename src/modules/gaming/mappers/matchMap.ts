@@ -18,6 +18,7 @@ import {
     Summary,
     TeamMetadata,
 } from "../domain/types";
+import { groupBy } from "lodash";
 
 export type RawMatch = PMatch & {
     teams: PTeam[];
@@ -48,6 +49,10 @@ export class MatchMap {
             })
         );
 
+        const homeTeam = raw.teams.find((t) => t.code === homeCode) as any;
+        const awayTeam = raw.teams.find((t) => t.code === awayCode) as any;
+
+        const posArr = ["GK", "D", "M", "F"];
         return {
             ...raw,
             periods, // TODO: Maybe add endOfPeriod scores here
@@ -55,16 +60,35 @@ export class MatchMap {
             winner,
             teams: {
                 home: {
-                    ...raw.teams.find((t) => t.code === homeCode),
+                    ...homeTeam,
+                    stadium: homeTeam?.metadata?.stadium,
                     winner: winner === "home",
                     statistics: summary.statistics[homeCode],
                     score: summary.scores[homeCode],
+                    players: groupBy(
+                        homeTeam.teamAthletes.map((a: any, idx: number) => ({
+                            id: a.athlete.id,
+                            name: a.athlete.name,
+                            position: a.position || posArr[idx % 4],
+                            number: a.number || idx + 1,
+                        })),
+                        "position"
+                    ),
                 } as any,
                 away: {
-                    ...raw.teams.find((t) => t.code === awayCode),
+                    ...awayTeam,
                     winner: winner === "away",
                     statistics: summary.statistics[awayCode],
                     score: summary.scores[awayCode],
+                    players: groupBy(
+                        awayTeam.teamAthletes.map((a: any, idx: number) => ({
+                            id: a.athlete.id,
+                            name: a.athlete.name,
+                            position: a.position || posArr[idx % 4],
+                            number: a.number || idx,
+                        })),
+                        "position"
+                    ),
                 } as any,
             },
             predictions,
@@ -77,8 +101,8 @@ export class MatchMap {
         ).getValue();
         const teams = raw.teams.map((t) => ({
             ...t,
-            sources: raw.sources as Record<string, any>,
-            metadata: raw.metadata as TeamMetadata,
+            sources: t.sources as Record<string, any>,
+            metadata: t.metadata as TeamMetadata,
             createdAt: raw.createdAt || new Date(),
             updatedAt: raw.updatedAt || new Date(),
         }));

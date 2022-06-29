@@ -23,12 +23,14 @@ export async function getLeagues() {
     >;
 }
 
-export async function getTeams(
-    params: { league: number; season: number; id?: number } = {
-        league: 39,
-        season: 2022,
-    }
-) {
+export async function getTeams(params: {
+    league?: number;
+    season?: number;
+    id?: number;
+}) {
+    if (!params.league) params.league = 39;
+    if (!params.season) params.season = 2022;
+
     return (await apiFootballRequest("/teams", params)).response as Promise<
         TeamData[]
     >;
@@ -37,13 +39,13 @@ export async function getTeams(
 export async function getTeamPlayers(
     team: number,
     params: {
-        season: number;
+        season?: number;
         page?: number;
-    } = {
-        season: 2022,
-        page: 1,
     }
 ) {
+    if (!params.page) params.page = 1;
+    if (!params.season) params.season = 2022;
+
     const resp = await apiFootballRequest("/players", {
         team,
         ...params,
@@ -54,18 +56,25 @@ export async function getTeamPlayers(
     };
 }
 
-export async function getFixtures(
-    params: {
-        league: number;
-        season: number;
-        id?: number;
-        live?: "all";
-    } = {
-        league: 39,
-        season: 2022,
-    }
-) {
+export async function getFixtures(params: {
+    league?: number;
+    season?: number;
+    id?: number;
+    live?: "all";
+}) {
+    if (!params.league) params.league = 39;
+    if (!params.season) params.season = 2022;
+
     return (await apiFootballRequest("/fixtures", params)).response as Promise<
+        FixtureData[]
+    >;
+}
+
+export async function getMatchLineUp(params: {
+    fixture: number;
+    team?: number;
+}) {
+    return (await apiFootballRequest("/fixtures/lineups", params)).response as Promise<
         FixtureData[]
     >;
 }
@@ -77,8 +86,6 @@ export async function getLiveFixture(
     let fixture = cache.get(fixtureId);
     if (!fixture) {
         const liveFixtures = await getFixtures({
-            league: 39,
-            season: 2022,
             live: "all",
         });
 
