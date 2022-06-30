@@ -8,10 +8,16 @@ export interface PlayerRepo {
     getPlayerByUserId(userId: string): Promise<Player | undefined>;
     save(player: Player): Promise<void>;
 }
+
+export type MatchSetData = {
+    id: string;
+    dateTime: Date;
+};
 export interface MatchRepo {
     getMatchById(matchId: string): Promise<Match | undefined>;
     getMatchByApiFootballId(apiFootballId: string): Promise<Match | undefined>;
     getLiveMatches(lastUpdatedMinutes?: number): Promise<Match[]>;
+    getUpcomingMatches(options?: { nextMatch: boolean }): Promise<MatchSetData[]>;
     save(match: Match): Promise<void>;
 }
 export type QueryMatch = NexusGenObjects["Match"];

@@ -14,13 +14,8 @@ import { verifyEmailResolver } from "../../../../modules/iam/useCases/verifyUser
 import { withUser } from "./utils";
 import { resetPasswordResolver } from "../../../../modules/iam/useCases/resetPassword/resetPasswordResolver";
 import { logoutResolver } from "../../../../modules/iam/useCases/logout/logoutResolver";
-// import { syncFirebaseUserResolver } from "../../../../modules/iam/useCases/syncFirebaseUser/syncFirebaseUserResolver";
-import { getUserMock } from "./mocks/Auth";
-
-/* TODO Auth graphql
-    - SSO Authentication
-    - Add a 
-*/
+import { syncFirebaseUserResolver } from "../../../../modules/iam/useCases/syncFirebaseUser/syncFirebaseUserResolver";
+// import { getUserMock } from "./mocks/Auth";
 
 export const AuthOutput = objectType({
     name: "AuthOutput",
@@ -76,13 +71,13 @@ export const AuthMutation = extendType({
                 token: nonNull(stringArg()),
                 referralCode: stringArg(),
             },
-            // resolve: syncFirebaseUserResolver,
-            async resolve(_parent, _args, _context) {
-                return {
-                    message: "Verification Email Sent",
-                    user: getUserMock(),
-                };
-            },
+            resolve: syncFirebaseUserResolver,
+            // async resolve(_parent, _args, _context) {
+            //     return {
+            //         message: "Verification Email Sent",
+            //         user: getUserMock(),
+            //     };
+            // },
         });
 
         t.nonNull.field("changePassword", {

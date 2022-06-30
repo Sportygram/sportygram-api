@@ -161,7 +161,7 @@ async function fixtureDataToMatchDTOMap(
         sport: "football",
         status,
         dateTime: fixtureData.fixture.date,
-        // TODO: Checkout periods for apiFootbal match that extended to penalties
+        // TODO: Checkout periods for apiFootball match that extended to penalties
         // It's okay for now, premier league does not extend to penalties
         periods: {
             first: (fixtureData.fixture.periods.first

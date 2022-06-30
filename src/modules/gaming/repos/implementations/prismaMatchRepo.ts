@@ -10,7 +10,7 @@ import {
     Summary,
 } from "../../domain/types";
 import { MatchMap } from "../../mappers/matchMap";
-import { MatchRepo } from "../interfaces";
+import { MatchRepo, MatchSetData } from "../interfaces";
 
 export class PrismaMatchRepo implements MatchRepo {
     async getMatchById(matchId: string): Promise<Match | undefined> {
@@ -115,6 +115,28 @@ export class PrismaMatchRepo implements MatchRepo {
         }));
 
         return matchesWithTeams.map(MatchMap.toDomain);
+    }
+
+    async getUpcomingMatches(options: { nextMatch?: boolean } = {}): Promise<MatchSetData[]> {
+        const to = options.nextMatch ? undefined : dayjs().add(1, "day").toDate();
+        const take = options.nextMatch ? 1 : undefined;
+
+        const matchEntities = await prisma.match.findMany({
+            where: {
+                dateTime: { gte: new Date(), lte: to },
+                status: MatchStatus.Scheduled,
+            },
+            select: {
+                id: true,
+                dateTime: true,
+            },
+            orderBy: {
+                dateTime: "asc",
+            },
+            take,
+        });
+
+        return matchEntities;
     }
 
     async save(match: Match): Promise<void> {

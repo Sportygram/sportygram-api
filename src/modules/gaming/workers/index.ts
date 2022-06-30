@@ -1,23 +1,23 @@
 import cron from "node-cron";
+import { setMatchesStartingNowToInProgress } from "../useCases/setMatchesStartingNowToInProgress";
 import { updateApiFootballLive } from "../useCases/updateLiveMatches";
 
 /*
 Automation Strategy
 
-Receive live match notifications from at least one API with notification service
+- Receive live match notifications from at least one API with notification service
 
 Every 1 minute,
 - Fetch next24hours match list from cache sortedSet[matchId: startTime]
-- If next24hoursList == null OR lastMatchFetched, 
+- If next24hoursList is empty,
     - Get all matches that will be played in the next 24hours and save in cache
-    - If no matches in the next 24hours, fetch the next match from now and save to cache
+    - If no matches in the next 24hours, fetch the next upcoming match from now and save to cache
 - Else,
     - Check each match 
         - If match startTime > 30 seconds before now, set match to in_progress and pop off cache
             NOTE: Only send a kickoff to users when API confirms kickoff
-                (if the APIs event latency is not fast enough then use exact time instead of 
-                    30sec prior and send a kickoff immediately)
-        - If last match has been popped, set lastMatchFetched to true.
+                (if the APIs event latency is not fast enough then use exact time instead 
+                    of 30sec prior and send a kickoff immediately)
 
 Every 2 minutes, 
 - update all live matches
@@ -65,7 +65,5 @@ cron.schedule("*/5 * * * *", () => {
 
 cron.schedule("* * * * *", () => {
     // Every minute
-    // Get all matches: dateTime > now &&, scheduled
-    // set all matches to in_progress
-    //
+    setMatchesStartingNowToInProgress.execute({})
 });

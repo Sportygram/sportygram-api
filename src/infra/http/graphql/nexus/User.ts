@@ -12,7 +12,7 @@ import { updateUserProfileResolver } from "../../../../modules/users/useCases/up
 import { withUser } from "./utils";
 
 /* TODO: User graphql
-    - Update Interests and favorite team details
+    - Update date Of Birth
     - Purchase coins
     - updateSettings
 */

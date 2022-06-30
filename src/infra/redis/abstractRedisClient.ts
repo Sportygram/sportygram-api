@@ -60,6 +60,24 @@ export class AsyncRedisClient {
         return reply;
     }
 
+    public async addToSortedSet(key: string, members: any[]) {
+        return this.client.zAdd(key, members);
+    }
+
+    public async getSortedSetRange(key: string): Promise<any[]> {
+        const result = [];
+        for await (const memberWithScore of this.client.zScanIterator(
+            key
+        )) {
+            result.push(memberWithScore);
+        }
+        return result;
+    }
+
+    public async removeFromSortedSet(key: string, members: any[]) {
+        return this.client.zRem(key, members);
+    }
+
     public async deleteOne(key: string): Promise<number> {
         return this.client.del(key);
     }

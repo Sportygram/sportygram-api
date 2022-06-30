@@ -118,7 +118,6 @@ export const GamingMutation = extendType({
             args: {
                 input: arg({ type: nonNull(PredictionInput) }),
             },
-            // TODO UpdatePredictionResolver
             resolve: withUser(updatePredictionResolver),
         });
     },

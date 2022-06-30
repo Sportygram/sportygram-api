@@ -21,6 +21,7 @@ import {
     MatchQuestionsMap,
 } from "./types";
 import { MatchQuestions } from "./valueObjects/matchQuestions";
+import { isConstObjectType } from "../../../lib/utils/typeUtils";
 
 interface MatchProps {
     teams: Team[];
@@ -93,6 +94,20 @@ export class Match extends AggregateRoot<MatchProps> {
     }
     get updatedAt(): Date {
         return this.props.updatedAt || new Date();
+    }
+
+    public updateMatchStatus(status: string): Result<void> {
+        const isValidStatus = isConstObjectType<MatchStatus>(
+            status,
+            MatchStatus
+        );
+
+        if (!isValidStatus) {
+            return Result.fail("Invalid match status");
+        }
+
+        this.props.status = status;
+        return Result.ok()
     }
 
     private updateScores(goal: Goal): MatchEventData[] {
@@ -287,6 +302,15 @@ export class Match extends AggregateRoot<MatchProps> {
 
         if (!guardResult.succeeded) {
             return Result.fail<Match>(guardResult.message || "");
+        }
+
+        const isValidStatus = isConstObjectType<MatchStatus>(
+            props.status,
+            MatchStatus
+        );
+
+        if (!isValidStatus) {
+            return Result.fail<Match>("Invalid match status");
         }
 
         const match = new Match(props, id);

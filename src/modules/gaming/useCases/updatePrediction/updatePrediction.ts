@@ -30,7 +30,7 @@ export class UpdatePrediction
         const { predictionId, requestUser } = request;
 
         try {
-            // TODO Check if requestUser can update prediction
+            // TODO Check if requestUser can update prediction; with Coins
             const prediction = await this.matchPredictionRepo.getPredictionById(
                 predictionId
             );
@@ -46,7 +46,7 @@ export class UpdatePrediction
                     )
                 );
             }
-            
+
             const matchId = prediction.matchId.id.toString();
             const match = await this.matchRepo.getMatchById(matchId);
             if (!match) {
@@ -68,7 +68,7 @@ export class UpdatePrediction
                 );
             }
 
-            prediction.updatePredictions(playerPredictionOrError.getValue())
+            prediction.updatePredictions(playerPredictionOrError.getValue());
             await this.matchPredictionRepo.save(prediction);
 
             return right(Result.ok<MatchPrediction>(prediction));

@@ -8,9 +8,12 @@ import logger from "./lib/core/Logger";
 import { app } from "./infra/http/app";
 import "./infra/socket";
 
+// Workers
+import "./modules/gaming/workers";
+
 // Subscriptions
-import "./modules/iam/subscribers";
 import "./modules/users/subscribers";
+import "./modules/iam/subscribers";
 import "./modules/messaging/subscribers";
 
 app.listen(app.get("PORT"), () =>
