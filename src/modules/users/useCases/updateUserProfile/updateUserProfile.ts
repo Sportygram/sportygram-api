@@ -165,7 +165,7 @@ export class UpdateUserProfile
 
             // TODO: Refactor into a subscriber that updates chatUser on profile/user update
             // update chatUser streamData if update is successful
-            const streamId = profile.id.toString();
+            const streamId = user.id.toString();
             const updatedStream = await this.streamService.updateUser(
                 streamId,
                 {
