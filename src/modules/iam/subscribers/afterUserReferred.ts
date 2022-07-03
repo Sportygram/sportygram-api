@@ -1,1 +1,0 @@
-// TODO: Increse referrer's referralCount and coinBalance

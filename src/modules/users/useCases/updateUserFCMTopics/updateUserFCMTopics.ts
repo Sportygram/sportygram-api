@@ -1,14 +1,14 @@
 import * as AppError from "../../../../lib/core/AppError";
 import { Either, left, Result, right } from "../../../../lib/core/Result";
 import { UseCase } from "../../../../lib/core/UseCase";
-import { UpdateUserFCMTopicsDTO } from "./updateUserFCMTopicsDTO";
+import { UpdateUserFCMTopicsDTO } from "./updateUserFCMTopics.dto";
 import { FirebaseService } from "../../../../lib/services/firebase";
 import { UserRepo } from "../../../iam/repos/interfaces";
 import {
     FCMTopicUpdateError,
     UserDoesNotExistError,
     UserDoesNotHaveFCMTokenError,
-} from "./updateUserFCMTopicsErrors";
+} from "./updateUserFCMTopics.errors";
 
 type Response = Either<
     | AppError.UnexpectedError

@@ -111,6 +111,12 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
         return Result.ok();
     }
 
+    public rewardReferral(): Result<void> {
+        this.props.referralCount += 1;
+        this.props.coinBalance += config.huddle.referralCoinReward;
+        return Result.ok();
+    }
+
     public static create(
         props: UserProfileProps,
         id?: UniqueEntityID
