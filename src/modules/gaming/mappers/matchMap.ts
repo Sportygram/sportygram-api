@@ -53,6 +53,23 @@ export class MatchMap {
         const awayTeam = raw.teams.find((t) => t.code === awayCode) as any;
 
         const posArr = ["GK", "D", "M", "F"];
+        const defaultPlayers = { GK: [], D: [], M: [], F: [] };
+
+        const getPlayers = (team: any) => {
+            return groupBy(
+                team.teamAthletes.map((a: any, idx: number) => ({
+                    id: a.athlete.id,
+                    name: a.athlete.name,
+                    position: a.position || posArr[idx % 4],
+                    number: a.number || idx + 1,
+                })),
+                "position"
+            );
+        };
+
+        const homePlayers = getPlayers(homeTeam);
+        const awayPlayers = getPlayers(awayTeam);
+
         return {
             ...raw,
             periods, // TODO: Maybe add endOfPeriod scores here
@@ -65,30 +82,19 @@ export class MatchMap {
                     winner: winner === "home",
                     statistics: summary.statistics[homeCode],
                     score: summary.scores[homeCode],
-                    players: groupBy(
-                        homeTeam.teamAthletes.map((a: any, idx: number) => ({
-                            id: a.athlete.id,
-                            name: a.athlete.name,
-                            position: a.position || posArr[idx % 4],
-                            number: a.number || idx + 1,
-                        })),
-                        "position"
-                    ),
-                } as any,
+                    players: Object.keys(homePlayers).length
+                        ? homePlayers
+                        : defaultPlayers,
+                },
+
                 away: {
                     ...awayTeam,
                     winner: winner === "away",
                     statistics: summary.statistics[awayCode],
                     score: summary.scores[awayCode],
-                    players: groupBy(
-                        awayTeam.teamAthletes.map((a: any, idx: number) => ({
-                            id: a.athlete.id,
-                            name: a.athlete.name,
-                            position: a.position || posArr[idx % 4],
-                            number: a.number || idx,
-                        })),
-                        "position"
-                    ),
+                    players: Object.keys(awayPlayers).length
+                        ? awayPlayers
+                        : defaultPlayers,
                 } as any,
             },
             predictions,
