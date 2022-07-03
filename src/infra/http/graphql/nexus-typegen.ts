@@ -264,6 +264,7 @@ export interface NexusGenObjects {
   Team: { // root type
     code: string; // String!
     colours?: NexusGenScalars['JSON'] | null; // JSON
+    competition?: string | null; // String
     id: string; // ID!
     logo: string; // String!
     name: string; // String!
@@ -486,6 +487,7 @@ export interface NexusGenFieldTypes {
   Team: { // field return type
     code: string; // String!
     colours: NexusGenScalars['JSON'] | null; // JSON
+    competition: string | null; // String
     id: string; // ID!
     logo: string; // String!
     name: string; // String!
@@ -707,6 +709,7 @@ export interface NexusGenFieldTypeNames {
   Team: { // field return type name
     code: 'String'
     colours: 'JSON'
+    competition: 'String'
     id: 'ID'
     logo: 'String'
     name: 'String'

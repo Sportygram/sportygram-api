@@ -275,6 +275,7 @@ enum RoomType {
 type Team {
   code: String!
   colours: JSON
+  competition: String
   id: ID!
   logo: String!
   name: String!

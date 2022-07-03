@@ -47,9 +47,12 @@ export class SetMatchesStartingNowToInProgress
             }
 
             next24hoursList.forEach(async (m) => {
-                if (m.score < Date.now() - 30 * 1000) {
+                if (m. score < Date.now() - 30 * 1000) {
                     const match = await this.matchRepo.getMatchById(m.value);
-                    if (!match) throw new Error(`Match ${m.value} not found`);
+                    if (!match) {
+                        this.redisClient.removeFromSortedSet(setKey, [m.value]);
+                        throw new Error(`Match ${m.value} not found`);
+                    }
 
                     match.updateMatchStatus("in_progress");
                     await this.matchRepo.save(match);

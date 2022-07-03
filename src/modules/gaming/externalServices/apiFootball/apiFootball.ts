@@ -62,8 +62,10 @@ export async function getFixtures(params: {
     id?: number;
     live?: "all";
 }) {
-    if (!params.league) params.league = 39;
-    if (!params.season) params.season = 2022;
+    if (!params.id) {
+        if (!params.league) params.league = 39;
+        if (!params.season) params.season = 2022;
+    }
 
     return (await apiFootballRequest("/fixtures", params)).response as Promise<
         FixtureData[]
@@ -74,9 +76,8 @@ export async function getMatchLineUp(params: {
     fixture: number;
     team?: number;
 }) {
-    return (await apiFootballRequest("/fixtures/lineups", params)).response as Promise<
-        FixtureData[]
-    >;
+    return (await apiFootballRequest("/fixtures/lineups", params))
+        .response as Promise<FixtureData[]>;
 }
 
 export async function getLiveFixture(

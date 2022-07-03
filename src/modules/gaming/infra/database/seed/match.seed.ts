@@ -1,10 +1,15 @@
 import logger from "../../../../../lib/core/Logger";
 import { apiFootballService } from "../../../services/footballService";
 import { createMatch } from "../../../useCases/createMatch";
+import { competitionSeed } from "./gaming.seed";
 
 export async function seedMatches() {
     // fetch all fixtures
-    const fixturesDTO = await apiFootballService.getFixtures();
+    const fixturesDTO = (await Promise.all(
+        competitionSeed.map((comp) => {
+            return apiFootballService.getFixtures(comp);
+        })
+    )).flat();
 
     const results = await Promise.all(
         fixturesDTO.map(async (match) => {

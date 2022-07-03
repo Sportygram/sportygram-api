@@ -7,6 +7,7 @@ import { RoomMap } from "../../mappers/roomMap";
 import { RoomRepo } from "../interfaces";
 import { v4 as uuidv4 } from "uuid";
 import { RoomGameStatus, RoomGameType } from "@prisma/client";
+import { config } from "../../../../lib/config";
 
 export class PrismaRoomRepo implements RoomRepo {
     async getRoomById(roomId: string): Promise<Room | undefined> {
@@ -108,6 +109,24 @@ export class PrismaRoomRepo implements RoomRepo {
                                 type: "season",
                                 expiringAt: new Date("2023-05-29"),
                             },
+                            ...(config.huddle.competitions.MLS
+                                ? [
+                                      {
+                                          ...defaultRoomGame,
+                                          id: uuidv4(),
+                                          name: `MLS weekly game`,
+                                          type: "weekly" as RoomGameType,
+                                          expiringAt: new Date("2023-05-29"),
+                                      },
+                                      {
+                                          ...defaultRoomGame,
+                                          id: uuidv4(),
+                                          name: `MLS season game`,
+                                          type: "season" as RoomGameType,
+                                          expiringAt: new Date("2022-10-10"),
+                                      },
+                                  ]
+                                : []),
                         ],
                     },
                 },

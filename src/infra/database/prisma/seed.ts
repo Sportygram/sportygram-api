@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 
-import { athletesSeed } from "../../../modules/gaming/infra/database/seed/athlete.seed";
+// import { seedAthletesFromApi } from "../../../modules/gaming/infra/database/seed/athlete.seed";
 // import { seedMatches } from "../../../modules/gaming/infra/database/seed/match.seed";
 import { competitionSeed } from "../../../modules/gaming/infra/database/seed/gaming.seed";
 import {
@@ -15,6 +15,7 @@ import {
 } from "../../../modules/iam/infra/database/seed/role.seed";
 import { prisma } from "./client";
 import { teamsAthleteSeed } from "../../../modules/gaming/infra/database/seed/teamsAthletes.seed";
+import { athletesSeed } from "../../../modules/gaming/infra/database/seed/athlete.seed";
 
 async function main() {
     await prisma.permission.createMany({
@@ -34,7 +35,7 @@ async function main() {
         skipDuplicates: true,
     });
     await prisma.team.createMany({
-        data: teamSeed,
+        data: teamSeed.map((t) => ({ ...t, competition: undefined })),
         skipDuplicates: true,
     });
     await prisma.teamCompetition.createMany({

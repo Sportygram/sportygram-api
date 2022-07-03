@@ -1,6 +1,6 @@
 import { Result } from "../../../../lib/core/Result";
 import { ValueObject } from "../../../../lib/domain/ValueObject";
-import { MatchQuestion } from "../types";
+import { FootballQuestion, MatchQuestion, MatchQuestionCode } from "../types";
 
 export interface MatchQuestionsProps {
     value: MatchQuestion[];
@@ -15,14 +15,26 @@ export class MatchQuestions extends ValueObject<MatchQuestionsProps> {
         super(props);
     }
 
-    public static create(questions: MatchQuestion[]): Result<MatchQuestions> {
-        for (let question of questions) {
-            const { code, type } = question;
+    public solveQuestion(
+        questionCode: MatchQuestionCode,
+        solution: any
+    ): Result<void> {
+        const idx = this.value.findIndex((q) => q.code === questionCode);
+        if (idx === -1) return Result.fail("Question not found");
+        // this.value.push({ code: questionCode, solution, scored: false });
+        if (!this.value[idx].solution) {
+            this.value[idx].solution = solution;
+            this.value[idx].scored = false;
+        }
 
-            if (!code || !type)
-                return Result.fail<MatchQuestions>(
-                    `question must have a code and a type`
-                );
+        return Result.ok<void>();
+    }
+
+    public static create(questions?: MatchQuestion[]): Result<MatchQuestions> {
+        if (!questions) {
+            questions = Object.values(FootballQuestion).map((qc) => ({
+                code: qc,
+            }));
         }
 
         return Result.ok<MatchQuestions>(

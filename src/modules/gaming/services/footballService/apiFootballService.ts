@@ -72,8 +72,6 @@ export class ApiFootballService implements FootballService {
             if (!fixture) {
                 const fixtures = await getFixtures({
                     id: afId,
-                    league: 39,
-                    season: 2022,
                 });
                 fixture = fixtures[0];
             }
@@ -160,6 +158,7 @@ async function fixtureDataToMatchDTOMap(
         teams,
         sport: "football",
         status,
+        competitionId: fixtureData.league.country === 'USA' ? 2 : 1,
         dateTime: fixtureData.fixture.date,
         // TODO: Checkout periods for apiFootball match that extended to penalties
         // It's okay for now, premier league does not extend to penalties
@@ -191,7 +190,6 @@ async function fixtureDataToMatchDTOMap(
             },
             statistics,
         },
-        questions: [],
         sources: { apiFootball: { id: fixtureData.fixture.id } },
         metadata: {
             status: fixtureData.fixture.status,

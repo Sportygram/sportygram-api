@@ -27,9 +27,9 @@ export class CreateMatch implements UseCase<MatchDTO, Promise<Response>> {
             venue,
             winner,
             summary,
-            questions,
             sources,
             metadata,
+            competitionId,
         } = request;
 
         try {
@@ -51,12 +51,12 @@ export class CreateMatch implements UseCase<MatchDTO, Promise<Response>> {
                 periods,
                 season,
                 competitionId: CompetitionId.create(
-                    new UniqueEntityID(1)
+                    new UniqueEntityID(competitionId)
                 ).getValue(),
                 venue,
                 winner,
+                questions: MatchQuestions.create().getValue(),
                 summary,
-                questions: MatchQuestions.create(questions).getValue(),
                 sources,
                 metadata,
             });

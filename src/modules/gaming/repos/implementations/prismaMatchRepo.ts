@@ -36,7 +36,7 @@ export class PrismaMatchRepo implements MatchRepo {
             periods: matchEntity.periods as Periods,
             summary: matchEntity.summary as Summary,
             sources: matchEntity.sources as Sources,
-            metadata: matchEntity.sources as MatchMetadata,
+            metadata: matchEntity.metadata as MatchMetadata,
             teams: matchEntity.matchTeams.map((mt) => {
                 return {
                     ...mt.team,
@@ -79,7 +79,7 @@ export class PrismaMatchRepo implements MatchRepo {
             periods: matchEntity.periods as Periods,
             summary: matchEntity.summary as Summary,
             sources: matchEntity.sources as Sources,
-            metadata: matchEntity.sources as MatchMetadata,
+            metadata: matchEntity.metadata as MatchMetadata,
             teams: matchEntity.matchTeams.map((mt) => mt.team),
         };
 
@@ -93,7 +93,7 @@ export class PrismaMatchRepo implements MatchRepo {
 
         const matchEntities = await prisma.match.findMany({
             where: {
-                updatedAt: { gte: updatedAt },
+                updatedAt: { lte: updatedAt },
                 status: MatchStatus.InProgress,
             },
             include: {
@@ -110,7 +110,7 @@ export class PrismaMatchRepo implements MatchRepo {
             periods: matchEntity.periods as Periods,
             summary: matchEntity.summary as Summary,
             sources: matchEntity.sources as Sources,
-            metadata: matchEntity.sources as MatchMetadata,
+            metadata: matchEntity.metadata as MatchMetadata,
             teams: matchEntity.matchTeams.map((mt) => mt.team),
         }));
 

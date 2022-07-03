@@ -107,9 +107,10 @@ export class Match extends AggregateRoot<MatchProps> {
         }
 
         this.props.status = status;
-        return Result.ok()
+        return Result.ok();
     }
 
+    /** Update summary.scores, summary.goals and return goal event */
     private updateScores(goal: Goal): MatchEventData[] {
         const events: MatchEventData[] = [];
 
@@ -142,6 +143,12 @@ export class Match extends AggregateRoot<MatchProps> {
             } else {
                 this.props.summary.goals = { [goal.teamCode]: [goal] };
             }
+
+            // set first_to_score question spolution
+            this.questions.solveQuestion(
+                FootballQuestion.FirstToScore,
+                goal.teamCode
+            );
         }
 
         return events;
@@ -179,6 +186,10 @@ export class Match extends AggregateRoot<MatchProps> {
                 goal: newScores[teamCode],
             };
             events = [...events, ...this.updateScores(goal)];
+
+            if (newScores[homeCode] && newScores[awayCode]) {
+                this.questions.solveQuestion(FootballQuestion.BothTeamsScore, true);
+            }
         }
 
         if (data.periods)

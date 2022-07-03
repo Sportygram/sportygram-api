@@ -59,7 +59,7 @@ export class UpdateApiFootballLiveMatches
                         await this.matchRepo.save(match);
                         return Result.ok<Match>(match);
                     } catch (error) {
-                        logger;
+                        logger.error(" Error updating live match", error);
                         return Result.fail<Match>(
                             `Match with id ${match.id.toValue()} update failed: ${
                                 error.message

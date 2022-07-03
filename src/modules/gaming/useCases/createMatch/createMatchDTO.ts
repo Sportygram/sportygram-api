@@ -11,13 +11,13 @@ export interface MatchDTO {
     teams: Team[];
     sport: string;
     status: string;
+    competitionId: number;
     dateTime: string;
     periods: Periods;
     season: string;
     venue: string;
     winner?: string;
     summary: Summary;
-    questions: any[];
     sources: Sources;
     metadata: MatchMetadata;
 }

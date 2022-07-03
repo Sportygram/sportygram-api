@@ -14,7 +14,7 @@ export type Sport = typeof Sport[number];
 export type CountryCode = string;
 
 export interface Competition {
-    id: string;
+    id: number;
     name: string;
     logo: string;
     sport: Sport;
@@ -179,8 +179,9 @@ type MatchQuestionType = "select" | "input" | "customData";
 export type PlayerPrediction = MatchQuestion & { value: any; points: number };
 export interface MatchQuestion {
     code: MatchQuestionCode;
-    type: MatchQuestionType;
-    correctPoints: number;
+    type?: MatchQuestionType;
+    correctPoints?: number;
+    scored?: boolean;
     question?: string;
     options?: { value: string; display: string }[];
     solution?: any;
@@ -210,7 +211,7 @@ export const MatchEvent = [
     "period_complete",
     "period_started",
     "completed",
-];
+] as const;
 export type MatchEvent = typeof MatchEvent[number];
 
 export interface MatchEventData {
