@@ -44,6 +44,7 @@ export class PrismaMatchReadRepo implements MatchReadRepo {
     }
 
     async getMatchesByDate(
+        userId: string,
         date?: string | Date,
         live = false
     ): Promise<QueryMatch[]> {
@@ -94,7 +95,11 @@ export class PrismaMatchReadRepo implements MatchReadRepo {
                         },
                     },
                 },
+                matchPredictions: {
+                    where: { userId },
+                },
             },
+            orderBy: { dateTime: "asc" },
         });
 
         const matchesWithTeams: RawMatch[] = matches.map((match) => ({
@@ -104,6 +109,7 @@ export class PrismaMatchReadRepo implements MatchReadRepo {
             sources: match.sources as Sources,
             metadata: match.metadata as MatchMetadata,
             teams: match.matchTeams.map((mt) => mt.team),
+            predictions: match.matchPredictions[0] as any,
         }));
         return matchesWithTeams.map(MatchMap.footballRawToQueryMatch);
     }

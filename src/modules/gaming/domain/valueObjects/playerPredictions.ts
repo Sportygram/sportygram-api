@@ -1,8 +1,9 @@
+import { isEqual } from "lodash";
 import { Result } from "../../../../lib/core/Result";
 import { ValueObject } from "../../../../lib/domain/ValueObject";
 import { Match } from "../match";
 import { getPredictionValidator } from "../predictionValidators";
-import { PlayerPrediction } from "../types";
+import { MatchQuestionsMap, PlayerPrediction } from "../types";
 
 export interface PlayerPredictionsProps {
     value: PlayerPrediction[];
@@ -15,6 +16,34 @@ export class PlayerPredictions extends ValueObject<PlayerPredictionsProps> {
 
     private constructor(props: PlayerPredictionsProps) {
         super(props);
+    }
+
+    public scoreUnscoredPredictions(match: Match): Result<number> {
+        const questions = match.questions.value;
+        let score = 0;
+
+        for (let prediction of this.value) {
+            if (prediction.scored) continue;
+
+            const { code, value } = prediction;
+            const question = questions.find((q) => q.code === code);
+            if (!question) continue;
+
+            const { solution } = question;
+            if (!solution) continue;
+            const { correctPoints } = MatchQuestionsMap[code];
+
+            if (isEqual(solution, value)) {
+                prediction.points = correctPoints || 0;
+                prediction.scored = true;
+                score += prediction.points;
+            } else {
+                prediction.points = 0;
+                prediction.scored = true;
+            }
+        }
+
+        return Result.ok(score);
     }
 
     public static create(

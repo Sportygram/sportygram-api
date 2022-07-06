@@ -20,9 +20,9 @@ import {
     PlayerData,
 } from "../../externalServices/apiFootball/apiFootball.types";
 import { MatchDTO } from "../../useCases/createMatch/createMatchDTO";
-import { FootballService } from "./footballService.types";
+import { FootballDataService } from "./footballService.types";
 
-export class ApiFootballService implements FootballService {
+export class ApiFootballService implements FootballDataService {
     getCompetitions(): Promise<any> {
         throw new Error("Method not implemented.");
     }
@@ -144,8 +144,8 @@ async function fixtureDataToMatchDTOMap(
 
     let winner;
     if (status === MatchStatus.Completed) {
-        if (fixtureData.teams.home.winner) winner = homeTeam.id;
-        else if (fixtureData.teams.away.winner) winner = awayTeam.id;
+        if (fixtureData.teams.home.winner) winner = homeTeam.code;
+        else if (fixtureData.teams.away.winner) winner = awayTeam.code;
         else winner = "draw";
     }
 
@@ -158,7 +158,7 @@ async function fixtureDataToMatchDTOMap(
         teams,
         sport: "football",
         status,
-        competitionId: fixtureData.league.country === 'USA' ? 2 : 1,
+        competitionId: fixtureData.league.country === "USA" ? 2 : 1,
         dateTime: fixtureData.fixture.date,
         // TODO: Checkout periods for apiFootball match that extended to penalties
         // It's okay for now, premier league does not extend to penalties

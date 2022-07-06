@@ -19,9 +19,13 @@ import {
     MatchQuestion,
     FootballQuestion,
     MatchQuestionsMap,
+    MatchQuestionCode,
 } from "./types";
 import { MatchQuestions } from "./valueObjects/matchQuestions";
 import { isConstObjectType } from "../../../lib/utils/typeUtils";
+import { MatchQuestionAnswered } from "./events/matchQuestionAnswered";
+import { MatchCompleted } from "./events/matchCompleted";
+import { AllMatchPredictionsScored } from "./events/allMatchPredictionsScored";
 
 interface MatchProps {
     teams: Team[];
@@ -42,6 +46,8 @@ interface MatchProps {
 }
 
 export class Match extends AggregateRoot<MatchProps> {
+    private questionAnswered: boolean;
+
     get matchId(): MatchId {
         return MatchId.create(this._id).getValue();
     }
@@ -131,9 +137,6 @@ export class Match extends AggregateRoot<MatchProps> {
                 },
             });
 
-            // update scores
-            this.props.summary.scores[goal.teamCode] = goal.goal;
-
             // update goals
             if (this.props.summary.goals) {
                 if (!this.props.summary.goals[goal.teamCode])
@@ -144,32 +147,26 @@ export class Match extends AggregateRoot<MatchProps> {
                 this.props.summary.goals = { [goal.teamCode]: [goal] };
             }
 
-            // set first_to_score question spolution
-            this.questions.solveQuestion(
-                FootballQuestion.FirstToScore,
-                goal.teamCode
-            );
+            // set first_to_score question solution
+            this.solveQuestion(FootballQuestion.FirstToScore, goal.teamCode);
         }
 
         return events;
     }
 
+    /*
+        matchUpdates [
+            "kickoff","goal","penalty","substitution",
+            "red_card","period_complete", "period_started", "completed",
+        ]
+    */
     private updateMatchProps(data: Partial<MatchProps>): MatchEventData[] {
-        // updated props [
-        //    summary.scores, summary.goals, (goal)
-        //    periods, summary.scoresByPeriodEnd, (period_completed / break started)
-        //    winner, summary.statistics, (completed)
-        //    status, metadata.status (kickoff, completed)
-        // ]
-        // matchUpdates [
-        //   "kickoff","goal","penalty","substitution",
-        //   "red_card","period_complete", "period_started", "completed",
-        // ]
         let events: MatchEventData[] = [];
 
         const homeCode = this.metadata.teams.home.code;
         const awayCode = this.metadata.teams.away.code;
 
+        // update summary.scores, summary.goals, (goal)
         if (
             data.summary?.scores &&
             !isEqual(data.summary.scores, this.props.summary.scores)
@@ -187,11 +184,15 @@ export class Match extends AggregateRoot<MatchProps> {
             };
             events = [...events, ...this.updateScores(goal)];
 
+            // update scores
+            this.props.summary.scores = data.summary.scores;
+
             if (newScores[homeCode] && newScores[awayCode]) {
-                this.questions.solveQuestion(FootballQuestion.BothTeamsScore, true);
+                this.solveQuestion(FootballQuestion.BothTeamsScore, true);
             }
         }
 
+        // update periods, summary.scoresByPeriodEnd, (period_completed / break started)
         if (data.periods)
             this.props.periods = { ...this.props.periods, ...data.periods };
         if (data.summary?.scoresByPeriodEnd)
@@ -200,10 +201,15 @@ export class Match extends AggregateRoot<MatchProps> {
                 ...data.summary.scoresByPeriodEnd,
             };
 
-        if (data.winner) this.props.winner = data.winner;
+        // update winner, summary.statistics, (completed)
+        if (data.winner && !this.winner) {
+            this.props.winner = data.winner;
+            this.solveQuestion(FootballQuestion.Winner, data.winner);
+        }
         if (data.summary?.statistics)
             this.props.summary.statistics = data.summary.statistics;
 
+        // update status, metadata.status (kickoff, completed)
         if (data.metadata?.status) {
             this.props.metadata.status = data.metadata.status;
         }
@@ -238,22 +244,22 @@ export class Match extends AggregateRoot<MatchProps> {
         return events;
     }
 
+    private solveQuestion(questionCode: MatchQuestionCode, solution: any) {
+        this.questions.solveQuestion(questionCode, solution);
+
+        if (!this.questionAnswered) {
+            this.addDomainEvent(new MatchQuestionAnswered(this));
+            this.questionAnswered = true;
+        }
+    }
+
     public updateLiveMatch(data: Partial<MatchProps>): Result<void> {
         const events = this.updateMatchProps(data);
         this.addDomainEvent(new LiveMatchUpdated(this, events));
-        return Result.ok();
-    }
 
-    public completeMatch(data: Partial<MatchProps>): Result<void> {
-        // TODO: Solve questions and add solutions and if truly complete
-        // You can make this public and specifically call it to add a MatchCompleted event
-        // that will later update the match and answer questions
-        // This is most advisable if properly answering the questions has an external dependency
-
-        // Check all data required to complete a match and answer questions
-        const events = this.updateMatchProps(data);
-        // solve questions here or dispatch a MatchCompleted event that will handle
-        this.addDomainEvent(new LiveMatchUpdated(this, events));
+        if (this.status === MatchStatus.Completed) {
+            this.addDomainEvent(new MatchCompleted(this));
+        }
         return Result.ok();
     }
 
@@ -291,8 +297,20 @@ export class Match extends AggregateRoot<MatchProps> {
         }
     }
 
+    public allQuestionsAnswered(): boolean {
+        for (let question of this.questions.value) {
+            if (!question.solution) return false;
+        }
+        return true;
+    }
+
+    public setAllPredictionsScored() {
+        this.props.metadata.allMatchPredictionsScored = true;
+        this.addDomainEvent(new AllMatchPredictionsScored(this));
+    }
     private constructor(roleProps: MatchProps, id?: UniqueEntityID) {
         super(roleProps, id);
+        this.questionAnswered = false;
     }
 
     public static create(

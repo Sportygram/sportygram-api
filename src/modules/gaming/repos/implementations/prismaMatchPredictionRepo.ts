@@ -17,6 +17,15 @@ export class PrismaMatchPredictionRepo implements MatchPredictionRepo {
         return MatchPredictionMap.toDomain(predictionEntity);
     }
 
+    async getPredictionsByMatchId(matchId: string): Promise<MatchPrediction[]> {
+        if (!matchId) throw new Error("matchId is required");
+        const predictionEntities = await prisma.matchPrediction.findMany({
+            where: { matchId },
+        });
+
+        return predictionEntities.map(MatchPredictionMap.toDomain);
+    }
+
     async save(prediction: MatchPrediction): Promise<void> {
         const rawPrediction = MatchPredictionMap.toPersistence(prediction);
         const pPrediction = {

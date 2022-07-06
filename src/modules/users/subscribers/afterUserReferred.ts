@@ -1,4 +1,3 @@
-// TODO: Increse referrer's referralCount and coinBalance
 import { IHandle } from "../../../lib/domain/events/IHandle";
 import {
     DomainEvents,
@@ -34,7 +33,8 @@ export class AfterUserReferred implements IHandle<UserReferred> {
             ]);
 
             logger.info(
-                `[AfterUserReferred]: Successfully updated user refeerral details after UserReferred`,                { userId: user.userId, email: user.email }
+                `[AfterUserReferred]: Successfully updated user refeerral details after UserReferred`,
+                { userId: user.userId, email: user.email }
             );
         } catch (err) {
             logger.error(

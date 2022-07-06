@@ -243,6 +243,7 @@ model Match {
   matchTeams       MatchTeam[]
   matchPredictions MatchPrediction[]
 
+  @@index([sport])
   @@map("matches")
 }
 

@@ -15,6 +15,7 @@ import "./modules/gaming/workers";
 import "./modules/users/subscribers";
 import "./modules/iam/subscribers";
 import "./modules/messaging/subscribers";
+import "./modules/gaming/subscribers";
 
 app.listen(app.get("PORT"), () =>
     logger.info(`🚀 Server running on port ${app.get("PORT")}`, {

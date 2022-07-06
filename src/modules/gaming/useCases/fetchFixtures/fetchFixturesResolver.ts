@@ -9,6 +9,7 @@ export const fixturesResolver: FieldResolver<"Query", "fixtures"> = async (
 ) => {
     if (!ctx.reqUser) throw new ForbiddenError("Please login to continue");
     const matches = await matchReadRepo.getMatchesByDate(
+        ctx.reqUser.userId,
         args.date || undefined,
         args.live || false
     );

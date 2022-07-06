@@ -24,7 +24,6 @@ export class MatchQuestions extends ValueObject<MatchQuestionsProps> {
         // this.value.push({ code: questionCode, solution, scored: false });
         if (!this.value[idx].solution) {
             this.value[idx].solution = solution;
-            this.value[idx].scored = false;
         }
 
         return Result.ok<void>();

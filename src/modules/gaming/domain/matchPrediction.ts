@@ -3,6 +3,7 @@ import { Result } from "../../../lib/core/Result";
 import { AggregateRoot } from "../../../lib/domain/AggregateRoot";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
 import { UserId } from "../../users/domain/userId";
+import { Match } from "./match";
 import { MatchId } from "./matchId";
 import { PredictionId } from "./predictionId";
 import { PlayerPredictions } from "./valueObjects/playerPredictions";
@@ -43,6 +44,17 @@ export class MatchPrediction extends AggregateRoot<MatchPredictionProps> {
     public updatePredictions(predictions: PlayerPredictions): Result<void> {
         this.props.predictions = predictions;
         return Result.ok();
+    }
+
+    public scoreMatchPrediction(match: Match): Result<number> {
+        // Maybe move into a predictions domain service later
+        if (!match.matchId.equals(this.matchId))
+            return Result.fail("invalid match");
+        const scoreOrError = this.predictions.scoreUnscoredPredictions(match);
+
+        if (scoreOrError.isFailure) return scoreOrError;
+        this.props.points = scoreOrError.getValue() + this.points;
+        return scoreOrError;
     }
 
     private constructor(roleProps: MatchPredictionProps, id?: UniqueEntityID) {

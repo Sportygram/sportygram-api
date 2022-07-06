@@ -12,6 +12,15 @@ export const FCMTopic = {
 } as const;
 export type FCMTopic = typeof FCMTopic[keyof typeof FCMTopic];
 
+export interface NotificationInput {
+    fcmToken?: string;
+    topic?: FCMTopic;
+    title: string;
+    body: string;
+    data: any;
+    options?: any;
+}
+
 export class FirebaseService {
     private app: App;
     private auth: Auth;
@@ -86,13 +95,15 @@ export class FirebaseService {
             return false;
         }
     }
-    async sendToDevice(
-        fcmToken: string,
-        title: string,
-        body: string,
-        data: any,
-        options: any
-    ) {
+
+    async sendToDevice({
+        fcmToken,
+        title,
+        body,
+        data,
+        options,
+    }: NotificationInput) {
+        if (!fcmToken) throw new Error("FCM Token required");
         const message = {
             notification: {
                 title,
@@ -104,13 +115,15 @@ export class FirebaseService {
         };
         this.sendNotification(message);
     }
-    async sendToTopic(
-        topic: FCMTopic,
-        title: string,
-        body: string,
-        data: any,
-        options: any
-    ) {
+    async sendToTopic({
+        topic,
+        title,
+        body,
+        data,
+        options,
+    }: NotificationInput) {
+        if (!topic) throw new Error("Topic required");
+
         const message = {
             notification: {
                 title,
@@ -122,6 +135,7 @@ export class FirebaseService {
         };
         this.sendNotification(message);
     }
+
     async subscribeDeviceToTopic(fcmToken: string, topic: FCMTopic) {
         try {
             getMessaging().subscribeToTopic([fcmToken], topic);

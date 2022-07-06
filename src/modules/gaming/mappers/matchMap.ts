@@ -40,7 +40,7 @@ export class MatchMap {
         const winner =
             raw.winner === "draw"
                 ? raw.winner
-                : teams.find((t) => t.id === raw.winner)?.code;
+                : teams.find((t) => t.code === raw.winner)?.code;
 
         const predictions = (raw.questions as any as MatchQuestion[]).map(
             (q) => ({

@@ -5,7 +5,6 @@ import { UseCase } from "../../../../lib/core/UseCase";
 import { Match } from "../../domain/match";
 import { ApiFootballService } from "../../services/footballService/apiFootballService";
 import logger from "../../../../lib/core/Logger";
-import { MatchStatus } from "../../domain/types";
 
 interface Summary {}
 
@@ -33,24 +32,13 @@ export class UpdateApiFootballLiveMatches
                         const { periods, winner, summary, status, metadata } =
                             matchDto;
 
-                        let updatedOrError;
-                        if (status && status === MatchStatus.Completed) {
-                            updatedOrError = match.completeMatch({
-                                periods,
-                                winner,
-                                summary,
-                                status,
-                                metadata,
-                            });
-                        } else {
-                            updatedOrError = match.updateLiveMatch({
-                                periods,
-                                winner,
-                                summary,
-                                status,
-                                metadata,
-                            });
-                        }
+                        const updatedOrError = match.updateLiveMatch({
+                            periods,
+                            winner,
+                            summary,
+                            status,
+                            metadata,
+                        });
 
                         if (updatedOrError.isFailure && updatedOrError.error) {
                             throw new Error(updatedOrError.error);

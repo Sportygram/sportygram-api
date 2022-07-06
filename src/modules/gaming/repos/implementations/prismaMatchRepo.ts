@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, Sport } from "@prisma/client";
 import dayjs from "dayjs";
 import { prisma } from "../../../../infra/database/prisma/client";
 import { Match } from "../../domain/match";
@@ -86,7 +86,10 @@ export class PrismaMatchRepo implements MatchRepo {
         return MatchMap.toDomain(matchWithTeams);
     }
 
-    async getLiveMatches(lastUpdatedMinutes = 1): Promise<Match[]> {
+    async getLiveMatches({
+        sport = "football",
+        lastUpdatedMinutes = 1,
+    } = {}): Promise<Match[]> {
         const updatedAt = dayjs()
             .subtract(lastUpdatedMinutes, "minute")
             .toDate();
@@ -95,6 +98,7 @@ export class PrismaMatchRepo implements MatchRepo {
             where: {
                 updatedAt: { lte: updatedAt },
                 status: MatchStatus.InProgress,
+                sport: sport as Sport,
             },
             include: {
                 matchTeams: {
@@ -103,6 +107,7 @@ export class PrismaMatchRepo implements MatchRepo {
                     },
                 },
             },
+            orderBy: { dateTime: "asc" },
         });
 
         const matchesWithTeams = matchEntities.map((matchEntity) => ({
@@ -117,8 +122,12 @@ export class PrismaMatchRepo implements MatchRepo {
         return matchesWithTeams.map(MatchMap.toDomain);
     }
 
-    async getUpcomingMatches(options: { nextMatch?: boolean } = {}): Promise<MatchSetData[]> {
-        const to = options.nextMatch ? undefined : dayjs().add(1, "day").toDate();
+    async getUpcomingMatches(
+        options: { nextMatch?: boolean } = {}
+    ): Promise<MatchSetData[]> {
+        const to = options.nextMatch
+            ? undefined
+            : dayjs().add(1, "day").toDate();
         const take = options.nextMatch ? 1 : undefined;
 
         const matchEntities = await prisma.match.findMany({

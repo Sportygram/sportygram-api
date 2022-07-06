@@ -245,6 +245,7 @@ export type MatchMetadata = {
         elapsed: number | null;
     };
     teams: FootballTeams;
+    allMatchPredictionsScored: boolean;
 };
 
 export type LineUpPlayer = {

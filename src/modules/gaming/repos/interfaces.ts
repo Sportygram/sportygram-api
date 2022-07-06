@@ -3,6 +3,7 @@ import { Game } from "../domain/game";
 import { Match } from "../domain/match";
 import { MatchPrediction } from "../domain/matchPrediction";
 import { Player } from "../domain/player";
+import { Sport } from "../domain/types";
 
 export interface PlayerRepo {
     getPlayerByUserId(userId: string): Promise<Player | undefined>;
@@ -13,11 +14,18 @@ export type MatchSetData = {
     id: string;
     dateTime: Date;
 };
+
+export interface LiveMatchInput {
+    sport: Sport;
+    lastUpdatedMinutes?: number;
+}
 export interface MatchRepo {
     getMatchById(matchId: string): Promise<Match | undefined>;
     getMatchByApiFootballId(apiFootballId: string): Promise<Match | undefined>;
-    getLiveMatches(lastUpdatedMinutes?: number): Promise<Match[]>;
-    getUpcomingMatches(options?: { nextMatch: boolean }): Promise<MatchSetData[]>;
+    getLiveMatches(params?: LiveMatchInput): Promise<Match[]>;
+    getUpcomingMatches(options?: {
+        nextMatch: boolean;
+    }): Promise<MatchSetData[]>;
     save(match: Match): Promise<void>;
 }
 export type QueryMatch = NexusGenObjects["Match"];
@@ -26,13 +34,18 @@ export interface MatchReadRepo {
         matchId: string,
         userId: string
     ): Promise<QueryMatch | undefined>;
-    getMatchesByDate(date: Date): Promise<QueryMatch[]>;
+    getMatchesByDate(
+        userId: string,
+        date: Date,
+        live?: boolean
+    ): Promise<QueryMatch[]>;
 }
 
 export interface MatchPredictionRepo {
     getPredictionById(
         predictionId: string
     ): Promise<MatchPrediction | undefined>;
+    getPredictionsByMatchId(matchId: string): Promise<MatchPrediction[]>;
     save(prediction: MatchPrediction): Promise<void>;
 }
 

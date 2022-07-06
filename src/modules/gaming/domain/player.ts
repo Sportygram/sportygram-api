@@ -47,6 +47,12 @@ export class Player extends AggregateRoot<PlayerProps> {
         return this.props.updatedAt || new Date();
     }
 
+    public updateWeeklyAndSeasonScores(points: number): Result<void> {
+        this.props.gamesSummary.weekly.score += points;
+        this.props.gamesSummary.season.score += points;
+        return Result.ok();
+    }
+
     private constructor(roleProps: PlayerProps, id?: UniqueEntityID) {
         super(roleProps, id);
     }
