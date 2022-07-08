@@ -12,7 +12,6 @@ import { MatchQuestions } from "../domain/valueObjects/matchQuestions";
 import {
     MatchMetadata,
     MatchQuestion,
-    MatchQuestionsMap,
     Periods,
     Sources,
     Summary,
@@ -42,12 +41,7 @@ export class MatchMap {
                 ? raw.winner
                 : teams.find((t) => t.code === raw.winner)?.code;
 
-        const predictions = (raw.questions as any as MatchQuestion[]).map(
-            (q) => ({
-                ...q,
-                question: MatchQuestionsMap[q.code],
-            })
-        );
+        const predictions = raw?.predictions?.predictions as any;
 
         const homeTeam = raw.teams.find((t) => t.code === homeCode) as any;
         const awayTeam = raw.teams.find((t) => t.code === awayCode) as any;

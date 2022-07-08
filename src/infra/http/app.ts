@@ -48,12 +48,17 @@ app.use("/v1", v1Router);
 app.use(errorMiddleware);
 export const httpServer = http.createServer(app);
 
-startApolloServer(app, httpServer).then(() => {
-    app.use("*", (_req, res) => {
-        res.status(404).json({
-            message: "URL Not Found",
-            status: "error",
-            data: null,
+startApolloServer(app, httpServer)
+    .then(() => {
+        app.use("*", (_req, res) => {
+            res.status(404).json({
+                message: "URL Not Found",
+                status: "error",
+                data: null,
+            });
         });
+    })
+    .catch((err) => {
+        console.error("SERVER_CRASH: ", err);
+        process.exit(1);
     });
-});
