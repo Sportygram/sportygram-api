@@ -11,7 +11,7 @@ import { ChatUserRole } from "../../../../modules/messaging/domain/chatUser";
 import { addUserToRoomResolver } from "../../../../modules/messaging/useCases/addUserToRoom/addUserToRoomResolver";
 import { createRoomResolver } from "../../../../modules/messaging/useCases/createRoom/createRoomResolver";
 import { roomQueryResolver } from "../../../../modules/messaging/useCases/fetchQueryRoom/fetchQueryRoomResolver";
-// import { chatTokenResolver } from "../../../../modules/messaging/useCases/generateChatToken/chatTokenResolver";
+import { chatTokenResolver } from "../../../../modules/messaging/useCases/generateChatToken/chatTokenResolver";
 import { updateChatUserRoleResolver } from "../../../../modules/messaging/useCases/updateChatUserRole/updateChatUserRoleResolver";
 import { updateRoomResolver } from "../../../../modules/messaging/useCases/updateRoom/updateRoomResolver";
 import { withUser } from "./utils";
@@ -52,10 +52,10 @@ export const Room = objectType({
 export const MessagingQuery = extendType({
     type: "Query",
     definition(t) {
-        // t.nonNull.field("chatToken", {
-        //     type: "String",
-        //     resolve: withUser(chatTokenResolver),
-        // });
+        t.nonNull.field("chatToken", {
+            type: "String",
+            resolve: withUser(chatTokenResolver),
+        });
 
         t.nonNull.field("room", {
             type: "Room",

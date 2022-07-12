@@ -57,7 +57,7 @@ export class PrismaPlayerRepo implements PlayerRepo {
         const rawPlayer = PlayerMap.toPersistence(player);
         const chatUserEntity = {
             ...rawPlayer,
-            metadata: rawPlayer.metadata as JsonObject,
+            metadata: undefined, // TODO: rawPlayer.metadata as JsonObject,
             gameSummaries: {
                 createMany: {
                     data: player.activeGameSummaries.getNewItems().map((gs) => {
