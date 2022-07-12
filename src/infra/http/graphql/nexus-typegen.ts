@@ -91,6 +91,7 @@ export interface NexusGenInputs {
     description?: string | null; // String
     name?: string | null; // String
     roomId: string; // String!
+    roomImageUrl?: string | null; // String
   }
   UpdateUserProfileInput: { // input type
     country?: string | null; // String
@@ -142,6 +143,15 @@ export interface NexusGenObjects {
   CheckUsernameOutput: { // root type
     available: boolean; // Boolean!
     message: string; // String!
+  }
+  Competition: { // root type
+    country?: string | null; // String
+    countryCode?: string | null; // String
+    id: string; // ID!
+    logo?: string | null; // String
+    name: string; // String!
+    season?: string | null; // String
+    sport: string; // String!
   }
   Country: { // root type
     code: string; // String!
@@ -341,6 +351,15 @@ export interface NexusGenFieldTypes {
     available: boolean; // Boolean!
     message: string; // String!
   }
+  Competition: { // field return type
+    country: string | null; // String
+    countryCode: string | null; // String
+    id: string; // ID!
+    logo: string | null; // String
+    name: string; // String!
+    season: string | null; // String
+    sport: string; // String!
+  }
   Country: { // field return type
     code: string; // String!
     emoji: string; // String!
@@ -453,6 +472,7 @@ export interface NexusGenFieldTypes {
     prediction: NexusGenRootTypes['MatchPrediction']; // MatchPrediction!
   }
   Query: { // field return type
+    competitions: Array<NexusGenRootTypes['Competition'] | null>; // [Competition]!
     countries: Array<NexusGenRootTypes['Country'] | null>; // [Country]!
     fixtures: NexusGenRootTypes['Match'][]; // [Match!]!
     room: NexusGenRootTypes['Room']; // Room!
@@ -562,6 +582,15 @@ export interface NexusGenFieldTypeNames {
   CheckUsernameOutput: { // field return type name
     available: 'Boolean'
     message: 'String'
+  }
+  Competition: { // field return type name
+    country: 'String'
+    countryCode: 'String'
+    id: 'ID'
+    logo: 'String'
+    name: 'String'
+    season: 'String'
+    sport: 'String'
   }
   Country: { // field return type name
     code: 'String'
@@ -675,6 +704,7 @@ export interface NexusGenFieldTypeNames {
     prediction: 'MatchPrediction'
   }
   Query: { // field return type name
+    competitions: 'Competition'
     countries: 'Country'
     fixtures: 'Match'
     room: 'Room'

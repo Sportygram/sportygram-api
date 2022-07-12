@@ -34,6 +34,11 @@ export const competitionSeed = [
     },
 ];
 
+export const competitions = competitionSeed.map((c) => ({
+    ...c,
+    id: c.id.toString(),
+}));
+
 export const gamesSeed = [
     {
         id: "0adb6035-b48d-4747-826b-5f282df7eb6a",

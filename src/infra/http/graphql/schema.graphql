@@ -26,6 +26,16 @@ type CheckUsernameOutput implements MutationOutput {
   message: String!
 }
 
+type Competition {
+  country: String
+  countryCode: String
+  id: ID!
+  logo: String
+  name: String!
+  season: String
+  sport: String!
+}
+
 type Country {
   code: String!
   emoji: String!
@@ -227,6 +237,7 @@ type PredictionOutput implements MutationOutput {
 }
 
 type Query {
+  competitions: [Competition]!
   countries: [Country]!
   fixtures(date: String, live: Boolean): [Match!]!
   room(roomId: String!): Room!
@@ -300,6 +311,7 @@ input UpdateRoomInput {
   description: String
   name: String
   roomId: String!
+  roomImageUrl: String
 }
 
 input UpdateUserProfileInput {

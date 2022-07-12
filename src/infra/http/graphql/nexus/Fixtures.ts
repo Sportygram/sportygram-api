@@ -3,6 +3,19 @@ import { booleanArg, extendType, objectType, stringArg } from "nexus";
 import { fixturesResolver } from "../../../../modules/gaming/useCases/fetchFixtures/fetchFixturesResolver";
 import { withUser } from "./utils";
 
+export const Competition = objectType({
+    name: "Competition",
+    definition(t) {
+        t.nonNull.id("id");
+        t.nonNull.string("name");
+        t.nonNull.string("sport");
+        t.string("logo");
+        t.string("country");
+        t.string("countryCode");
+        t.string("season");
+    },
+});
+
 export const MatchStatus = objectType({
     name: "MatchStatus",
     definition(t) {
