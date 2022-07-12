@@ -17,6 +17,16 @@ export class PrismaRoomRepo implements RoomRepo {
         return RoomMap.toDomain(roomEntity);
     }
 
+    async chatUserInRoom(roomId: string, userId: string): Promise<boolean> {
+        const roomChatUser = await prisma.roomChatUser.findUnique({
+            where: {
+                roomId_userId: { roomId, userId },
+            },
+        });
+
+        return !!roomChatUser;
+    }
+
     async getRoomIdsWithPlayers(roomId?: string): Promise<RoomWithPlayers[]> {
         const roomIds = await prisma.room.findMany({
             where: roomId ? { id: roomId } : {},
@@ -61,11 +71,9 @@ export class PrismaRoomRepo implements RoomRepo {
 
         const updateMany = room.members?.getItems().map((member) => ({
             where: {
-                userId: {
-                    equals: member.userId.id.toString(),
-                },
-                roomId: {
-                    equals: rawRoom.id,
+                roomId_userId: {
+                    roomId: rawRoom.id,
+                    userId: member.userId.id.toString(),
                 },
             },
             data: {

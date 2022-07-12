@@ -4,6 +4,7 @@ import { AggregateRoot } from "../../../lib/domain/AggregateRoot";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
 import { UserId } from "../../users/domain/userId";
 import { ChatUser } from "./chatUser";
+import { ChatUserAddedToRoom } from "./events/chatUserAddedToRoom";
 import { RoomCreated } from "./events/roomCreated";
 import { RoomChatUsers } from "./roomChatUsers";
 import { RoomId } from "./roomId";
@@ -70,6 +71,7 @@ export class Room extends AggregateRoot<RoomProps> {
         // TODO: dispatch member added and add member to RoomGames leaderboards
         if (!this.members) this.props.members = RoomChatUsers.create([]);
         this.members?.add(member);
+        this.addDomainEvent(new ChatUserAddedToRoom(this));
         return Result.ok();
     }
     public updateName(name: string): Result<void> {

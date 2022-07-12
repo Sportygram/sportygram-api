@@ -18,10 +18,16 @@ export class PrismaRoomGameRepo implements RoomGameRepo {
         return rawGames.map(RoomGameMap.toDomain);
     }
 
-    async getLiveRoomGames(competitionId: number): Promise<RoomGame[]> {
+    async getLiveRoomGames(
+        competitionId?: string,
+        roomId?: string
+    ): Promise<RoomGame[]> {
         const rawGames = await prisma.roomGame.findMany({
             where: {
-                competitionId,
+                competitionId: competitionId
+                    ? Number(competitionId)
+                    : undefined,
+                roomId,
                 status: "in_progress",
             },
         });

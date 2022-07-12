@@ -6,12 +6,10 @@ import {
     RegisterCallback,
 } from "../../../lib/domain/events/DomainEvents";
 import logger from "../../../lib/core/Logger";
-import { AllMatchPredictionsScored } from "../domain/events/allMatchPredictionsScored";
 import { UpdateRoomGameLeaderboards } from "../useCases/updateRoomGameLeaderboards/updateRoomGameLeaderboards";
+import { ChatUserAddedToRoom } from "../../messaging/domain/events/chatUserAddedToRoom";
 
-export class AfterAllMatchPredictionsScored
-    implements IHandle<AllMatchPredictionsScored>
-{
+export class AfterUserAddedToRoom implements IHandle<ChatUserAddedToRoom> {
     constructor(
         private updateRoomGameLeaderboards: UpdateRoomGameLeaderboards
     ) {
@@ -22,28 +20,28 @@ export class AfterAllMatchPredictionsScored
         // Register to the domain event
         DomainEvents.register(
             this.onLiveMatchUpdated.bind(this) as RegisterCallback,
-            AllMatchPredictionsScored.name
+            ChatUserAddedToRoom.name
         );
     }
 
     private async onLiveMatchUpdated(
-        event: AllMatchPredictionsScored
+        event: ChatUserAddedToRoom
     ): Promise<void> {
-        const { match } = event;
+        const { room } = event;
 
         try {
             this.updateRoomGameLeaderboards.execute({
-                competitionId: match.competitionId.id.toString(),
+                roomId: room.id.toString(),
             });
 
             logger.info(
-                `[AfterMatchQuestionAnswered]: Successfully updated room game leaderboards after AllMatchPredictionsScored`,
-                { matchId: match.matchId }
+                `[AfterMatchQuestionAnswered]: Successfully updated room game leaderboards after ChatUserAddedToRoom`,
+                { roomId: room.roomId }
             );
         } catch (err) {
             logger.error(
-                `[AfterMatchQuestionAnswered]: Failed to updated room game leaderboards after AllMatchPredictionsScored.`,
-                { matchId: match.matchId }
+                `[AfterMatchQuestionAnswered]: Failed to update room game leaderboards after ChatUserAddedToRoom.`,
+                { roomId: room.roomId }
             );
         }
     }

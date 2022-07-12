@@ -1,3 +1,4 @@
 export interface UpdateRoomGameLeaderboardsDTO {
-    competitionId: string;
+    competitionId?: string;
+    roomId?: string;
 }

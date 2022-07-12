@@ -3,7 +3,6 @@ import * as AppError from "../../../../lib/core/AppError";
 import { UseCase } from "../../../../lib/core/UseCase";
 // import { hasPermissions } from "../../../../lib/utils/permissions";
 import { AddUserToRoomDTO } from "./addUserToRoomDTO";
-import { Room } from "../../domain/room";
 import { ChatUserRepo, RoomRepo } from "../../repos/interfaces";
 import { GetStreamService } from "../../services/getStream/getStreamService";
 import {
@@ -19,7 +18,7 @@ type Response = Either<
     | StreamRoomUpdateError
     | AppError.UnexpectedError
     | AppError.PermissionsError,
-    Result<Room>
+    Result<void>
 >;
 
 export class AddUserToRoom
@@ -36,7 +35,15 @@ export class AddUserToRoom
         const { userId, roomId } = request;
 
         try {
-            // TODO: Allow admin add user to room
+            // TODO: Allow room_moderator or me add user to room
+            const chatUserAlreadyInRoom = await this.roomRepo.chatUserInRoom(
+                roomId,
+                userId
+            );
+            if (chatUserAlreadyInRoom) {
+                return right(Result.ok());
+            }
+
             const chatUser = await this.chatUserRepo.getChatUserByUserId(
                 userId
             );
@@ -63,7 +70,7 @@ export class AddUserToRoom
 
             await this.roomRepo.save(room);
 
-            return right(Result.ok<Room>(room));
+            return right(Result.ok());
         } catch (err) {
             return left(
                 new AppError.UnexpectedError(

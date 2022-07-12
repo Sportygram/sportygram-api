@@ -66,7 +66,7 @@ export interface GameRepo {
     save(game: Game): Promise<void>;
 }
 export interface RoomGameRepo {
-    getLiveRoomGames(competitionId: number): Promise<RoomGame[]>;
+    getLiveRoomGames(competitionId?: string, roomId?: string): Promise<RoomGame[]>;
     getRoomPlayers(roomId: string, gameId?: string): Promise<Player[]>;
     getRoomGamesByGameId(gameId: string): Promise<RoomGame[]>;
     save(roomGame: RoomGame): Promise<void>;

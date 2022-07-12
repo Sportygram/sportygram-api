@@ -39,7 +39,7 @@ export class UpdateRoom
         } = request;
 
         try {
-            // Check requestUser permissions
+            // TODO: Check requestUser permissions
             // Only room moderators and admin can upload
             const room = await this.roomRepo.getRoomById(roomId);
             if (!room) {

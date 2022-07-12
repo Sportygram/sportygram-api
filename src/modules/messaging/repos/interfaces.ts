@@ -12,6 +12,7 @@ export interface RoomWithPlayers {
 
 export interface RoomRepo {
     getRoomIdsWithPlayers(roomId?: string): Promise<RoomWithPlayers[]>;
+    chatUserInRoom(roomId: string, userId: string): Promise<boolean> ;
     getRoomById(roomId: string): Promise<Room | undefined>;
     save(room: Room): Promise<void>;
 }

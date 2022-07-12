@@ -10,11 +10,10 @@ import {
     StreamRoomUpdateError,
 } from "./addUserToRoomErrors";
 
-export const addUserToRoomResolver: FieldResolver<"Mutation", "joinRoom"> = async (
-    _parent,
-    args,
-    ctx
-) => {
+export const addUserToRoomResolver: FieldResolver<
+    "Mutation",
+    "joinRoom"
+> = async (_parent, args, ctx) => {
     const dto = {
         ...args,
         userId: ctx.reqUser?.userId,
@@ -24,8 +23,7 @@ export const addUserToRoomResolver: FieldResolver<"Mutation", "joinRoom"> = asyn
     const result = await addUserToRoom.execute(dto);
 
     if (result.isRight()) {
-        const roomId = result.value.getValue().id.toString();
-        const room = await roomReadRepo.getRoomById(roomId);
+        const room = await roomReadRepo.getRoomById(dto.roomId);
         if (!room) throw new Error("Room fetch Error");
 
         return {

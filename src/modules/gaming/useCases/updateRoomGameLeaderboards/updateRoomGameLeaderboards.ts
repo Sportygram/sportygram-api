@@ -16,11 +16,11 @@ export class UpdateRoomGameLeaderboards
     constructor(private roomGameRepo: RoomGameRepo) {}
 
     async execute(request: UpdateRoomGameLeaderboardsDTO): Promise<Response> {
-        const { competitionId } = request;
+        const { competitionId, roomId } = request;
 
         try {
             const liveGames = await this.roomGameRepo.getLiveRoomGames(
-                Number(competitionId)
+                competitionId, roomId
             );
 
             const liveGameUpdateResults = await Promise.all(
@@ -40,13 +40,13 @@ export class UpdateRoomGameLeaderboards
                             if (!summary) {
                                 // player does not have game summary for game for some reason
                                 return {
-                                    playerId: player.id.toString(),
+                                    playerId: player.userId.id.toString(),
                                     username: player.username,
                                     score: 0,
                                 };
                             }
                             return {
-                                playerId: player.id.toString(),
+                                playerId: player.userId.id.toString(),
                                 username: player.username,
                                 score: summary.score,
                             };
@@ -122,6 +122,8 @@ export class UpdateRoomGameLeaderboards
             const summary = {
                 ...results,
                 total: liveGameUpdateResults.length,
+                competitionId,
+                roomId,
             };
             return right(Result.ok(summary));
         } catch (err) {

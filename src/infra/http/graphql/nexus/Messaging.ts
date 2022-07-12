@@ -81,6 +81,7 @@ export const UpdateRoomInput = inputObjectType({
         t.nonNull.string("roomId");
         t.string("name");
         t.string("description");
+        t.string("roomImageUrl");
     },
 });
 
