@@ -66,6 +66,7 @@ export class MatchMap {
 
         return {
             ...raw,
+            competitionId: raw.competitionId.toString(),
             periods, // TODO: Maybe add endOfPeriod scores here
             status: metadata.status,
             winner,

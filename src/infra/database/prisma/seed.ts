@@ -14,8 +14,8 @@ import {
     roleSeed,
 } from "../../../modules/iam/infra/database/seed/role.seed";
 import { prisma } from "./client";
-import { teamsAthleteSeed } from "../../../modules/gaming/infra/database/seed/teamsAthletes.seed";
-import { athletesSeed } from "../../../modules/gaming/infra/database/seed/athlete.seed";
+// import { teamsAthleteSeed } from "../../../modules/gaming/infra/database/seed/teamsAthletes.seed";
+// import { athletesSeed } from "../../../modules/gaming/infra/database/seed/athlete.seed";
 
 async function main() {
     await prisma.permission.createMany({
@@ -51,14 +51,14 @@ async function main() {
     // Use minimal data for competitions, matches, teams, athletes
     // await seedMatches();
     // await seedAthletesFromApi();
-    await prisma.athlete.createMany({
-        data: athletesSeed(),
-        skipDuplicates: true,
-    });
-    await prisma.teamAthlete.createMany({
-        data: teamsAthleteSeed,
-        skipDuplicates: true,
-    });
+    // await prisma.athlete.createMany({
+    //     data: athletesSeed(),
+    //     skipDuplicates: true,
+    // });
+    // await prisma.teamAthlete.createMany({
+    //     data: teamsAthleteSeed,
+    //     skipDuplicates: true,
+    // });
     return;
 }
 

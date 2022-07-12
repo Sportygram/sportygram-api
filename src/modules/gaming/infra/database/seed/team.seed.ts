@@ -976,7 +976,7 @@ export const teams = raw
         name: tData.team.name,
         logo: tData.team.logo,
         stadium: tData.venue.name,
-        competition: tData.team.country === "USA" ? "MLS" : "EPL",
+        competition: tData.team.country === "USA" ? "2" : "1",
     }))
     .sort((a, b) => {
         return a.name.localeCompare(b.name);

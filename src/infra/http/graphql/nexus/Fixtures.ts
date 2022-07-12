@@ -98,6 +98,7 @@ export const Match = objectType({
         t.nonNull.dateTime("dateTime");
         t.nonNull.field("periods", { type: "MatchPeriod" });
         t.nonNull.string("season");
+        t.nonNull.string("competitionId");
         t.string("venue");
         t.string("winner");
         t.int("userPoints");
@@ -114,6 +115,7 @@ export const FixturesQuery = extendType({
             args: {
                 date: stringArg(),
                 live: booleanArg(),
+                sport: stringArg(),
             },
             // async resolve(_parent, _args, _context, _info) {
             //     return [getMatchMock()];

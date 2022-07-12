@@ -182,6 +182,7 @@ export interface NexusGenObjects {
     position?: string | null; // String
   }
   Match: { // root type
+    competitionId: string; // String!
     dateTime: NexusGenScalars['DateTime']; // DateTime!
     id?: string | null; // ID
     misc?: NexusGenScalars['JSON'] | null; // JSON
@@ -389,6 +390,7 @@ export interface NexusGenFieldTypes {
     position: string | null; // String
   }
   Match: { // field return type
+    competitionId: string; // String!
     dateTime: NexusGenScalars['DateTime']; // DateTime!
     id: string | null; // ID
     misc: NexusGenScalars['JSON'] | null; // JSON
@@ -621,6 +623,7 @@ export interface NexusGenFieldTypeNames {
     position: 'String'
   }
   Match: { // field return type name
+    competitionId: 'String'
     dateTime: 'DateTime'
     id: 'ID'
     misc: 'JSON'
@@ -868,9 +871,14 @@ export interface NexusGenArgTypes {
     fixtures: { // args
       date?: string | null; // String
       live?: boolean | null; // Boolean
+      sport?: string | null; // String
     }
     room: { // args
       roomId: string; // String!
+    }
+    teams: { // args
+      competitionId?: string | null; // String
+      sport?: string | null; // String
     }
   }
 }

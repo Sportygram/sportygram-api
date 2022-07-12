@@ -1,4 +1,4 @@
-import { extendType, objectType } from "nexus";
+import { extendType, objectType, stringArg } from "nexus";
 import { countries } from "../../../../modules/iam/domain/countries";
 import { teams } from "../../../../modules/gaming/infra/database/seed/team.seed";
 import { CacheScope } from "apollo-server-types";
@@ -40,13 +40,22 @@ export const OtherQuery = extendType({
 
         t.nonNull.list.field("teams", {
             type: "Team",
-            args: {},
-            async resolve(_parent, _args, _context, info) {
+            args: {
+                competitionId: stringArg(),
+                sport: stringArg(),
+            },
+            async resolve(_parent, args, _context, info) {
                 info.cacheControl.setCacheHint({
                     maxAge: 3600,
                     scope: CacheScope.Public,
                 });
-                return teams;
+                return (
+                    args.competitionId
+                        ? teams.filter(
+                              (t) => t.competition === args.competitionId
+                          )
+                        : teams
+                );
             },
         });
 

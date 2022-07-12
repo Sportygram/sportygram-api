@@ -219,6 +219,7 @@ let fixtureDefault: Match = {
     venue: "St. Mary's Stadium, Southampton, Hampshire",
     winner: teamsDefault.away?.code,
     userPoints: 6,
+    competitionId: "1",
     predictions: [
         {
             code: FootballQuestion.Winner,

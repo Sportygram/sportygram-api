@@ -118,6 +118,7 @@ input LoginInput {
 }
 
 type Match {
+  competitionId: String!
   dateTime: DateTime!
   id: ID
   misc: JSON
@@ -239,9 +240,9 @@ type PredictionOutput implements MutationOutput {
 type Query {
   competitions: [Competition]!
   countries: [Country]!
-  fixtures(date: String, live: Boolean): [Match!]!
+  fixtures(date: String, live: Boolean, sport: String): [Match!]!
   room(roomId: String!): Room!
-  teams: [Team]!
+  teams(competitionId: String, sport: String): [Team]!
   viewer: User!
 }
 
