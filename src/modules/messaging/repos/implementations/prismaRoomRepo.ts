@@ -1,42 +1,49 @@
-import dayjs from "dayjs";
 import { JsonObject } from "swagger-ui-express";
 import { prisma } from "../../../../infra/database/prisma/client";
-import { LeaderboardPlayer } from "../../../gaming/domain/types";
 import { Room } from "../../domain/room";
 import { RoomMap } from "../../mappers/roomMap";
-import { RoomRepo } from "../interfaces";
-import { v4 as uuidv4 } from "uuid";
-import { RoomGameStatus, RoomGameType } from "@prisma/client";
-import { config } from "../../../../lib/config";
-
+import { RoomRepo, RoomWithPlayers } from "../interfaces";
 export class PrismaRoomRepo implements RoomRepo {
     async getRoomById(roomId: string): Promise<Room | undefined> {
         if (!roomId) return undefined;
         const roomEntity = await prisma.room.findUnique({
             where: { id: roomId },
+            include: {
+                roomGames: true,
+            },
         });
         if (!roomEntity) return undefined;
 
         return RoomMap.toDomain(roomEntity);
     }
 
+    async getRoomIdsWithPlayers(roomId?: string): Promise<RoomWithPlayers[]> {
+        const roomIds = await prisma.room.findMany({
+            where: roomId ? { id: roomId } : {},
+            select: {
+                id: true,
+                roomChatUsers: {
+                    select: {
+                        userId: true,
+                        chatUser: {
+                            select: { user: { select: { username: true } } },
+                        },
+                    },
+                },
+            },
+        });
+
+        return roomIds.map((room) => ({
+            roomId: room.id,
+            players: room.roomChatUsers.map((user) => ({
+                playerId: user.userId,
+                username: user.chatUser.user.username || "",
+            })),
+        }));
+    }
+
     async save(room: Room): Promise<void> {
         const rawRoom = RoomMap.toPersistence(room);
-        const defaultRoomGame = {
-            id: uuidv4(),
-            name: `EPL weekly game`,
-            competitionId: 1,
-            type: "weekly" as RoomGameType,
-            status: "in_progress" as RoomGameStatus,
-            summary: {},
-            leaderboard: [] as LeaderboardPlayer[],
-            expiringAt: dayjs()
-                .add(1, "week")
-                .startOf("week")
-                .add(1, "day")
-                .toISOString(),
-        };
-
         const roomEntity = {
             ...rawRoom,
             metadata: rawRoom.metadata as JsonObject,
@@ -50,17 +57,6 @@ export class PrismaRoomRepo implements RoomRepo {
                     role: member.role,
                 })),
             };
-
-            defaultRoomGame.leaderboard = [
-                ...defaultRoomGame.leaderboard,
-                ...room.members.getNewItems().map((member) => ({
-                    playerId: member.userId.id.toString(),
-                    username: member.username,
-                    rank: 1,
-                    prevRank: 1,
-                    score: 0,
-                })),
-            ];
         }
 
         const updateMany = room.members?.getItems().map((member) => ({
@@ -98,38 +94,6 @@ export class PrismaRoomRepo implements RoomRepo {
             create: {
                 ...roomEntity,
                 roomChatUsers,
-                roomGames: {
-                    createMany: {
-                        data: [
-                            defaultRoomGame,
-                            {
-                                ...defaultRoomGame,
-                                id: uuidv4(),
-                                name: `EPL season game`,
-                                type: "season",
-                                expiringAt: new Date("2023-05-29"),
-                            },
-                            ...(config.huddle.competitions.MLS
-                                ? [
-                                      {
-                                          ...defaultRoomGame,
-                                          id: uuidv4(),
-                                          name: `MLS weekly game`,
-                                          type: "weekly" as RoomGameType,
-                                          expiringAt: new Date("2023-05-29"),
-                                      },
-                                      {
-                                          ...defaultRoomGame,
-                                          id: uuidv4(),
-                                          name: `MLS season game`,
-                                          type: "season" as RoomGameType,
-                                          expiringAt: new Date("2022-10-10"),
-                                      },
-                                  ]
-                                : []),
-                        ],
-                    },
-                },
             },
         });
     }

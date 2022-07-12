@@ -7,7 +7,7 @@ import {
     MatchStatus,
     Periods,
     Sources,
-    Summary,
+    MatchSummary,
 } from "../../domain/types";
 import { MatchMap } from "../../mappers/matchMap";
 import { MatchRepo, MatchSetData } from "../interfaces";
@@ -34,7 +34,7 @@ export class PrismaMatchRepo implements MatchRepo {
         const matchWithTeams = {
             ...matchEntity,
             periods: matchEntity.periods as Periods,
-            summary: matchEntity.summary as Summary,
+            summary: matchEntity.summary as MatchSummary,
             sources: matchEntity.sources as Sources,
             metadata: matchEntity.metadata as MatchMetadata,
             teams: matchEntity.matchTeams.map((mt) => {
@@ -77,7 +77,7 @@ export class PrismaMatchRepo implements MatchRepo {
         const matchWithTeams = {
             ...matchEntity,
             periods: matchEntity.periods as Periods,
-            summary: matchEntity.summary as Summary,
+            summary: matchEntity.summary as MatchSummary,
             sources: matchEntity.sources as Sources,
             metadata: matchEntity.metadata as MatchMetadata,
             teams: matchEntity.matchTeams.map((mt) => mt.team),
@@ -113,7 +113,7 @@ export class PrismaMatchRepo implements MatchRepo {
         const matchesWithTeams = matchEntities.map((matchEntity) => ({
             ...matchEntity,
             periods: matchEntity.periods as Periods,
-            summary: matchEntity.summary as Summary,
+            summary: matchEntity.summary as MatchSummary,
             sources: matchEntity.sources as Sources,
             metadata: matchEntity.metadata as MatchMetadata,
             teams: matchEntity.matchTeams.map((mt) => mt.team),

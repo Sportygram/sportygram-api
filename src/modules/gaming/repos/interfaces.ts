@@ -3,9 +3,12 @@ import { Game } from "../domain/game";
 import { Match } from "../domain/match";
 import { MatchPrediction } from "../domain/matchPrediction";
 import { Player } from "../domain/player";
+import { RoomGame } from "../domain/roomGame";
 import { Sport } from "../domain/types";
 
 export interface PlayerRepo {
+    createAllUserGameSummaries(game: Game): Promise<number>;
+    getAllPlayers(gameId?: string): Promise<Player[]>
     getPlayerByUserId(userId: string): Promise<Player | undefined>;
     save(player: Player): Promise<void>;
 }
@@ -56,6 +59,15 @@ export interface MatchPredictionReadRepo {
     ): Promise<QueryMatchPrediction | undefined>;
 }
 
+export interface GameRepo {
+    getGameById(gameId: string): Promise<Game | undefined>;
+    getActiveGames(competitionId?: string): Promise<Game[]>;
+    getEndedGames(): Promise<Game[]>
+    save(game: Game): Promise<void>;
+}
 export interface RoomGameRepo {
-    save(roomGame: Game): Promise<void>;
+    getLiveRoomGames(competitionId: number): Promise<RoomGame[]>;
+    getRoomPlayers(roomId: string, gameId?: string): Promise<Player[]>;
+    getRoomGamesByGameId(gameId: string): Promise<RoomGame[]>;
+    save(roomGame: RoomGame): Promise<void>;
 }

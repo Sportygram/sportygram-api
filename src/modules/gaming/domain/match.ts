@@ -8,7 +8,7 @@ import { CompetitionId } from "./competitionId";
 import { MatchId } from "./matchId";
 import {
     FootballPeriod,
-    Summary,
+    MatchSummary,
     Sources,
     MatchStatus,
     MatchMetadata,
@@ -37,7 +37,7 @@ interface MatchProps {
     competitionId: CompetitionId;
     venue: string;
     winner?: string;
-    summary: Summary;
+    summary: MatchSummary;
     sources: Sources;
     questions: MatchQuestions; // store only solutions
     metadata: MatchMetadata; // periodNames(could be in code)
@@ -83,7 +83,7 @@ export class Match extends AggregateRoot<MatchProps> {
     get winner() {
         return this.props.winner;
     }
-    get summary(): Summary {
+    get summary(): MatchSummary {
         return this.props.summary;
     }
     get sources() {

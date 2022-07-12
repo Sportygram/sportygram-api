@@ -5,8 +5,7 @@ import { UseCase } from "../../../../lib/core/UseCase";
 import { Match } from "../../domain/match";
 import { ApiFootballService } from "../../services/footballService/apiFootballService";
 import logger from "../../../../lib/core/Logger";
-
-interface Summary {}
+import { Summary } from "../../../../lib/@types";
 
 type Response = Either<
     AppError.UnexpectedError | AppError.PermissionsError,
@@ -63,7 +62,7 @@ export class UpdateApiFootballLiveMatches
             const summary = updateMatchesOrError.reduce<{
                 successCount: number;
                 failureCount: number;
-                failedMatches: string[];
+                failed: string[];
             }>(
                 (prevSummary, matchOrError) => {
                     if (matchOrError.isSuccess) {
@@ -76,14 +75,14 @@ export class UpdateApiFootballLiveMatches
                         return {
                             ...prevSummary,
                             failureCount: prevSummary.failureCount + 1,
-                            failedMatches: [
-                                ...prevSummary.failedMatches,
+                            failed: [
+                                ...prevSummary.failed,
                                 error,
                             ],
                         };
                     }
                 },
-                { successCount: 0, failureCount: 0, failedMatches: [] }
+                { successCount: 0, failureCount: 0, failed: [] }
             );
 
             return right(Result.ok<Summary>(summary));

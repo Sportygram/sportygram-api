@@ -20,5 +20,3 @@ export type Settings = {
         crypto: any;
     };
 };
-
-export type GamesSummary = {}

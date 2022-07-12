@@ -2,7 +2,7 @@ import {
     MatchMetadata,
     Periods,
     Sources,
-    Summary,
+    MatchSummary,
     Team,
 } from "../../domain/types";
 
@@ -17,7 +17,7 @@ export interface MatchDTO {
     season: string;
     venue: string;
     winner?: string;
-    summary: Summary;
+    summary: MatchSummary;
     sources: Sources;
     metadata: MatchMetadata;
 }

@@ -26,7 +26,6 @@ export class PrismaUserProfileRepo implements UserProfileRepo {
             ...rawUserProfile,
             settings: rawUserProfile.settings as JsonObject,
             metadata: rawUserProfile.metadata as JsonObject,
-            gamesSummary: rawUserProfile.gamesSummary as JsonObject,
         };
         await prisma.userProfile.upsert({
             where: { id: rawUserProfile.id },

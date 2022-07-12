@@ -14,7 +14,7 @@ import {
     MatchQuestion,
     Periods,
     Sources,
-    Summary,
+    MatchSummary,
     TeamMetadata,
 } from "../domain/types";
 import { groupBy } from "lodash";
@@ -23,7 +23,7 @@ export type RawMatch = PMatch & {
     teams: PTeam[];
     periods: Periods;
     sources: Sources;
-    summary: Summary;
+    summary: MatchSummary;
     metadata: MatchMetadata;
     predictions?: MatchPrediction;
 };

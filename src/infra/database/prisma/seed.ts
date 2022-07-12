@@ -3,7 +3,7 @@ dotenv.config();
 
 // import { seedAthletesFromApi } from "../../../modules/gaming/infra/database/seed/athlete.seed";
 // import { seedMatches } from "../../../modules/gaming/infra/database/seed/match.seed";
-import { competitionSeed } from "../../../modules/gaming/infra/database/seed/gaming.seed";
+import { competitionSeed, gamesSeed } from "../../../modules/gaming/infra/database/seed/gaming.seed";
 import {
     teamCompetitionSeed,
     teamSeed,
@@ -34,6 +34,10 @@ async function main() {
         data: competitionSeed,
         skipDuplicates: true,
     });
+    await prisma.game.createMany({
+        data: gamesSeed,
+        skipDuplicates: true,
+    });
     await prisma.team.createMany({
         data: teamSeed.map((t) => ({ ...t, competition: undefined })),
         skipDuplicates: true,
@@ -42,6 +46,9 @@ async function main() {
         data: teamCompetitionSeed,
         skipDuplicates: true,
     });
+    
+    // TODO: Admin endpoint for seeding matches, teams, athletes using API
+    // Use minimal data for competitions, matches, teams, athletes
     // await seedMatches();
     // await seedAthletesFromApi();
     await prisma.athlete.createMany({

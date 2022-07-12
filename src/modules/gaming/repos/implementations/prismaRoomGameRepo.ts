@@ -1,11 +1,60 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../../../infra/database/prisma/client";
-import { Game } from "../../domain/game";
 import { RoomGameRepo } from "../interfaces";
-import { RoomGameMap } from "../../mappers/gameMap";
+import { Player } from "../../domain/player";
+import { PlayerMap } from "../../mappers/playerMap";
+import { RoomGameMap } from "../../mappers/roomGameMap";
+import { RoomGame } from "../../domain/roomGame";
 
 export class PrismaRoomGameRepo implements RoomGameRepo {
-    async save(game: Game): Promise<void> {
+    async getRoomGamesByGameId(gameId: string): Promise<RoomGame[]> {
+        const rawGames = await prisma.roomGame.findMany({
+            where: {
+                gameId,
+                status: "in_progress",
+            },
+        });
+
+        return rawGames.map(RoomGameMap.toDomain);
+    }
+
+    async getLiveRoomGames(competitionId: number): Promise<RoomGame[]> {
+        const rawGames = await prisma.roomGame.findMany({
+            where: {
+                competitionId,
+                status: "in_progress",
+            },
+        });
+
+        return rawGames.map(RoomGameMap.toDomain);
+    }
+
+    async getRoomPlayers(roomId: string, gameId?: string): Promise<Player[]> {
+        const rawPlayers = await prisma.roomChatUser.findMany({
+            where: { roomId },
+            include: {
+                chatUser: {
+                    select: {
+                        id: true,
+                        userId: true,
+                        displayName: true,
+                        coinBalance: true,
+                        metadata: true,
+                        createdAt: true,
+                        updatedAt: true,
+                        user: { select: { username: true } },
+                        gameSummaries: {
+                            where: { gameId },
+                        },
+                    },
+                },
+            },
+        });
+
+        return rawPlayers.map((rp) => PlayerMap.toDomain(rp.chatUser));
+    }
+
+    async save(game: RoomGame): Promise<void> {
         const rawGame = RoomGameMap.toPersistence(game);
         const gameEntity = {
             ...rawGame,

@@ -14,10 +14,10 @@ CREATE TYPE "Sport" AS ENUM ('football', 'basketball', 'baseball', 'cricket', 'a
 CREATE TYPE "MatchStatus" AS ENUM ('unscheduled', 'scheduled', 'in_progress', 'break', 'suspended', 'cancelled', 'completed');
 
 -- CreateEnum
-CREATE TYPE "RoomGameType" AS ENUM ('weekly', 'season');
+CREATE TYPE "GameType" AS ENUM ('weekly', 'season');
 
 -- CreateEnum
-CREATE TYPE "RoomGameStatus" AS ENUM ('in_progress', 'completed');
+CREATE TYPE "GameStatus" AS ENUM ('in_progress', 'completed');
 
 -- CreateTable
 CREATE TABLE "roles" (
@@ -66,7 +66,7 @@ CREATE TABLE "users" (
     "updated_at" TIMESTAMP(3) NOT NULL,
     "last_login_ip" INET,
     "last_login_time" TIMESTAMP(3),
-    "user_state" "UserState" NOT NULL DEFAULT E'active',
+    "user_state" "UserState" NOT NULL DEFAULT 'active',
     "metadata" JSONB NOT NULL DEFAULT '{}',
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
@@ -94,7 +94,6 @@ CREATE TABLE "user_profiles" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "settings" JSONB NOT NULL DEFAULT '{}',
-    "gamesSummary" JSONB NOT NULL DEFAULT '{}',
     "metadata" JSONB NOT NULL DEFAULT '{}',
 
     CONSTRAINT "user_profiles_pkey" PRIMARY KEY ("id")
@@ -117,7 +116,7 @@ CREATE TABLE "rooms" (
     "id" UUID NOT NULL,
     "name" VARCHAR(100) NOT NULL,
     "description" TEXT,
-    "room_type" TEXT NOT NULL DEFAULT E'public',
+    "room_type" TEXT NOT NULL DEFAULT 'public',
     "room_image_url" TEXT,
     "joining_fee" INTEGER NOT NULL DEFAULT 0,
     "created_by_id" UUID NOT NULL,
@@ -185,6 +184,7 @@ CREATE TABLE "athletes" (
     "nationality" TEXT,
     "photo" TEXT,
     "sources" JSONB NOT NULL DEFAULT '{}',
+    "metadata" JSONB NOT NULL DEFAULT '{}',
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
 
@@ -195,6 +195,8 @@ CREATE TABLE "athletes" (
 CREATE TABLE "teams_athletes" (
     "team_id" INTEGER NOT NULL,
     "athlete_id" INTEGER NOT NULL,
+    "position" TEXT,
+    "number" INTEGER,
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3)
 );
@@ -247,21 +249,51 @@ CREATE TABLE "user_match_predictions" (
 );
 
 -- CreateTable
-CREATE TABLE "room_games" (
+CREATE TABLE "games" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
+    "type" "GameType" NOT NULL,
+    "status" "GameStatus" NOT NULL,
+    "metadata" JSONB NOT NULL DEFAULT '{}',
+    "competition_id" INTEGER NOT NULL,
+    "expiring_at" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "games_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "room_games" (
+    "id" UUID NOT NULL,
+    "type" "GameType" NOT NULL,
+    "status" "GameStatus" NOT NULL,
+    "game_id" UUID NOT NULL,
     "room_id" UUID NOT NULL,
-    "league_id" UUID NOT NULL,
-    "type" "RoomGameType" NOT NULL,
-    "status" "RoomGameStatus" NOT NULL,
+    "competition_id" INTEGER NOT NULL,
     "leaderboard" JSONB NOT NULL DEFAULT '[]',
     "summary" JSONB NOT NULL DEFAULT '{}',
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "expiring_at" TIMESTAMP(3) NOT NULL,
     "updated_at" TIMESTAMP(3),
 
     CONSTRAINT "room_games_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "user_game_summaries" (
+    "id" UUID NOT NULL,
+    "type" "GameType" NOT NULL,
+    "status" "GameStatus" NOT NULL,
+    "game_id" UUID NOT NULL,
+    "user_id" UUID NOT NULL,
+    "competition_id" INTEGER NOT NULL,
+    "score" INTEGER NOT NULL DEFAULT 0,
+    "summary" JSONB NOT NULL DEFAULT '{}',
+    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3),
+
+    CONSTRAINT "user_game_summaries_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -298,13 +330,22 @@ CREATE UNIQUE INDEX "team_id_competition_id_unique" ON "teams_competitions"("tea
 CREATE UNIQUE INDEX "team_id_athlete_id_unique" ON "teams_athletes"("team_id", "athlete_id");
 
 -- CreateIndex
+CREATE INDEX "matches_sport_idx" ON "matches"("sport");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "team_id_match_id_unique" ON "matches_teams"("team_id", "match_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_id_match_id_unique" ON "user_match_predictions"("user_id", "match_id");
 
 -- CreateIndex
+CREATE INDEX "games_competition_id_idx" ON "games"("competition_id");
+
+-- CreateIndex
 CREATE INDEX "room_id_index" ON "room_games"("room_id");
+
+-- CreateIndex
+CREATE INDEX "competition_id_index" ON "room_games"("competition_id");
 
 -- AddForeignKey
 ALTER TABLE "roles_permissions" ADD CONSTRAINT "roles_permissions_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -358,4 +399,22 @@ ALTER TABLE "user_match_predictions" ADD CONSTRAINT "user_match_predictions_user
 ALTER TABLE "user_match_predictions" ADD CONSTRAINT "user_match_predictions_match_id_fkey" FOREIGN KEY ("match_id") REFERENCES "matches"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "games" ADD CONSTRAINT "games_competition_id_fkey" FOREIGN KEY ("competition_id") REFERENCES "competitions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "room_games" ADD CONSTRAINT "room_games_room_id_fkey" FOREIGN KEY ("room_id") REFERENCES "rooms"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "room_games" ADD CONSTRAINT "room_games_competition_id_fkey" FOREIGN KEY ("competition_id") REFERENCES "competitions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "room_games" ADD CONSTRAINT "room_games_game_id_fkey" FOREIGN KEY ("game_id") REFERENCES "games"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_game_summaries" ADD CONSTRAINT "user_game_summaries_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user_profiles"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_game_summaries" ADD CONSTRAINT "user_game_summaries_competition_id_fkey" FOREIGN KEY ("competition_id") REFERENCES "competitions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_game_summaries" ADD CONSTRAINT "user_game_summaries_game_id_fkey" FOREIGN KEY ("game_id") REFERENCES "games"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,3 +1,3 @@
 export interface UpdateReferralDetailsDTO {
-    userId: string;
+    referrerId: string;
 }

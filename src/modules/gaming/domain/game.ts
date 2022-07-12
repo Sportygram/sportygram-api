@@ -2,26 +2,19 @@ import { Guard } from "../../../lib/core/Guard";
 import { Result } from "../../../lib/core/Result";
 import { AggregateRoot } from "../../../lib/domain/AggregateRoot";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
-import { RoomId } from "../../messaging/domain/roomId";
 import { CompetitionId } from "./competitionId";
+import { GameCompleted } from "./events/gameCompleted";
+import { GameCreated } from "./events/gameCreated";
 import { GameId } from "./gameId";
-import { LeaderboardPlayer } from "./types";
-
-const GameType = ["weekly", "season"] as const;
-type GameType = typeof GameType[number];
-
-const GameStatus = ["completed", "in_progress"] as const;
-type GameStatus = typeof GameStatus[number];
+import { GameStatus, GameType } from "./types";
 
 interface GameProps {
     name: string;
     description?: string;
-    roomId: RoomId;
     competitionId: CompetitionId;
     type: string;
     status?: string;
-    summary?: any;
-    leaderboard?: LeaderboardPlayer[];
+    metadata: any;
     expiringAt: Date;
     createdAt?: Date;
     updatedAt?: Date;
@@ -38,9 +31,6 @@ export class Game extends AggregateRoot<GameProps> {
     get description() {
         return this.props.description;
     }
-    get roomId(): RoomId {
-        return this.props.roomId;
-    }
     get competitionId(): CompetitionId {
         return this.props.competitionId;
     }
@@ -50,11 +40,8 @@ export class Game extends AggregateRoot<GameProps> {
     get status(): GameStatus {
         return this.props.status as GameStatus;
     }
-    get summary() {
-        return this.props.summary;
-    }
-    get leaderboard() {
-        return this.props.leaderboard;
+    get metadata() {
+        return this.props.metadata;
     }
     get expiringAt(): Date {
         return this.props.expiringAt;
@@ -66,6 +53,18 @@ export class Game extends AggregateRoot<GameProps> {
         return this.props.updatedAt || new Date();
     }
 
+    public updateMetadata(data: any) {
+        this.props.metadata = {
+            ...this.props.metadata,
+            ...data,
+        };
+    }
+
+    public completeGame() {
+        this.props.status = "completed";
+        this.addDomainEvent(new GameCompleted(this));
+    }
+
     private constructor(roleProps: GameProps, id?: UniqueEntityID) {
         super(roleProps, id);
     }
@@ -73,7 +72,6 @@ export class Game extends AggregateRoot<GameProps> {
     public static create(props: GameProps, id?: UniqueEntityID): Result<Game> {
         const guardResult = Guard.againstNullOrUndefinedBulk([
             { argument: props.name, argumentName: "name" },
-            { argument: props.roomId, argumentName: "roomId" },
             { argument: props.competitionId, argumentName: "competitionId" },
             { argument: props.type, argumentName: "type" },
             { argument: props.expiringAt, argumentName: "expiringAt" },
@@ -85,7 +83,7 @@ export class Game extends AggregateRoot<GameProps> {
 
         const type = props.type.toLowerCase() as GameType;
         const status = "in_progress";
-        const gameTypeGuard = Guard.isValidValueOfType<GameType>(
+        const gameTypeGuard = Guard.isValidValueOfObjectType<GameType>(
             type,
             GameType,
             "type"
@@ -96,11 +94,11 @@ export class Game extends AggregateRoot<GameProps> {
         }
 
         const game = new Game({ ...props, type, status }, id);
-        // const isNewPrediction = !id;
+        const isNewGame = !id;
 
-        // if (isNewPrediction) {
-        //     prediction.addDomainEvent(new MatchPredictionCreated(prediction));
-        // }
+        if (isNewGame) {
+            game.addDomainEvent(new GameCreated(game));
+        }
         return Result.ok<Game>(game);
     }
 }

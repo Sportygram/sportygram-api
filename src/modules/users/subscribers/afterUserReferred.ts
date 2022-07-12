@@ -25,21 +25,30 @@ export class AfterUserReferred implements IHandle<UserReferred> {
         const { user } = event;
 
         try {
+            if (!user.referrerId) throw new Error("User missing referee");
             await Promise.all([
                 this.updateReferralDetails.execute({
-                    userId: user.userId.id.toString(),
+                    referrerId: user.referrerId.id.toString(),
                     // requestUser: SystemRequestUser,
                 }),
             ]);
 
             logger.info(
                 `[AfterUserReferred]: Successfully updated user refeerral details after UserReferred`,
-                { userId: user.userId, email: user.email }
+                {
+                    userId: user.userId,
+                    email: user.email,
+                    referrerId: user.referrerId,
+                }
             );
         } catch (err) {
             logger.error(
                 `[AfterUserReferred]: Failed to updated user referral details after UserReferred.`,
-                { userId: user.userId, email: user.email }
+                {
+                    userId: user.userId,
+                    email: user.email,
+                    referrerId: user.referrerId,
+                }
             );
         }
     }

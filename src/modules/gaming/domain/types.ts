@@ -85,7 +85,7 @@ export type Goal = {
     minute?: string;
 };
 
-export type Summary = {
+export type MatchSummary = {
     scores: Record<TeamCode, number>;
     scoresByPeriodEnd: Record<
         FootballPeriod,
@@ -107,7 +107,7 @@ export interface Match {
     competitionId: number;
     venue: string;
     winner?: Team;
-    summary: Summary; // scores, teamId-StatisticsObj
+    summary: MatchSummary; // scores, teamId-StatisticsObj
     sources: Sources;
     questions: MatchQuestion[]; // store only solutions
     metadata: any; // home: "MUN", away: "CHE", periodNames(could be in code)
@@ -263,3 +263,12 @@ export type LeaderboardPlayer = {
     rank: number;
     prevRank: number;
 };
+
+export const GameType = { Weekly: "weekly", Seasonm: "season" } as const;
+export type GameType = typeof GameType[keyof typeof GameType];
+
+export const GameStatus = {
+    Completed: "completed",
+    InProgress: "in_progress",
+} as const;
+export type GameStatus = typeof GameStatus[keyof typeof GameStatus];

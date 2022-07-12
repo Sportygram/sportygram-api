@@ -4,18 +4,19 @@ import { AggregateRoot } from "../../../lib/domain/AggregateRoot";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
 import { ChatUserMetadata } from "../../messaging/domain/chatUser";
 import { UserId } from "../../users/domain/userId";
+import { CompetitionId } from "./competitionId";
+import { PlayerGameEnded } from "./events/playerGameEnded";
+import { GameId } from "./gameId";
+import { PlayerGameSummary } from "./gameSummary";
+import { PlayerGameSummaries } from "./playerGameSummaries";
 import { PlayerId } from "./playerId";
-
-export type GamesSummary = {
-    weekly: { score: number };
-    season: { score: number };
-};
 
 interface PlayerProps {
     userId: UserId;
+    username?: string;
     displayName?: string;
     coinBalance: number;
-    gamesSummary: GamesSummary;
+    activeGameSummaries: PlayerGameSummaries;
     metadata: ChatUserMetadata;
     createdAt?: Date;
     updatedAt?: Date;
@@ -28,6 +29,9 @@ export class Player extends AggregateRoot<PlayerProps> {
     get userId() {
         return this.props.userId;
     }
+    get username(): string | undefined {
+        return this.props.username;
+    }
     get displayName(): string | undefined {
         return this.props.displayName;
     }
@@ -37,8 +41,8 @@ export class Player extends AggregateRoot<PlayerProps> {
     get metadata(): ChatUserMetadata {
         return this.props.metadata || { stream: { data: {} } };
     }
-    get gamesSummary(): GamesSummary {
-        return this.props.gamesSummary;
+    get activeGameSummaries(): PlayerGameSummaries {
+        return this.props.activeGameSummaries;
     }
     get createdAt(): Date {
         return this.props.createdAt || new Date();
@@ -47,9 +51,53 @@ export class Player extends AggregateRoot<PlayerProps> {
         return this.props.updatedAt || new Date();
     }
 
-    public updateWeeklyAndSeasonScores(points: number): Result<void> {
-        this.props.gamesSummary.weekly.score += points;
-        this.props.gamesSummary.season.score += points;
+    public getGameSummariesByCompetition(
+        competitionId: CompetitionId
+    ): PlayerGameSummary[] {
+        return this.props.activeGameSummaries
+            .getItems()
+            .filter((gs) => gs.competitionId.equals(competitionId));
+    }
+
+    public addActiveGameSummary(gameSummary: PlayerGameSummary): Result<void> {
+        const foundGameSummaries = this.getGameSummariesByCompetition(
+            gameSummary.competitionId
+        );
+        if (foundGameSummaries.find((gs) => gs.type === gameSummary.type))
+            return Result.fail(
+                `Game with competitionId: ${gameSummary.competitionId.id} and type ${gameSummary.type} exists`
+            );
+        this.props.activeGameSummaries.add(gameSummary);
+        return Result.ok();
+    }
+
+    public setGameSummaryComplete(gameId: GameId): Result<void> {
+        const gameSummary = this.props.activeGameSummaries
+            .getItems()
+            .find((gs) => gs.gameId.equals(gameId));
+
+        if (!gameSummary) return Result.fail("Game summary for gameId not found");
+        if (gameSummary.isComplete())
+            return Result.fail("Game is already complete");
+
+        gameSummary.completeGame();
+
+        this.props.activeGameSummaries.remove(gameSummary);
+        this.addDomainEvent(new PlayerGameEnded(this, gameSummary));
+        return Result.ok();
+    }
+
+    public updateCompetitonGameScores(
+        competitionId: CompetitionId,
+        points: number
+    ): Result<void> {
+        const competitonGameSummaries =
+            this.getGameSummariesByCompetition(competitionId);
+
+        competitonGameSummaries.forEach((gs) => {
+            gs.increaseScore(points);
+            this.props.activeGameSummaries.add(gs);
+        });
         return Result.ok();
     }
 

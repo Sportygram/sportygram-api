@@ -15,3 +15,10 @@ export const Interval = {
     Years: "years",
 } as const;
 export type Interval = typeof Interval[keyof typeof Interval];
+
+export interface Summary {
+    total?: number;
+    successCount: number;
+    failureCount: number;
+    failed: any[];
+}

@@ -9,7 +9,19 @@ export class PrismaUserReadRepo implements UserReadRepo {
         const user = await prisma.user.findUnique({
             where: { id: userId },
             include: {
-                profile: true,
+                profile: {
+                    include: {
+                        gameSummaries: {
+                            select: {
+                                type: true,
+                                status: true,
+                                score: true,
+                                summary: true,
+                                competitionId: true,
+                            },
+                        },
+                    },
+                },
                 userRoles: {
                     select: {
                         role: true,

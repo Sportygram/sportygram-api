@@ -1,8 +1,7 @@
 export interface CreateGameDTO {
     name: string;
-    description: string;
-    roomId: string;
+    description?: string;
     competitionId: string;
     type: string;
-    expiringAt: Date;
+    expiringAt: string;
 }

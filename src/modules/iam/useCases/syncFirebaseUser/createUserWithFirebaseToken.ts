@@ -41,7 +41,7 @@ export class CreateUserWithFirebaseToken
 
                 Verify idToken to get claims {uid}
                 Get user data with the uid
-                Create huddle user, use uid as password
+                Create / Update huddle user, use uid as password if creating
                 if successful, set user claims with huddle_uuid
 
             */
@@ -102,32 +102,35 @@ export class CreateUserWithFirebaseToken
             }
             //#endregion
 
-            const userAlreadyExists = await this.userRepo.getUserByEmail(email);
-            if (userAlreadyExists) {
+            let user = await this.userRepo.getUserByEmail(email);
+            if (user) {
                 return left(new EmailAlreadyExistsError(email.value));
+            } else {
+                const [firstname, lastname] = (
+                    firebaseUserRecord.displayName || ""
+                )
+                    .trim()
+                    .split(" ");
+                const userOrError: Result<User> = User.create({
+                    email,
+                    passwordHash,
+                    firstname,
+                    lastname,
+                    referralCode,
+                    userState: UserState.Active,
+                    roles,
+                    tokens: UserTokens.create([]),
+                    referrerId: referrer?.userId,
+                    metadata: { firebase: firebaseUserRecord },
+                });
+
+                if (userOrError.isFailure && userOrError.error) {
+                    return left(new AppError.InputError(userOrError.error));
+                }
+
+                user = userOrError.getValue();
             }
-
-            const [firstname, lastname] = (
-                firebaseUserRecord.displayName || ""
-            ).trim().split(" ");
-            const userOrError: Result<User> = User.create({
-                email,
-                passwordHash,
-                firstname,
-                lastname,
-                referralCode,
-                userState: UserState.Active,
-                roles,
-                tokens: UserTokens.create([]),
-                referrerId: referrer?.userId,
-                metadata: { firebase: firebaseUserRecord },
-            });
-
-            if (userOrError.isFailure && userOrError.error) {
-                return left(new AppError.InputError(userOrError.error));
-            }
-
-            const user: User = userOrError.getValue();
+            user.updateFirebaseUserData(firebaseUserRecord);
 
             await this.userRepo.save(user);
             await this.firebaseService.setClaims(firebaseUserRecord.uid, {

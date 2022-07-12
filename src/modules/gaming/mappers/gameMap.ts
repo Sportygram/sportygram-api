@@ -1,15 +1,12 @@
-import { RoomGame as PRoomGame } from "@prisma/client";
+import { Game as PGame } from "@prisma/client";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
-import { RoomId } from "../../messaging/domain/roomId";
 import { Game } from "../domain/game";
 import { CompetitionId } from "../domain/competitionId";
-import { LeaderboardPlayer } from "../domain/types";
 
-export type RawRoomGame = PRoomGame;
+export type RawGame = PGame;
 
-export class RoomGameMap {
-    public static toDomain(raw: RawRoomGame): Game | undefined {
-        const roomId = RoomId.create(new UniqueEntityID(raw.roomId)).getValue();
+export class GameMap {
+    public static toDomain(raw: RawGame): Game {
         const competitionId = CompetitionId.create(
             new UniqueEntityID(raw.competitionId)
         ).getValue();
@@ -17,32 +14,32 @@ export class RoomGameMap {
             {
                 name: raw.name,
                 description: raw.description || undefined,
-                roomId,
                 competitionId: competitionId,
                 type: raw.type,
                 status: raw.status,
-                summary: raw.summary || {},
-                leaderboard: raw.leaderboard as LeaderboardPlayer[],
+                metadata: raw.metadata,
                 expiringAt: raw.expiringAt,
                 createdAt: raw.createdAt || undefined,
                 updatedAt: raw.updatedAt || undefined,
             },
             new UniqueEntityID(raw.id)
         );
-        return gameOrError.isSuccess ? gameOrError.getValue() : undefined;
+
+        if (!gameOrError.isSuccess) {
+            throw new Error(gameOrError.error as string);
+        }
+        return gameOrError.getValue();
     }
 
-    public static toPersistence(game: Game): RawRoomGame {
+    public static toPersistence(game: Game): RawGame {
         return {
             id: game.gameId.id.toString(),
-            roomId: game.roomId.id.toString(),
             competitionId: Number(game.competitionId.id.toString()),
             name: game.name,
             description: game.description || null,
             type: game.type,
             status: game.status,
-            summary: game.summary,
-            leaderboard: game.leaderboard || [],
+            metadata: game.metadata,
             expiringAt: game.expiringAt,
             createdAt: game.createdAt,
             updatedAt: game.updatedAt,

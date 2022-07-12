@@ -55,9 +55,11 @@ export class ScoreMatchPredictions
                                 additionalPointsOrError.error as string
                             );
                         }
-                        player.updateWeeklyAndSeasonScores(
+                        player.updateCompetitonGameScores(
+                            match.competitionId,
                             additionalPointsOrError.getValue()
                         );
+                        // TODO: commit both player and matchPrediction in a transaction
                         await this.playerRepo.save(player);
                         await this.matchPredictionRepo.save(prediction);
                         return Result.ok<MatchPrediction>(prediction);
@@ -70,7 +72,7 @@ export class ScoreMatchPredictions
             const scoringResults = scoringResultsOrError.reduce<{
                 successCount: number;
                 failureCount: number;
-                failedMatches: string[];
+                failed: string[];
             }>(
                 (prevSummary, scoredOrError) => {
                     if (scoredOrError.isSuccess) {
@@ -84,13 +86,13 @@ export class ScoreMatchPredictions
                             ...prevSummary,
                             failureCount: prevSummary.failureCount + 1,
                             failedPredictions: [
-                                ...prevSummary.failedMatches,
+                                ...prevSummary.failed,
                                 error,
                             ],
                         };
                     }
                 },
-                { successCount: 0, failureCount: 0, failedMatches: [] }
+                { successCount: 0, failureCount: 0, failed: [] }
             );
 
             return right(

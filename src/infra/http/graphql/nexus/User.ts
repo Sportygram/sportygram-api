@@ -38,7 +38,7 @@ export const User = objectType({
         t.nonNull.float("coinBalance");
         t.field("chatData", { type: "ChatData" });
         t.json("settings");
-        t.json("gamesSummary");
+        t.json("gameSummaries");
         t.nonNull.dateTime("createdAt");
         t.nonNull.dateTime("updatedAt");
     },

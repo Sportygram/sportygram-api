@@ -1,7 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["filterJson"]
-
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -94,11 +92,11 @@ model UserProfile {
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")
   settings         Json              @default("{}")
-  gamesSummary     Json              @default("{}")
   metadata         Json              @default("{}")
   user             User              @relation(fields: [userId], references: [id])
   chatUserRooms    RoomChatUser[]
   matchPredictions MatchPrediction[]
+  gameSummaries    UserGameSummary[]
 
   @@map("user_profiles")
 }
@@ -138,7 +136,7 @@ model RoomChatUser {
   role      String
   createdAt DateTime?   @default(now()) @map("created_at")
   updatedAt DateTime?   @updatedAt @map("updated_at")
-  rooom     Room        @relation(fields: [roomId], references: [id])
+  room      Room        @relation(fields: [roomId], references: [id])
   chatUser  UserProfile @relation(fields: [userId], references: [userId])
 
   @@unique([roomId, userId], map: "room_id_user_id_unique")
@@ -159,7 +157,9 @@ model Competition {
   matches          Match[]
   competitionTeams TeamCompetition[]
 
-  RoomGame RoomGame[]
+  RoomGame        RoomGame[]
+  UserGameSummary UserGameSummary[]
+  Game            Game[]
   @@map("competitions")
 }
 
@@ -278,26 +278,62 @@ model MatchPrediction {
   @@map("user_match_predictions")
 }
 
-model RoomGame {
-  id            String         @id @db.Uuid
+model Game {
+  id            String     @id @db.Uuid
   name          String
   description   String?
-  roomId        String         @map("room_id") @db.Uuid
-  competitionId Int            @map("competition_id")
-  type          RoomGameType
-  status        RoomGameStatus
-  leaderboard   Json           @default("[]")
-  summary       Json           @default("{}")
-  createdAt     DateTime?      @default(now()) @map("created_at")
-  expiringAt    DateTime       @map("expiring_at")
-  updatedAt     DateTime?      @updatedAt @map("updated_at")
-  room          Room           @relation(fields: [roomId], references: [id])
-  competition   Competition    @relation(fields: [competitionId], references: [id])
+  type          GameType
+  status        GameStatus
+  metadata      Json       @default("{}")
+  competitionId Int        @map("competition_id")
+  expiringAt    DateTime   @map("expiring_at")
+  createdAt     DateTime?  @default(now()) @map("created_at")
+  updatedAt     DateTime?  @updatedAt @map("updated_at")
 
+  roomGames   RoomGame[]
+  competition Competition @relation(fields: [competitionId], references: [id])
+
+  @@index([competitionId])
+  @@map("games")
+  UserGameSummary UserGameSummary[]
+}
+
+model RoomGame {
+  id            String      @id @db.Uuid
+  type          GameType
+  status        GameStatus
+  gameId        String      @map("game_id") @db.Uuid
+  roomId        String      @map("room_id") @db.Uuid
+  competitionId Int         @map("competition_id")
+  leaderboard   Json        @default("[]")
+  summary       Json        @default("{}")
+  createdAt     DateTime?   @default(now()) @map("created_at")
+  updatedAt     DateTime?   @updatedAt @map("updated_at")
+  game          Game        @relation(fields: [gameId], references: [id])
+  room          Room        @relation(fields: [roomId], references: [id])
+  competition   Competition @relation(fields: [competitionId], references: [id])
 
   @@index([roomId], map: "room_id_index")
   @@index([competitionId], map: "competition_id_index")
   @@map("room_games")
+}
+
+model UserGameSummary {
+  id            String      @id @db.Uuid
+  type          GameType
+  status        GameStatus
+  gameId        String      @map("game_id") @db.Uuid
+  playerId      String      @map("user_id") @db.Uuid
+  competitionId Int         @map("competition_id")
+  score         Int         @default(0) @map("score")
+  summary       Json        @default("{}")
+  createdAt     DateTime?   @default(now()) @map("created_at")
+  updatedAt     DateTime?   @updatedAt @map("updated_at")
+  game          Game        @relation(fields: [gameId], references: [id])
+  player        UserProfile @relation(fields: [playerId], references: [userId])
+  competition   Competition @relation(fields: [competitionId], references: [id])
+
+  @@map("user_game_summaries")
 }
 
 enum AccessMode {
@@ -340,12 +376,12 @@ enum MatchStatus {
   completed
 }
 
-enum RoomGameType {
+enum GameType {
   weekly
   season
 }
 
-enum RoomGameStatus {
+enum GameStatus {
   in_progress
   completed
 }

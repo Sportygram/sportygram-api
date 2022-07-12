@@ -155,10 +155,6 @@ export class PrismaUserRepo implements UserRepo {
                         id: uuidv4(),
                         onboarded: false,
                         settings: {},
-                        gamesSummary: {
-                            weekly: { score: 0 },
-                            season: { score: 0 },
-                        },
                         displayName: `${user.firstname || ""} ${
                             user.lastname || ""
                         }`.trim(),

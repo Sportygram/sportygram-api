@@ -77,7 +77,7 @@ export class FirebaseService {
             (faster fanouts cos fewer stale tokens and better success metrics tracking)
         
 
-        while handling live match notofications, we should create different notifications
+        while handling live match notifications, we should create different notifications
         for the different matches and push updates to each notification 
     */
 
@@ -108,7 +108,7 @@ export class FirebaseService {
             notification: {
                 title,
                 body,
-                color: options.color || config.huddle.defaultProfileColour,
+                color: options?.color || config.huddle.defaultProfileColour,
             },
             data,
             token: fcmToken,
@@ -128,7 +128,7 @@ export class FirebaseService {
             notification: {
                 title,
                 body,
-                color: options.color || config.huddle.defaultProfileColour,
+                color: options?.color || config.huddle.defaultProfileColour,
             },
             data,
             topic,

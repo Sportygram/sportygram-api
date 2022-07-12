@@ -25,6 +25,7 @@ import { Platform } from "../../../lib/@types";
 import { isConstArrayType } from "../../../lib/utils/typeUtils";
 import { FCMTokenUpdated } from "../../users/domain/events/fcmTokenUpdated";
 import { FCMTopic } from "../../../lib/services/firebase";
+import { UserRecord } from "firebase-admin/auth";
 
 type UserMetadata = {
     firebase?: any;
@@ -243,6 +244,16 @@ export class User extends AggregateRoot<UserProps> {
         );
         this.props.metadata.fcm.topics = topics;
 
+        return Result.ok();
+    }
+
+    public updateFirebaseUserData(
+        firebaseUserRecord: UserRecord
+    ): Result<void> {
+        this.metadata.firebase = {
+            ...this.metadata.firebase,
+            ...firebaseUserRecord,
+        };
         return Result.ok();
     }
 

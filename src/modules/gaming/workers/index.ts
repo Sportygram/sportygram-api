@@ -1,4 +1,5 @@
 import cron from "node-cron";
+import { endGames } from "../useCases/endGames";
 import { setMatchesStartingNowToInProgress } from "../useCases/setMatchesStartingNowToInProgress";
 import { updateApiFootballLive } from "../useCases/updateLiveMatches";
 
@@ -25,22 +26,30 @@ Every 2 minutes,
 - Prioritize using APIs that allow fetching all live match update in a request
     NOTE (They may be slower so check speed and monetary cost of fetch)
 - This will serve as a backup strategy if APIs with a notification system for updates fail 
+
 After Live Match Updated,
-- For each scorable event, update corresponding questions 
-    (question that can be solved by event and does not have solution yet) solution and 
-    set question.scored to false (this will actually happen before the event)
+- For each scorable event, update corresponding questions solution
+    (question that can be solved by event and does not have solution yet)
+- Trigger MatchQuestionAnswered event for match
+- Send notification with updates to users
+
+After Match Complete
+- Answer any questions that are not yet answered
+- Trigger MatchQuestionAnswered event for match
+
+After Match Question Answered
 - Fetch all match predictions,
-- For each prediction, score the prediction and update the user games Summary.
-- Update match's question scored to true. 
-    This means the question has been scored for all players and we don't need to 
-    rescore any players. We might need to rescore if process failed while scoring
-    We'll fetch all games that have completed for a while but with a question.scored = false, 
-    we then rescore that question for player predictions that were not scored
+- For each prediction in each matchPrediction, score the prediction if it's question
+    has been solved,
+    - Update prediction's scored to true
+    (each prediction will only be scored once)
+- add the score for the newly scored predictions to the totalpoints for 
+    the currently running user gameSummaries (weekly and season) for competition.
 - Dispatch Match predictions scored event
 
 After Match Predictions Scored,
-- Get all live room games (in_progress weekly and season). Notify me if missing game
-- Fetch all room users with their game summaries (new scores)
+- Get all live room games for competition (in_progress weekly and season). Notify me if missing game
+- Fetch all room users with their in_progress game summaries (new scores)
 - For each user, update their score on the leaderboard
 - Recalculate all user ranks on leaderboard using new scores
 - save all old ranks to lastRank
@@ -48,14 +57,35 @@ After Match Predictions Scored,
 - Save room games back to db
 
 Every week at midnight and every 10minutes till 00:30
-- Get all room games that have ended but still in_progress
-- Calculate summary for the game
-- Update the status to completed
-- Save room game
+- Get all ended games that have ended but still in_progress
+- Get all room games for the ended games
+- Calculate summary for each room game
+- Save room games with summary to db and status completed (
+    room game must only be completed once so the summary message goes out once
+    even if the end game calls for a game again)
+- Get all user game summaries
+- Calculate summary for each user game
+- Save user games with summary to db and status completed
+- Update game status to completed
+- Save game to db;
+- Trigger game ended
+
+After room game ended
+- Send a message with the game summary for the room and the commencement of a new game
+
+After user game ended
+- Send a message with the game summary for the user and the commencement of a new game
 
 After game ended
-- Send a message with the game summary for the room and the commencement of a new game
 - Create new game
+- Create new room game for all rooms
+    new rooms will automatically trigger creation of all corresponding room games
+- Create new user game summaries for all users
+    new users will automatically trigger creation of all corresponding user game summaries
+
+
+TODO: Every day at midnight
+- Check upcoming (next 2weeks) unscheduled match for dateTime updates
 */
 
 cron.schedule("*/5 * * * *", () => {
@@ -65,5 +95,11 @@ cron.schedule("*/5 * * * *", () => {
 
 cron.schedule("* * * * *", () => {
     // Every minute
-    setMatchesStartingNowToInProgress.execute({})
+    setMatchesStartingNowToInProgress.execute({});
+});
+
+// */10 0-1 * * 0
+cron.schedule("*/10 0-1 * * 0", () => {
+    // Every 10 minutes from 00:00 to 01:00 on Sunday
+    endGames.execute({});
 });

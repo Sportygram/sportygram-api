@@ -30,11 +30,11 @@ export async function seedMatches() {
     const summary = results.reduce<{
         successCount: number;
         failureCount: number;
-        failedMatches: any[];
+        failed: any[];
     }>(
         (prevSummary, result) => {
             !result.success &&
-                prevSummary.failedMatches.push(
+                prevSummary.failed.push(
                     result.match?.sources.apiFootball.id
                 );
             return {
@@ -42,10 +42,10 @@ export async function seedMatches() {
                     prevSummary.successCount + (result.success ? 1 : 0),
                 failureCount:
                     prevSummary.failureCount + (result.success ? 0 : 1),
-                failedMatches: prevSummary.failedMatches,
+                failed: prevSummary.failed,
             };
         },
-        { successCount: 0, failureCount: 0, failedMatches: [] }
+        { successCount: 0, failureCount: 0, failed: [] }
     );
 
     const result = {

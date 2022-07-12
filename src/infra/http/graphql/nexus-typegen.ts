@@ -295,7 +295,7 @@ export interface NexusGenObjects {
     emailVerified: boolean; // Boolean!
     favoriteTeam?: string | null; // String
     firstname?: string | null; // String
-    gamesSummary?: NexusGenScalars['JSON'] | null; // JSON
+    gameSummaries?: NexusGenScalars['JSON'] | null; // JSON
     lastname?: string | null; // String
     onboarded: boolean; // Boolean!
     phone?: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
@@ -518,7 +518,7 @@ export interface NexusGenFieldTypes {
     emailVerified: boolean; // Boolean!
     favoriteTeam: string | null; // String
     firstname: string | null; // String
-    gamesSummary: NexusGenScalars['JSON'] | null; // JSON
+    gameSummaries: NexusGenScalars['JSON'] | null; // JSON
     lastname: string | null; // String
     onboarded: boolean; // Boolean!
     phone: NexusGenScalars['PhoneNumber'] | null; // PhoneNumber
@@ -740,7 +740,7 @@ export interface NexusGenFieldTypeNames {
     emailVerified: 'Boolean'
     favoriteTeam: 'String'
     firstname: 'String'
-    gamesSummary: 'JSON'
+    gameSummaries: 'JSON'
     lastname: 'String'
     onboarded: 'Boolean'
     phone: 'PhoneNumber'

@@ -3,7 +3,7 @@ import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
 import { Result } from "../../../lib/core/Result";
 import { UserId } from "./userId";
 import { Guard } from "../../../lib/core/Guard";
-import { GamesSummary, Settings } from "./valueObjects/settings";
+import { Settings } from "./valueObjects/settings";
 import { UserProfileId } from "./userProfileId";
 import { teams } from "../../gaming/infra/database/seed/team.seed";
 import { config } from "../../../lib/config";
@@ -18,7 +18,6 @@ interface UserProfileProps {
     profileImageUrl?: string;
     onboarded: boolean;
     settings: Settings;
-    gamesSummary: GamesSummary;
     metadata: any;
     createdAt?: Date;
     updatedAt?: Date;
@@ -48,9 +47,6 @@ export class UserProfile extends AggregateRoot<UserProfileProps> {
     }
     get metadata() {
         return this.props.metadata;
-    }
-    get gamesSummary(): GamesSummary {
-        return this.props.gamesSummary;
     }
     get onboarded(): boolean {
         return !!this.props.onboarded;

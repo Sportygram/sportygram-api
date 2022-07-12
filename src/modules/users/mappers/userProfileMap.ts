@@ -1,7 +1,7 @@
 import { UserProfile } from "../domain/userProfile";
 import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
 import { UserId } from "../domain/userId";
-import { GamesSummary, Settings } from "../domain/valueObjects/settings";
+import { Settings } from "../domain/valueObjects/settings";
 import { UserProfile as PUserProfile } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime";
 
@@ -21,7 +21,6 @@ export class UserProfileMap {
                 favoriteTeam: raw.favoriteTeam || undefined,
                 coinBalance: raw.coinBalance.toNumber(),
                 referralCount: raw.referralCount,
-                gamesSummary: (raw.gamesSummary as GamesSummary) || {},
                 settings: (raw.settings as Settings) || {},
                 metadata: (raw.metadata as Settings) || {},
                 createdAt: raw.createdAt,
@@ -36,9 +35,7 @@ export class UserProfileMap {
         return userOrError.getValue();
     }
 
-    public static toPersistence(
-        profile: UserProfile
-    ): RawUserProfile {
+    public static toPersistence(profile: UserProfile): RawUserProfile {
         return {
             id: profile.userProfileId.id.toString(),
             displayName: profile.displayName || null,
@@ -49,7 +46,6 @@ export class UserProfileMap {
             userId: profile.userId.id.toString(),
             settings: profile.settings,
             metadata: profile.metadata,
-            gamesSummary: profile.gamesSummary,
             coinBalance: new Decimal(profile.coinBalance),
             referralCount: profile.referralCount,
             createdAt: profile.createdAt,

@@ -18,12 +18,12 @@ export class UpdateReferralDetails
 
     async execute(request: UpdateReferralDetailsDTO): Promise<Response> {
         try {
-            const { userId } = request;
+            const { referrerId } = request;
             const profile = await this.userProfileRepo.getUserProfileByUserId(
-                userId
+                referrerId
             );
             if (!profile) {
-                return left(new UserProfileDoesNotExistError(userId));
+                return left(new UserProfileDoesNotExistError(referrerId));
             }
 
             profile.rewardReferral();

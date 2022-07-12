@@ -327,7 +327,7 @@ type User {
   emailVerified: Boolean!
   favoriteTeam: String
   firstname: String
-  gamesSummary: JSON
+  gameSummaries: JSON
   lastname: String
   onboarded: Boolean!
   phone: PhoneNumber

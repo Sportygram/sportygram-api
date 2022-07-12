@@ -10,7 +10,8 @@ export const config = {
             EPL: true,
             MLS: process.env.NODE_ENV !== "production",
         },
-        referralCoinReward: 1,
+        referralCoinReward: 8,
+        predictionEditCoinCOst: 5
     },
     auth: {
         secret: process.env.AUTH_SECRET || "top-secret",
