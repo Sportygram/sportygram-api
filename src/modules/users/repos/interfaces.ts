@@ -6,6 +6,7 @@ export interface UserProfileRepo {
 }
 
 export interface FollowerRepo {
+    followingUser(followerId: string, userId: string): Promise<boolean>;
     followUser(userId: string, followerId: string): Promise<void>;
     unfollowUser(userId: string, followerId: string): Promise<void>;
 }

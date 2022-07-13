@@ -22,7 +22,6 @@ export class FollowUser implements UseCase<FollowUserDTO, Promise<Response>> {
         const { followerId, userId } = request;
 
         try {
-            // TODO: Do not break if user already followed
             const follower = await this.userProfileRepo.getUserProfileByUserId(
                 followerId
             );
@@ -38,6 +37,13 @@ export class FollowUser implements UseCase<FollowUserDTO, Promise<Response>> {
                 return left(new UserProfileDoesNotExistError(userId));
             }
 
+            const alreadyFollowing = await this.followRepo.followingUser(
+                followerId,
+                userId
+            );
+            if (alreadyFollowing) {
+                return right(Result.ok<void>());
+            }
             await this.followRepo.followUser(followerId, userId);
 
             return right(Result.ok());
