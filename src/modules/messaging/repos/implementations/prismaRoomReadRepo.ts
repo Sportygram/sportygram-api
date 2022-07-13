@@ -50,7 +50,7 @@ export class PrismaRoomReadRepo implements RoomReadRepo {
                         rankStatus:
                             player.rank === player.prevRank
                                 ? "same"
-                                : player.rank > player.prevRank
+                                : player.rank < player.prevRank
                                 ? "up"
                                 : "down",
                     };

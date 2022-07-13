@@ -71,9 +71,11 @@ export class PrismaRoomRepo implements RoomRepo {
 
         const updateMany = room.members?.getItems().map((member) => ({
             where: {
-                roomId_userId: {
-                    roomId: rawRoom.id,
-                    userId: member.userId.id.toString(),
+                userId: {
+                    equals: member.userId.id.toString(),
+                },
+                roomId: {
+                    equals: rawRoom.id,
                 },
             },
             data: {

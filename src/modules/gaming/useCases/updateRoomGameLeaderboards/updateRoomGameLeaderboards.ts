@@ -4,6 +4,7 @@ import * as AppError from "../../../../lib/core/AppError";
 import { RoomGameRepo } from "../../repos/interfaces";
 import { UseCase } from "../../../../lib/core/UseCase";
 import { Summary } from "../../../../lib/@types";
+import _ from "lodash";
 
 type Response = Either<
     AppError.UnexpectedError | AppError.PermissionsError,
@@ -20,7 +21,8 @@ export class UpdateRoomGameLeaderboards
 
         try {
             const liveGames = await this.roomGameRepo.getLiveRoomGames(
-                competitionId, roomId
+                competitionId,
+                roomId
             );
 
             const liveGameUpdateResults = await Promise.all(
@@ -67,7 +69,7 @@ export class UpdateRoomGameLeaderboards
                                     // can either fetch player and add to leaderboard
                                     // or just log and trace bug that caused this
 
-                                    return { ...score, prevRank: 0 };
+                                    return { ...score, rank: 0, prevRank: 0 };
                                 }
                                 return {
                                     ...oldLeaderboardPlayer,
@@ -77,14 +79,17 @@ export class UpdateRoomGameLeaderboards
                             }
                         );
 
-                        newLeaderboardWithoutRank.sort(
-                            (a, b) => b.score - a.score
-                        );
-                        const newLeaderboard = newLeaderboardWithoutRank.map(
-                            (player, index) => {
-                                return { ...player, rank: index + 1 };
-                            }
-                        );
+                        const newLeaderboard = _(newLeaderboardWithoutRank)
+                            .groupBy("score")
+                            .toPairs()
+                            .orderBy((spArray) => spArray[0], "desc")
+                            .flatMap((spArray, idx) =>
+                                spArray[1].map((p) => ({
+                                    ...p,
+                                    rank: p.score === 0 ? 0 : idx + 1,
+                                }))
+                            )
+                            .value();
 
                         game.updateLeaderboard(newLeaderboard);
                         await this.roomGameRepo.save(game);
