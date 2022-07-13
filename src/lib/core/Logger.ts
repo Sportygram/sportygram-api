@@ -56,6 +56,7 @@ if (
     });
 } else {
     logger = createLogger({
+        transports: [new LokiTransport(options.loki)],
         exitOnError: false,
     });
 }

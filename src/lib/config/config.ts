@@ -23,9 +23,9 @@ export const config = {
     },
     grafana: {
         loki: {
-            url: process.env.LOKI_URL || "http://127.0.0.1:3100",
-            username: process.env.LOKI_USERNAME,
-            password: process.env.LOKI_PASSWORD,
+            url: process.env.LOKI_URL || "http://huddle-loki:3100",
+            username: process.env.LOKI_USERNAME || "admin",
+            password: process.env.LOKI_PASSWORD || "Pa55w0rd",
             label: process.env.LOKI_LABEL || "huddle_dev_api",
         },
     },
