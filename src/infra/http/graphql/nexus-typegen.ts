@@ -166,6 +166,9 @@ export interface NexusGenObjects {
     next?: string | null; // String
     prev?: string | null; // String
   }
+  FollowerOutput: { // root type
+    message: string; // String!
+  }
   GamePlayer: { // root type
     name: string; // String!
     playerId: string; // ID!
@@ -306,6 +309,8 @@ export interface NexusGenObjects {
     emailVerified: boolean; // Boolean!
     favoriteTeam?: string | null; // String
     firstname?: string | null; // String
+    followerCount: number; // Int!
+    followingCount: number; // Int!
     gameSummaries?: NexusGenScalars['JSON'] | null; // JSON
     lastname?: string | null; // String
     onboarded: boolean; // Boolean!
@@ -325,7 +330,7 @@ export interface NexusGenObjects {
 
 export interface NexusGenInterfaces {
   CursorPaginationOutput: any;
-  MutationOutput: NexusGenRootTypes['AuthOutput'] | NexusGenRootTypes['CheckUsernameOutput'] | NexusGenRootTypes['CreateRoomOutput'] | NexusGenRootTypes['PredictionOutput'] | NexusGenRootTypes['TokenSendOutput'] | NexusGenRootTypes['UpdateUserProfileOutput'];
+  MutationOutput: NexusGenRootTypes['AuthOutput'] | NexusGenRootTypes['CheckUsernameOutput'] | NexusGenRootTypes['CreateRoomOutput'] | NexusGenRootTypes['FollowerOutput'] | NexusGenRootTypes['PredictionOutput'] | NexusGenRootTypes['TokenSendOutput'] | NexusGenRootTypes['UpdateUserProfileOutput'];
   PaginatedInput: any;
   PaginationOutput: any;
 }
@@ -373,6 +378,9 @@ export interface NexusGenFieldTypes {
   Cursor: { // field return type
     next: string | null; // String
     prev: string | null; // String
+  }
+  FollowerOutput: { // field return type
+    message: string; // String!
   }
   GamePlayer: { // field return type
     name: string; // String!
@@ -431,6 +439,7 @@ export interface NexusGenFieldTypes {
     changePassword: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     checkUsername: NexusGenRootTypes['CheckUsernameOutput']; // CheckUsernameOutput!
     createRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
+    followUser: NexusGenRootTypes['FollowerOutput']; // FollowerOutput!
     joinRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     leaveRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     login: NexusGenRootTypes['AuthOutput']; // AuthOutput!
@@ -442,6 +451,7 @@ export interface NexusGenFieldTypes {
     signup: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     syncFCMToken: NexusGenRootTypes['MutationOutput']; // MutationOutput!
     syncFirebaseUser: NexusGenRootTypes['AuthOutput']; // AuthOutput!
+    unfollowUser: NexusGenRootTypes['FollowerOutput']; // FollowerOutput!
     updateChatUserRole: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     updatePrediction: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
     updateRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
@@ -542,6 +552,8 @@ export interface NexusGenFieldTypes {
     emailVerified: boolean; // Boolean!
     favoriteTeam: string | null; // String
     firstname: string | null; // String
+    followerCount: number; // Int!
+    followingCount: number; // Int!
     gameSummaries: NexusGenScalars['JSON'] | null; // JSON
     lastname: string | null; // String
     onboarded: boolean; // Boolean!
@@ -609,6 +621,9 @@ export interface NexusGenFieldTypeNames {
     next: 'String'
     prev: 'String'
   }
+  FollowerOutput: { // field return type name
+    message: 'String'
+  }
   GamePlayer: { // field return type name
     name: 'String'
     playerId: 'ID'
@@ -666,6 +681,7 @@ export interface NexusGenFieldTypeNames {
     changePassword: 'AuthOutput'
     checkUsername: 'CheckUsernameOutput'
     createRoom: 'CreateRoomOutput'
+    followUser: 'FollowerOutput'
     joinRoom: 'CreateRoomOutput'
     leaveRoom: 'CreateRoomOutput'
     login: 'AuthOutput'
@@ -677,6 +693,7 @@ export interface NexusGenFieldTypeNames {
     signup: 'AuthOutput'
     syncFCMToken: 'MutationOutput'
     syncFirebaseUser: 'AuthOutput'
+    unfollowUser: 'FollowerOutput'
     updateChatUserRole: 'CreateRoomOutput'
     updatePrediction: 'PredictionOutput'
     updateRoom: 'CreateRoomOutput'
@@ -777,6 +794,8 @@ export interface NexusGenFieldTypeNames {
     emailVerified: 'Boolean'
     favoriteTeam: 'String'
     firstname: 'String'
+    followerCount: 'Int'
+    followingCount: 'Int'
     gameSummaries: 'JSON'
     lastname: 'String'
     onboarded: 'Boolean'
@@ -821,6 +840,9 @@ export interface NexusGenArgTypes {
       name: string; // String!
       roomType?: string | null; // String
     }
+    followUser: { // args
+      userId: string; // String!
+    }
     joinRoom: { // args
       roomId: string; // String!
     }
@@ -857,6 +879,9 @@ export interface NexusGenArgTypes {
       referralCode?: string | null; // String
       token: string; // String!
     }
+    unfollowUser: { // args
+      userId: string; // String!
+    }
     updateChatUserRole: { // args
       role: NexusGenEnums['ChatUserRoleType']; // ChatUserRoleType!
       roomId: string; // String!
@@ -891,13 +916,14 @@ export interface NexusGenArgTypes {
 }
 
 export interface NexusGenAbstractTypeMembers {
-  MutationOutput: "AuthOutput" | "CheckUsernameOutput" | "CreateRoomOutput" | "PredictionOutput" | "TokenSendOutput" | "UpdateUserProfileOutput"
+  MutationOutput: "AuthOutput" | "CheckUsernameOutput" | "CreateRoomOutput" | "FollowerOutput" | "PredictionOutput" | "TokenSendOutput" | "UpdateUserProfileOutput"
 }
 
 export interface NexusGenTypeInterfaces {
   AuthOutput: "MutationOutput"
   CheckUsernameOutput: "MutationOutput"
   CreateRoomOutput: "MutationOutput"
+  FollowerOutput: "MutationOutput"
   PredictionOutput: "MutationOutput"
   TokenSendOutput: "MutationOutput"
   UpdateUserProfileOutput: "MutationOutput"

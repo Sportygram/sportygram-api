@@ -69,6 +69,10 @@ A field whose value conforms to the standard internet email address format as sp
 """
 scalar EmailAddress @specifiedBy(url: "https://www.w3.org/Protocols/rfc822/")
 
+type FollowerOutput implements MutationOutput {
+  message: String!
+}
+
 type GamePlayer {
   name: String!
   playerId: ID!
@@ -164,6 +168,7 @@ type Mutation {
   changePassword(newPassword: String!, oldPassword: String): AuthOutput!
   checkUsername(username: String!): CheckUsernameOutput!
   createRoom(description: String, name: String!, roomType: String): CreateRoomOutput!
+  followUser(userId: String!): FollowerOutput!
   joinRoom(roomId: String!): CreateRoomOutput!
   leaveRoom(roomId: String!): CreateRoomOutput!
   login(input: LoginInput!): AuthOutput!
@@ -175,6 +180,7 @@ type Mutation {
   signup(email: String!, password: String, referralCode: String): AuthOutput!
   syncFCMToken(fcmToken: String!, platform: String!): MutationOutput!
   syncFirebaseUser(referralCode: String, token: String!): AuthOutput!
+  unfollowUser(userId: String!): FollowerOutput!
   updateChatUserRole(role: ChatUserRoleType!, roomId: String!): CreateRoomOutput!
   updatePrediction(input: PredictionInput!): PredictionOutput!
   updateRoom(input: UpdateRoomInput!): CreateRoomOutput!
@@ -342,6 +348,8 @@ type User {
   emailVerified: Boolean!
   favoriteTeam: String
   firstname: String
+  followerCount: Int!
+  followingCount: Int!
   gameSummaries: JSON
   lastname: String
   onboarded: Boolean!

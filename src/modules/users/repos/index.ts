@@ -1,7 +1,5 @@
+import { PrismaFollowerRepo } from "./implementations/prismaFollowerRepo";
 import { PrismaUserProfileRepo } from "./implementations/prismaUserProfileRepo";
 
-const userProfileRepo = new PrismaUserProfileRepo();
-
-export {
-    userProfileRepo,
-}
+export const userProfileRepo = new PrismaUserProfileRepo();
+export const followerRepo = new PrismaFollowerRepo();

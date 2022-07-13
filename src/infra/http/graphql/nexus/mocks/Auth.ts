@@ -12,6 +12,8 @@ let userDefault: User = {
     emailVerified: true,
     referralCode: "TOA-E86",
     referralCount: 0,
+    followerCount: 0,
+    followingCount: 0,
     coinBalance: 0.0,
     phone: "+2348031234567",
     profileColour: config.huddle.defaultProfileColour,

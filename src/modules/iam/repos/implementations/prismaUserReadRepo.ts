@@ -20,6 +20,12 @@ export class PrismaUserReadRepo implements UserReadRepo {
                                 competitionId: true,
                             },
                         },
+                        _count: {
+                            select: {
+                                followers: true,
+                                followings: true,
+                            },
+                        },
                     },
                 },
                 userRoles: {
@@ -35,6 +41,8 @@ export class PrismaUserReadRepo implements UserReadRepo {
         const baseUserWithRoles = {
             ...baseUser,
             ...user.profile,
+            followerCount: get(user.profile, "_count.followers", 0),
+            followingCount: get(user.profile, "_count.followings", 0),
             roles: user.userRoles.map((ur) => ur.role.name),
         };
 

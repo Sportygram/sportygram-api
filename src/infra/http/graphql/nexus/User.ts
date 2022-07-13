@@ -9,7 +9,9 @@ import {
 import { viewerResolver } from "../../../../modules/users/useCases/fetchQueryUser/fetchQueryUserResolver";
 import { syncFCMTokenResolver } from "../../../../modules/users/useCases/updateUserProfile/syncFCMTokenResolver";
 import { updateUserProfileResolver } from "../../../../modules/users/useCases/updateUserProfile/updateUserProfileResolver";
+import { unfollowUserResolver } from "../../../../modules/users/useCases/unfollowUser/unfollowUser.resolver";
 import { withUser } from "./utils";
+import { followUserResolver } from "../../../../modules/users/useCases/followUser/followUser.resolver";
 
 /* TODO: User graphql
     - Update date Of Birth
@@ -30,6 +32,8 @@ export const User = objectType({
         t.nonNull.boolean("emailVerified");
         t.nonNull.string("referralCode");
         t.nonNull.int("referralCount");
+        t.nonNull.int("followerCount");
+        t.nonNull.int("followingCount");
         t.phone("phone");
         t.nonNull.string("profileColour");
         t.nonNull.string("profileImageUrl");
@@ -77,6 +81,13 @@ export const UpdateUserProfileOutput = objectType({
     },
 });
 
+export const FollowerOutput = objectType({
+    name: "FollowerOutput",
+    definition(t) {
+        t.implements("MutationOutput");
+    },
+});
+
 export const UserMutation = extendType({
     type: "Mutation",
     definition(t) {
@@ -95,6 +106,22 @@ export const UserMutation = extendType({
                 platform: nonNull(stringArg()),
             },
             resolve: withUser(syncFCMTokenResolver),
+        });
+
+        t.nonNull.field("followUser", {
+            type: "FollowerOutput",
+            args: {
+                userId: nonNull(stringArg()),
+            },
+            resolve: withUser(followUserResolver),
+        });
+
+        t.nonNull.field("unfollowUser", {
+            type: "FollowerOutput",
+            args: {
+                userId: nonNull(stringArg()),
+            },
+            resolve: withUser(unfollowUserResolver),
         });
     },
 });
