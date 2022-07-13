@@ -432,6 +432,7 @@ export interface NexusGenFieldTypes {
     checkUsername: NexusGenRootTypes['CheckUsernameOutput']; // CheckUsernameOutput!
     createRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     joinRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
+    leaveRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     login: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     logout: boolean; // Boolean!
     predictMatch: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
@@ -666,6 +667,7 @@ export interface NexusGenFieldTypeNames {
     checkUsername: 'CheckUsernameOutput'
     createRoom: 'CreateRoomOutput'
     joinRoom: 'CreateRoomOutput'
+    leaveRoom: 'CreateRoomOutput'
     login: 'AuthOutput'
     logout: 'Boolean'
     predictMatch: 'PredictionOutput'
@@ -820,6 +822,9 @@ export interface NexusGenArgTypes {
       roomType?: string | null; // String
     }
     joinRoom: { // args
+      roomId: string; // String!
+    }
+    leaveRoom: { // args
       roomId: string; // String!
     }
     login: { // args

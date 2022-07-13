@@ -5,6 +5,7 @@ import { UniqueEntityID } from "../../../lib/domain/UniqueEntityID";
 import { UserId } from "../../users/domain/userId";
 import { ChatUser } from "./chatUser";
 import { ChatUserAddedToRoom } from "./events/chatUserAddedToRoom";
+import { ChatUserRemovedFromRoom } from "./events/chatUserRemovedFromRoom";
 import { RoomCreated } from "./events/roomCreated";
 import { RoomChatUsers } from "./roomChatUsers";
 import { RoomId } from "./roomId";
@@ -72,6 +73,12 @@ export class Room extends AggregateRoot<RoomProps> {
         if (!this.members) this.props.members = RoomChatUsers.create([]);
         this.members?.add(member);
         this.addDomainEvent(new ChatUserAddedToRoom(this));
+        return Result.ok();
+    }
+    public removeMember(member: ChatUser): Result<void> {
+        if (!this.members) this.props.members = RoomChatUsers.create([]);
+        this.members?.remove(member);
+        this.addDomainEvent(new ChatUserRemovedFromRoom(this));
         return Result.ok();
     }
     public updateName(name: string): Result<void> {

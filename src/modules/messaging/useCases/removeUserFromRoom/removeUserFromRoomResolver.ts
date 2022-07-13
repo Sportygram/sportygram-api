@@ -1,33 +1,33 @@
 import { FieldResolver } from "nexus";
 import { ForbiddenError, UserInputError } from "apollo-server-core";
 import * as AppError from "../../../../lib/core/AppError";
-import { AddUserToRoomDTO } from "./addUserToRoomDTO";
+import { RemoveUserFromRoomDTO } from "./removeUserFromRoom.dto";
 import { roomReadRepo } from "../../repos";
-import { addUserToRoom } from ".";
+import { removeUserFromRoom } from ".";
 import {
     ChatUserDoesNotExistError,
     RoomDoesNotExistError,
     StreamRoomUpdateError,
-} from "./addUserToRoomErrors";
+} from "../addUserToRoom/addUserToRoomErrors";
 
-export const addUserToRoomResolver: FieldResolver<
+export const removeUserFromRoomResolver: FieldResolver<
     "Mutation",
-    "joinRoom"
+    "leaveRoom"
 > = async (_parent, args, ctx) => {
     const dto = {
         ...args,
         userId: ctx.reqUser?.userId,
         requestUser: ctx.reqUser,
-    } as AddUserToRoomDTO;
+    } as RemoveUserFromRoomDTO;
 
-    const result = await addUserToRoom.execute(dto);
+    const result = await removeUserFromRoom.execute(dto);
 
     if (result.isRight()) {
         const room = await roomReadRepo.getRoomById(dto.roomId);
         if (!room) throw new Error("Room fetch Error");
 
         return {
-            message: "User Added to Room",
+            message: "User Removed From Room",
             room,
         };
     } else {

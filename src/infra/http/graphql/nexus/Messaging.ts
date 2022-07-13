@@ -9,6 +9,7 @@ import {
 } from "nexus";
 import { ChatUserRole } from "../../../../modules/messaging/domain/chatUser";
 import { addUserToRoomResolver } from "../../../../modules/messaging/useCases/addUserToRoom/addUserToRoomResolver";
+import { removeUserFromRoomResolver } from "../../../../modules/messaging/useCases/removeUserFromRoom/removeUserFromRoomResolver";
 import { createRoomResolver } from "../../../../modules/messaging/useCases/createRoom/createRoomResolver";
 import { roomQueryResolver } from "../../../../modules/messaging/useCases/fetchQueryRoom/fetchQueryRoomResolver";
 import { chatTokenResolver } from "../../../../modules/messaging/useCases/generateChatToken/chatTokenResolver";
@@ -104,6 +105,14 @@ export const MessagingMutation = extendType({
                 roomId: nonNull(stringArg()),
             },
             resolve: withUser(addUserToRoomResolver),
+        });
+        
+        t.nonNull.field("leaveRoom", {
+            type: "CreateRoomOutput",
+            args: {
+                roomId: nonNull(stringArg()),
+            },
+            resolve: withUser(removeUserFromRoomResolver),
         });
 
         t.nonNull.field("updateRoom", {

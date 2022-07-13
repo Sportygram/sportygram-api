@@ -165,6 +165,7 @@ type Mutation {
   checkUsername(username: String!): CheckUsernameOutput!
   createRoom(description: String, name: String!, roomType: String): CreateRoomOutput!
   joinRoom(roomId: String!): CreateRoomOutput!
+  leaveRoom(roomId: String!): CreateRoomOutput!
   login(input: LoginInput!): AuthOutput!
   logout: Boolean!
   predictMatch(input: PredictionInput!): PredictionOutput!
