@@ -238,6 +238,7 @@ type PredictionOutput implements MutationOutput {
 }
 
 type Query {
+  chatToken: String!
   competitions: [Competition]!
   countries: [Country]!
   fixtures(date: String, live: Boolean, sport: String): [Match!]!

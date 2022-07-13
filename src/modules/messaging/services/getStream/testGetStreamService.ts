@@ -92,6 +92,11 @@ const streamChannel = {
 };
 
 export class TestGetStreamService implements GetStreamService {
+    getUserById(
+        _userId: string
+    ): Promise<UserResponse<DefaultGenerics> | undefined> {
+        throw new Error("Method not implemented.");
+    }
     async createToken(_userId: string): Promise<string> {
         return token;
     }

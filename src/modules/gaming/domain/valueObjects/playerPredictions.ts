@@ -18,6 +18,10 @@ export class PlayerPredictions extends ValueObject<PlayerPredictionsProps> {
         super(props);
     }
 
+    public updatePredictions(_newPredictions: PlayerPredictions): Result<void> {
+        return Result.ok();
+    }
+
     public scoreUnscoredPredictions(match: Match): Result<number> {
         const questions = match.questions.value;
         let score = 0;

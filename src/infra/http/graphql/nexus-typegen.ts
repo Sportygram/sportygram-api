@@ -474,6 +474,7 @@ export interface NexusGenFieldTypes {
     prediction: NexusGenRootTypes['MatchPrediction']; // MatchPrediction!
   }
   Query: { // field return type
+    chatToken: string; // String!
     competitions: Array<NexusGenRootTypes['Competition'] | null>; // [Competition]!
     countries: Array<NexusGenRootTypes['Country'] | null>; // [Country]!
     fixtures: NexusGenRootTypes['Match'][]; // [Match!]!
@@ -707,6 +708,7 @@ export interface NexusGenFieldTypeNames {
     prediction: 'MatchPrediction'
   }
   Query: { // field return type name
+    chatToken: 'String'
     competitions: 'Competition'
     countries: 'Country'
     fixtures: 'Match'

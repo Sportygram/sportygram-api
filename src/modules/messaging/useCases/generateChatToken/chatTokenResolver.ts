@@ -1,19 +1,25 @@
-import { ForbiddenError } from "apollo-server-errors";
 import { FieldResolver } from "nexus";
-import { userReadRepo } from "../../../iam/repos";
-import { streamService } from "../../services/getStream";
+import { generateChatToken } from ".";
+import { CreateChatUserDTO } from "../createChatUser/createChatUserDTO";
 
 export const chatTokenResolver: FieldResolver<"Query", "chatToken"> = async (
     _parent,
-    _args,
+    args,
     ctx
 ) => {
-    if (!ctx.reqUser) throw new ForbiddenError("Please login to continue");
-    const user = await userReadRepo.getUserById(ctx.reqUser.userId);
-    if (!user || !user.chatData) throw new Error("User fetch Error");
+    const dto = {
+        ...args,
+        userId: ctx.reqUser?.userId,
+        requestUser: ctx.reqUser,
+    } as CreateChatUserDTO;
 
-    // TODO: Move into usecase and save new token generated
-    const token = await streamService.createToken(user.chatData.streamUserId);
-    if (!token) throw new Error("Token generate Error");
-    return token;
+    const result = await generateChatToken.execute(dto);
+
+    if (result.isRight()) {
+        const token = result.value.getValue();
+        return token;
+    } else {
+        const error = result.value;
+        throw new Error(error.errorValue().message);
+    }
 };

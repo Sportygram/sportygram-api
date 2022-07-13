@@ -19,6 +19,9 @@ export const StreamChannelType = {
 export interface GetStreamService {
     createToken(userId: string): Promise<string>;
 
+    getUserById(
+        userId: string
+    ): Promise<UserResponse<DefaultGenerics> | undefined>;
     createOrReplaceUser(
         userData: any
     ): Promise<{ [key: string]: UserResponse<DefaultGenerics> } | undefined>;
@@ -88,6 +91,17 @@ export class GetStreamServiceImpl implements GetStreamService {
 
     //#region Users
     /** Create or Replace users */
+    async getUserById(
+        userId: string
+    ): Promise<UserResponse<DefaultGenerics> | undefined> {
+        try {
+            const response = await this.client.queryUsers({ id: userId });
+            return response.users[0];
+        } catch (error) {
+            this.log(error);
+            return undefined;
+        }
+    }
     async createOrReplaceUser(userData: any) {
         try {
             const response = await this.client.upsertUser(userData);
