@@ -146,11 +146,14 @@ export interface NexusGenObjects {
   Competition: { // root type
     country?: string | null; // String
     countryCode?: string | null; // String
+    endDate?: NexusGenScalars['DateTime'] | null; // DateTime
     id: string; // ID!
     logo?: string | null; // String
     name: string; // String!
     season?: string | null; // String
+    short: string; // String!
     sport: string; // String!
+    startDate?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   Country: { // root type
     code: string; // String!
@@ -359,11 +362,14 @@ export interface NexusGenFieldTypes {
   Competition: { // field return type
     country: string | null; // String
     countryCode: string | null; // String
+    endDate: NexusGenScalars['DateTime'] | null; // DateTime
     id: string; // ID!
     logo: string | null; // String
     name: string; // String!
     season: string | null; // String
+    short: string; // String!
     sport: string; // String!
+    startDate: NexusGenScalars['DateTime'] | null; // DateTime
   }
   Country: { // field return type
     code: string; // String!
@@ -601,11 +607,14 @@ export interface NexusGenFieldTypeNames {
   Competition: { // field return type name
     country: 'String'
     countryCode: 'String'
+    endDate: 'DateTime'
     id: 'ID'
     logo: 'String'
     name: 'String'
     season: 'String'
+    short: 'String'
     sport: 'String'
+    startDate: 'DateTime'
   }
   Country: { // field return type name
     code: 'String'

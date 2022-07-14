@@ -9,10 +9,13 @@ export const Competition = objectType({
         t.nonNull.id("id");
         t.nonNull.string("name");
         t.nonNull.string("sport");
+        t.nonNull.string("short");
         t.string("logo");
         t.string("country");
         t.string("countryCode");
         t.string("season");
+        t.dateTime("startDate")
+        t.dateTime("endDate")
     },
 });
 

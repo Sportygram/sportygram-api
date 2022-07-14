@@ -29,11 +29,14 @@ type CheckUsernameOutput implements MutationOutput {
 type Competition {
   country: String
   countryCode: String
+  endDate: DateTime
   id: ID!
   logo: String
   name: String!
   season: String
+  short: String!
   sport: String!
+  startDate: DateTime
 }
 
 type Country {

@@ -148,11 +148,14 @@ model RoomChatUser {
 model Competition {
   id               Int               @id @default(autoincrement())
   name             String
+  short            String?
   logo             String
   sport            Sport
   country          String            @db.VarChar(30)
   countryCode      String            @map("country_code") @db.VarChar(2)
   season           String
+  startDate        DateTime?         @map("start_date")
+  endDate          DateTime?         @map("end_date")
   sources          Json              @default("{}")
   createdAt        DateTime?         @default(now()) @map("created_at")
   updatedAt        DateTime?         @updatedAt @map("updated_at")
