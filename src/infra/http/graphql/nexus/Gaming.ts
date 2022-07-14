@@ -88,7 +88,6 @@ export const MatchPrediction = objectType({
 export const PredictionInput = inputObjectType({
     name: "PredictionInput",
     definition(t) {
-        t.string("predictionId");
         t.nonNull.string("matchId");
         t.json("predictions"); // Record<MatchQuestionCode, any>
     },

@@ -27,15 +27,17 @@ export class UpdatePrediction
     ) {}
 
     async execute(request: UpdatePredictionDTO): Promise<Response> {
-        const { predictionId, requestUser } = request;
+        const { matchId, requestUser } = request;
 
         try {
             // TODO Check if requestUser can update prediction; with Coins
-            const prediction = await this.matchPredictionRepo.getPredictionById(
-                predictionId
-            );
+            const prediction =
+                await this.matchPredictionRepo.getPredictionByMatchId(
+                    matchId,
+                    requestUser.userId
+                );
             if (!prediction) {
-                return left(new PredictionDoesNotExistError(predictionId));
+                return left(new PredictionDoesNotExistError(matchId));
             }
 
             if (requestUser.userId !== prediction.userId.id.toString()) {
@@ -47,7 +49,6 @@ export class UpdatePrediction
                 );
             }
 
-            const matchId = prediction.matchId.id.toString();
             const match = await this.matchRepo.getMatchById(matchId);
             if (!match) {
                 return left(new MatchDoesNotExistError(matchId));

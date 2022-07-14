@@ -84,7 +84,6 @@ export interface NexusGenInputs {
   }
   PredictionInput: { // input type
     matchId: string; // String!
-    predictionId?: string | null; // String
     predictions?: NexusGenScalars['JSON'] | null; // JSON
   }
   UpdateRoomInput: { // input type

@@ -1,7 +1,7 @@
 import { RequestUserDTO } from "../../../../lib/utils/permissions";
 
 export interface UpdatePredictionDTO {
-    predictionId: string;
+    matchId: string;
     predictions: any;
     requestUser: RequestUserDTO;
 }

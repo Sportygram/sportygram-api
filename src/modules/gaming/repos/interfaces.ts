@@ -48,6 +48,10 @@ export interface MatchPredictionRepo {
     getPredictionById(
         predictionId: string
     ): Promise<MatchPrediction | undefined>;
+    getPredictionByMatchId(
+        matchId: string,
+        userId: string
+    ): Promise<MatchPrediction | undefined>
     getPredictionsByMatchId(matchId: string): Promise<MatchPrediction[]>;
     save(prediction: MatchPrediction): Promise<void>;
 }

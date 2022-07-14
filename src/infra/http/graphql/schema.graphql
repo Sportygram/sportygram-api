@@ -230,7 +230,6 @@ type Prediction {
 
 input PredictionInput {
   matchId: String!
-  predictionId: String
   predictions: JSON
 }
 
