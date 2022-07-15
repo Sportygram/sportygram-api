@@ -2,6 +2,7 @@ import { UpdatePredictionDTO } from "./updatePredictionDTO";
 import {
     MatchDoesNotExistError,
     PredictionDoesNotExistError,
+    PredictionLockedError,
 } from "./updatePredictionErrors";
 import { Either, Result, left, right } from "../../../../lib/core/Result";
 import * as AppError from "../../../../lib/core/AppError";
@@ -13,6 +14,7 @@ import { PlayerPredictions } from "../../domain/valueObjects/playerPredictions";
 type Response = Either<
     | MatchDoesNotExistError
     | PredictionDoesNotExistError
+    | PredictionLockedError
     | AppError.UnexpectedError
     | AppError.PermissionsError,
     Result<MatchPrediction>
@@ -38,6 +40,9 @@ export class UpdatePrediction
                 );
             if (!prediction) {
                 return left(new PredictionDoesNotExistError(matchId));
+            }
+            if (!prediction.unlocked) {
+                return left(new PredictionLockedError(matchId));
             }
 
             if (requestUser.userId !== prediction.userId.id.toString()) {

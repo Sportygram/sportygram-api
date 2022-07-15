@@ -11,7 +11,7 @@ export const config = {
             MLS: process.env.NODE_ENV !== "production",
         },
         referralCoinReward: 8,
-        predictionEditCoinCOst: 5
+        predictionEditCoinCost: 5,
     },
     auth: {
         secret: process.env.AUTH_SECRET || "top-secret",

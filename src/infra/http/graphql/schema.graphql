@@ -136,6 +136,7 @@ type Match {
   season: String!
   status: MatchStatus!
   teams: TeamData!
+  unlocked: Boolean
   userPoints: Int
   venue: String
   winner: String
@@ -154,6 +155,7 @@ type MatchPrediction {
   id: ID!
   matchId: String!
   predictions: [Prediction]!
+  unlocked: Boolean
   updatedAt: DateTime
 }
 
@@ -185,6 +187,7 @@ type Mutation {
   syncFCMToken(fcmToken: String!, platform: String!): MutationOutput!
   syncFirebaseUser(referralCode: String, token: String!): AuthOutput!
   unfollowUser(userId: String!): FollowerOutput!
+  unlockPrediction(predictionId: String!): PredictionOutput!
   updateChatUserRole(role: ChatUserRoleType!, roomId: String!): CreateRoomOutput!
   updatePrediction(input: PredictionInput!): PredictionOutput!
   updateRoom(input: UpdateRoomInput!): CreateRoomOutput!

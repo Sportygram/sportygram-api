@@ -5,8 +5,10 @@ import {
     inputObjectType,
     nonNull,
     objectType,
+    stringArg,
 } from "nexus";
 import { makePredictionResolver } from "../../../../modules/gaming/useCases/makePrediction/makePredictionResolver";
+import { unlockPredictionResolver } from "../../../../modules/gaming/useCases/unlockPrediction/unlockPrediction.resolver";
 import { updatePredictionResolver } from "../../../../modules/gaming/useCases/updatePrediction/updatePredictionResolver";
 import { withUser } from "./utils";
 
@@ -79,6 +81,7 @@ export const MatchPrediction = objectType({
     definition(t) {
         t.nonNull.id("id");
         t.nonNull.string("matchId");
+        t.boolean("unlocked");
         t.nonNull.list.field("predictions", { type: "Prediction" });
         t.dateTime("createdAt");
         t.dateTime("updatedAt");
@@ -118,6 +121,14 @@ export const GamingMutation = extendType({
                 input: arg({ type: nonNull(PredictionInput) }),
             },
             resolve: withUser(updatePredictionResolver),
+        });
+
+        t.nonNull.field("unlockPrediction", {
+            type: "PredictionOutput",
+            args: {
+                predictionId: nonNull(stringArg()),
+            },
+            resolve: withUser(unlockPredictionResolver),
         });
     },
 });

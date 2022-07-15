@@ -274,6 +274,7 @@ model MatchPrediction {
   userId      String      @map("user_id") @db.Uuid
   matchId     String      @map("match_id") @db.Uuid
   points      Int
+  unlocked    Boolean     @default(false)
   predictions Json        @default("[]")
   createdAt   DateTime?   @default(now()) @map("created_at")
   updatedAt   DateTime?   @updatedAt @map("updated_at")

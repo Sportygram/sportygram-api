@@ -83,6 +83,7 @@ export class MakePrediction
                 MatchPrediction.create({
                     userId: player.userId,
                     matchId: match.matchId,
+                    unlocked: false,
                     predictions: playerPredictionOrError.getValue(),
                 });
 

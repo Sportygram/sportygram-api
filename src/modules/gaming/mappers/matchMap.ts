@@ -88,6 +88,7 @@ export class MatchMap {
                     players: awayPlayers,
                 } as any,
             },
+            unlocked: raw.predictions?.unlocked,
             predictionId: raw.predictions?.id,
             predictions,
         };

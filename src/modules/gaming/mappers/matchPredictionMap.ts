@@ -21,6 +21,7 @@ export class MatchPredictionMap {
             {
                 userId,
                 matchId,
+                unlocked: raw.unlocked,
                 points: raw.points,
                 predictions,
                 createdAt: raw.createdAt || undefined,
@@ -43,6 +44,7 @@ export class MatchPredictionMap {
             userId: prediction.userId.id.toString(),
             matchId: prediction.matchId.id.toString(),
             points: prediction.points,
+            unlocked: prediction.unlocked,
             predictions: prediction.predictions.value as any,
             createdAt: prediction.createdAt,
             updatedAt: prediction.updatedAt,

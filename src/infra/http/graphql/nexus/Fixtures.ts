@@ -109,6 +109,7 @@ export const Match = objectType({
         t.string("venue");
         t.string("winner");
         t.int("userPoints");
+        t.boolean("unlocked");
         t.string("predictionId");
         t.list.field("predictions", { type: "Prediction" });
         t.json("misc");

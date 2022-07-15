@@ -198,6 +198,7 @@ export interface NexusGenObjects {
     season: string; // String!
     status: NexusGenRootTypes['MatchStatus']; // MatchStatus!
     teams: NexusGenRootTypes['TeamData']; // TeamData!
+    unlocked?: boolean | null; // Boolean
     userPoints?: number | null; // Int
     venue?: string | null; // String
     winner?: string | null; // String
@@ -214,6 +215,7 @@ export interface NexusGenObjects {
     id: string; // ID!
     matchId: string; // String!
     predictions: Array<NexusGenRootTypes['Prediction'] | null>; // [Prediction]!
+    unlocked?: boolean | null; // Boolean
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
   MatchStatistic: { // root type
@@ -416,6 +418,7 @@ export interface NexusGenFieldTypes {
     season: string; // String!
     status: NexusGenRootTypes['MatchStatus']; // MatchStatus!
     teams: NexusGenRootTypes['TeamData']; // TeamData!
+    unlocked: boolean | null; // Boolean
     userPoints: number | null; // Int
     venue: string | null; // String
     winner: string | null; // String
@@ -432,6 +435,7 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     matchId: string; // String!
     predictions: Array<NexusGenRootTypes['Prediction'] | null>; // [Prediction]!
+    unlocked: boolean | null; // Boolean
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   MatchStatistic: { // field return type
@@ -460,6 +464,7 @@ export interface NexusGenFieldTypes {
     syncFCMToken: NexusGenRootTypes['MutationOutput']; // MutationOutput!
     syncFirebaseUser: NexusGenRootTypes['AuthOutput']; // AuthOutput!
     unfollowUser: NexusGenRootTypes['FollowerOutput']; // FollowerOutput!
+    unlockPrediction: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
     updateChatUserRole: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
     updatePrediction: NexusGenRootTypes['PredictionOutput']; // PredictionOutput!
     updateRoom: NexusGenRootTypes['CreateRoomOutput']; // CreateRoomOutput!
@@ -664,6 +669,7 @@ export interface NexusGenFieldTypeNames {
     season: 'String'
     status: 'MatchStatus'
     teams: 'TeamData'
+    unlocked: 'Boolean'
     userPoints: 'Int'
     venue: 'String'
     winner: 'String'
@@ -680,6 +686,7 @@ export interface NexusGenFieldTypeNames {
     id: 'ID'
     matchId: 'String'
     predictions: 'Prediction'
+    unlocked: 'Boolean'
     updatedAt: 'DateTime'
   }
   MatchStatistic: { // field return type name
@@ -708,6 +715,7 @@ export interface NexusGenFieldTypeNames {
     syncFCMToken: 'MutationOutput'
     syncFirebaseUser: 'AuthOutput'
     unfollowUser: 'FollowerOutput'
+    unlockPrediction: 'PredictionOutput'
     updateChatUserRole: 'CreateRoomOutput'
     updatePrediction: 'PredictionOutput'
     updateRoom: 'CreateRoomOutput'
@@ -897,6 +905,9 @@ export interface NexusGenArgTypes {
     }
     unfollowUser: { // args
       userId: string; // String!
+    }
+    unlockPrediction: { // args
+      predictionId: string; // String!
     }
     updateChatUserRole: { // args
       role: NexusGenEnums['ChatUserRoleType']; // ChatUserRoleType!

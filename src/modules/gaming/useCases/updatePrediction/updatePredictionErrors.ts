@@ -16,3 +16,11 @@ export class MatchDoesNotExistError extends Result<UseCaseError> {
         } as UseCaseError);
     }
 }
+
+export class PredictionLockedError extends Result<UseCaseError> {
+    constructor(_matchId: string) {
+        super(false, {
+            message: `Prediction locked, Please unlock first before updating`,
+        } as UseCaseError);
+    }
+}

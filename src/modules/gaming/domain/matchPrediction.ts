@@ -11,6 +11,7 @@ import { PlayerPredictions } from "./valueObjects/playerPredictions";
 interface MatchPredictionProps {
     userId: UserId;
     matchId: MatchId;
+    unlocked: boolean;
     points?: number;
     predictions: PlayerPredictions;
     createdAt?: Date;
@@ -28,6 +29,9 @@ export class MatchPrediction extends AggregateRoot<MatchPredictionProps> {
     get matchId(): MatchId {
         return this.props.matchId;
     }
+    get unlocked(): boolean {
+        return this.props.unlocked;
+    }
     get points(): number {
         return this.props.points || 0;
     }
@@ -43,7 +47,12 @@ export class MatchPrediction extends AggregateRoot<MatchPredictionProps> {
 
     public updatePredictions(predictions: PlayerPredictions): Result<void> {
         this.props.predictions = predictions;
+        this.props.unlocked = false;
         return Result.ok();
+    }
+
+    public unlock(): void {
+        this.props.unlocked = true;
     }
 
     public scoreMatchPrediction(match: Match): Result<number> {

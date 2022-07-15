@@ -1,3 +1,4 @@
+import { config } from "../../../lib/config";
 import { Guard } from "../../../lib/core/Guard";
 import { Result } from "../../../lib/core/Result";
 import { AggregateRoot } from "../../../lib/domain/AggregateRoot";
@@ -76,7 +77,8 @@ export class Player extends AggregateRoot<PlayerProps> {
             .getItems()
             .find((gs) => gs.gameId.equals(gameId));
 
-        if (!gameSummary) return Result.fail("Game summary for gameId not found");
+        if (!gameSummary)
+            return Result.fail("Game summary for gameId not found");
         if (gameSummary.isComplete())
             return Result.fail("Game is already complete");
 
@@ -98,6 +100,14 @@ export class Player extends AggregateRoot<PlayerProps> {
             gs.increaseScore(points);
             this.props.activeGameSummaries.add(gs);
         });
+        return Result.ok();
+    }
+
+    public debitCoinBalanceForPredictionEdit(): Result<void> {
+        const amount = config.huddle.predictionEditCoinCost;
+        if (this.coinBalance < amount)
+            return Result.fail("Insufficient coin balance");
+        this.props.coinBalance -= amount;
         return Result.ok();
     }
 
