@@ -1,6 +1,7 @@
 import { MakePredictionDTO } from "./makePredictionDTO";
 import {
     MatchDoesNotExistError,
+    PredictionClosedError,
     UserDoesNotExistError,
 } from "./makePredictionErrors";
 import { Either, Result, left, right } from "../../../../lib/core/Result";
@@ -13,8 +14,11 @@ import {
 import { UseCase } from "../../../../lib/core/UseCase";
 import { MatchPrediction } from "../../domain/matchPrediction";
 import { PlayerPredictions } from "../../domain/valueObjects/playerPredictions";
+import { MatchStatus } from "../../domain/types";
+import { get } from "lodash";
 
 type Response = Either<
+    | PredictionClosedError
     | MatchDoesNotExistError
     | UserDoesNotExistError
     | AppError.UnexpectedError
@@ -40,6 +44,21 @@ export class MakePrediction
                 return left(new MatchDoesNotExistError(matchId));
             }
 
+            const alreadyComplete = (
+                [
+                    MatchStatus.Break,
+                    MatchStatus.Suspended,
+                    MatchStatus.Cancelled,
+                    MatchStatus.Completed,
+                ] as string[]
+            ).includes(match.status);
+
+            const pastHalfTime = get(match, "metadata.status.elapsed", 0) > 45;
+
+            if (alreadyComplete || pastHalfTime) {
+                return left(new PredictionClosedError(matchId));
+            }
+
             const player = await this.playerRepo.getPlayerByUserId(userId);
             if (!player) {
                 return left(new UserDoesNotExistError(matchId));
@@ -48,7 +67,7 @@ export class MakePrediction
             const playerPredictionOrError = PlayerPredictions.create(
                 request.predictions,
                 true,
-                match 
+                match
             );
 
             if (

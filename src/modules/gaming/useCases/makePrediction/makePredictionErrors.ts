@@ -16,3 +16,11 @@ export class MatchDoesNotExistError extends Result<UseCaseError> {
         } as UseCaseError);
     }
 }
+
+export class PredictionClosedError extends Result<UseCaseError> {
+    constructor(matchId: string) {
+        super(false, {
+            message: `Predictions have been closed for this match; ${matchId}`,
+        } as UseCaseError);
+    }
+}

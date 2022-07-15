@@ -7,6 +7,7 @@ import { makePrediction } from ".";
 import {
     UserDoesNotExistError,
     MatchDoesNotExistError,
+    PredictionClosedError,
 } from "./makePredictionErrors";
 
 export const makePredictionResolver: FieldResolver<
@@ -38,6 +39,7 @@ export const makePredictionResolver: FieldResolver<
         switch (error.constructor) {
             case UserDoesNotExistError:
             case MatchDoesNotExistError:
+            case PredictionClosedError:
             case AppError.InputError:
                 throw new UserInputError(error.errorValue().message);
             case AppError.PermissionsError:
