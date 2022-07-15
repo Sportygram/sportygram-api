@@ -244,7 +244,7 @@ export class Match extends AggregateRoot<MatchProps> {
         return events;
     }
 
-    private solveQuestion(questionCode: MatchQuestionCode, solution: any) {
+    public solveQuestion(questionCode: MatchQuestionCode, solution: any) {
         this.questions.solveQuestion(questionCode, solution);
 
         if (!this.questionAnswered) {
@@ -271,16 +271,17 @@ export class Match extends AggregateRoot<MatchProps> {
 
     public getQuestionsWithOptions(): Result<MatchQuestion[]> {
         try {
-            const teamCodes = this.teams.map((t) => ({
-                value: t.code,
-                display: t.name,
-            }));
-
-            const questions = Object.assign({}, MatchQuestionsMap);
-            questions[FootballQuestion.Winner].options = [
-                ...teamCodes,
+            const teamCodes = [
+                ...this.teams.map((t) => ({
+                    value: t.code,
+                    display: t.name,
+                })),
                 { value: "DRAW", display: "DRAW" },
             ];
+
+            const questions = Object.assign({}, MatchQuestionsMap);
+
+            questions[FootballQuestion.Winner].options = teamCodes;
             questions[FootballQuestion.FirstToScore].options = teamCodes;
             questions[FootballQuestion.ManOfTheMatch].options = this.teams
                 .map((t) => {
@@ -308,6 +309,10 @@ export class Match extends AggregateRoot<MatchProps> {
             if (!question.solution) return false;
         }
         return true;
+    }
+
+    public setMatchCompletionErrors(errors: any) {
+        this.props.metadata.errors = errors;
     }
 
     public setAllPredictionsScored() {

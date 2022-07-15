@@ -1,4 +1,5 @@
 import { firebaseService } from "../../../lib/services/firebase";
+import { completeFootbalMatch } from "../useCases/completeMatch";
 import { createGame } from "../useCases/createGame";
 import { createPlayer } from "../useCases/createPlayer";
 import { createRoomGames } from "../useCases/createRoomGames";
@@ -7,6 +8,7 @@ import { updateRoomGameLeaderboards } from "../useCases/updateRoomGameLeaderboar
 import { AfterAllMatchPredictionsScored } from "./afterAllMatchPredictionsScored";
 import { AfterGameCompleted } from "./afterGameCompleted";
 import { AfterLiveMatchUpdated } from "./afterLiveMatchUpdated";
+import { AfterMatchCompleted } from "./afterMatchCompleted";
 import { AfterMatchQuestionAnswered } from "./afterMatchQuestionAnswered";
 import { AfterRoomCreated } from "./afterRoomCreated";
 import { AfterUserAddedToRoom } from "./afterUserAddedToRoom";
@@ -19,3 +21,4 @@ new AfterGameCompleted(createGame);
 new AfterRoomCreated(createRoomGames);
 new AfterAllMatchPredictionsScored(updateRoomGameLeaderboards);
 new AfterUserAddedToRoom(updateRoomGameLeaderboards);
+new AfterMatchCompleted(completeFootbalMatch);

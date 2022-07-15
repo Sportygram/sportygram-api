@@ -54,6 +54,17 @@ export class ApiFootballService implements FootballDataService {
         return teamPlayers.map(playerDataToAthleteMap);
     }
 
+    async getFixture(match: Match, withLineups?: boolean): Promise<MatchDTO> {
+        try {
+            const afId = match?.sources?.apiFootball?.id;
+            const fixtures = await getFixtures({ id: afId });
+            return fixtureDataToMatchDTOMap(fixtures[0], withLineups);
+        } catch (error) {
+            logger.info(`Error fetching fixtures from apiFootball`, error);
+            throw error;
+        }
+    }
+
     async getFixtures(
         competition?: Competition,
         withLineups?: boolean
@@ -169,8 +180,12 @@ export async function fixtureDataToMatchDTOMap(
     };
 
     let lineups;
+    let goals;
+    let playerRatings;
     if (withLineups) {
         lineups = getLineups(fixtureData, homeTeam, awayTeam);
+        goals = fixtureData.goals;
+        playerRatings = getPlayerRatings(fixtureData, homeTeam, awayTeam);
     }
 
     const events = fixtureData.events.map((event) => {
@@ -246,6 +261,8 @@ export async function fixtureDataToMatchDTOMap(
             },
         } as MatchMetadata,
         lineups,
+        goals,
+        playerRatings,
     };
 }
 
@@ -316,5 +333,31 @@ function getTeamLineup(teamLineUp: FixtureTeamLineup, team: Team) {
             name: teamLineUp.coach.name,
             photo: teamLineUp.coach.photo,
         },
+    };
+}
+
+function getPlayerRatings(
+    fixtureData: FixtureData,
+    homeTeam: Team,
+    awayTeam: Team
+) {
+    const homePlayers = fixtureData.players.find(
+        (l) => l.team.name === homeTeam.name
+    );
+    const awayPlayers = fixtureData.players.find(
+        (l) => l.team.name === awayTeam.name
+    );
+
+    if (!homePlayers || !awayPlayers) return undefined;
+
+    return {
+        [homeTeam.code]: homePlayers.players.map((p) => ({
+            apiFootballId: p.player.id,
+            rating: p.statistics[0]?.games?.rating,
+        })),
+        [awayTeam.code]: awayPlayers.players.map((p) => ({
+            apiFootballId: p.player.id,
+            rating: p.statistics[0]?.games?.rating,
+        })),
     };
 }

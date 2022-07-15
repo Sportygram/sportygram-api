@@ -250,6 +250,7 @@ export type MatchMetadata = {
     };
     teams: FootballTeams;
     allMatchPredictionsScored: boolean;
+    errors?: any;
 };
 
 export type LineUpPlayer = {

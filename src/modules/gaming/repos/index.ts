@@ -5,6 +5,7 @@ import { PrismaMatchReadRepo } from "./implementations/prismaMatchReadRepo";
 import { PrismaMatchRepo } from "./implementations/prismaMatchRepo";
 import { PrismaRoomGameRepo } from "./implementations/prismaRoomGameRepo";
 import { PrismaGameRepo } from "./implementations/prismaGameRepo";
+import { PrismaAthleteRepo } from "./implementations/prismaAthleteRepo";
 
 export const matchPredictionRepo = new PrismaMatchPredictionRepo();
 export const matchRepo = new PrismaMatchRepo();
@@ -13,3 +14,4 @@ export const playerRepo = new PrismaPlayerRepo();
 export const matchPredictionReadRepo = new PrismaMatchPredictionReadRepoRepo();
 export const roomGameRepo = new PrismaRoomGameRepo();
 export const gameRepo = new PrismaGameRepo();
+export const athleteRepo = new PrismaAthleteRepo();

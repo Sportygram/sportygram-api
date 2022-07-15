@@ -4,7 +4,7 @@ import { Match } from "../domain/match";
 import { MatchPrediction } from "../domain/matchPrediction";
 import { Player } from "../domain/player";
 import { RoomGame } from "../domain/roomGame";
-import { Sport } from "../domain/types";
+import { Athlete, Sport } from "../domain/types";
 
 export interface PlayerRepo {
     createAllUserGameSummaries(game: Game): Promise<number>;
@@ -74,4 +74,9 @@ export interface RoomGameRepo {
     getRoomPlayers(roomId: string, gameId?: string): Promise<Player[]>;
     getRoomGamesByGameId(gameId: string): Promise<RoomGame[]>;
     save(roomGame: RoomGame): Promise<void>;
+}
+
+
+export interface AthleteRepo {
+    getAthleteByApiFootballId(athleteApiFootballId: number): Promise<Athlete | undefined>;
 }

@@ -15,6 +15,14 @@ export class MatchQuestions extends ValueObject<MatchQuestionsProps> {
         super(props);
     }
 
+    public getQuestion(questionCode: MatchQuestionCode): MatchQuestion {
+        const question = this.value.find(
+            (question) => question.code === questionCode
+        );
+        if (!question) throw new Error("Question not found");
+        return question;
+    }
+
     public solveQuestion(
         questionCode: MatchQuestionCode,
         solution: any

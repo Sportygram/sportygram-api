@@ -21,6 +21,8 @@ export interface MatchDTO {
     summary: MatchSummary;
     sources: Sources;
     metadata: MatchMetadata;
-    events: MatchEventData[]
+    events: MatchEventData[];
     lineups?: any;
+    goals?: any;
+    playerRatings?: any;
 }
