@@ -10,16 +10,16 @@ get Match Statistics: https://api-football-v1.p.rapidapi.com/v3/fixtures?id=7109
 
 import {
     FixtureData,
-    LeagueData,
+    LeagueResponseData,
     Paging,
-    PlayerData,
-    TeamData,
+    PlayerResponseData,
+    TeamResponseData,
 } from "./apiFootball.types";
 import { apiFootballRequest } from "./baseApi";
 
 export async function getLeagues() {
     return (await apiFootballRequest("/leagues")).response as Promise<
-        LeagueData[]
+        LeagueResponseData[]
     >;
 }
 
@@ -32,7 +32,7 @@ export async function getTeams(params: {
     if (!params.season) params.season = 2022;
 
     return (await apiFootballRequest("/teams", params)).response as Promise<
-        TeamData[]
+        TeamResponseData[]
     >;
 }
 
@@ -51,7 +51,7 @@ export async function getTeamPlayers(
         ...params,
     });
     return {
-        response: resp.response as PlayerData[],
+        response: resp.response as PlayerResponseData[],
         paging: resp.paging as Paging,
     };
 }

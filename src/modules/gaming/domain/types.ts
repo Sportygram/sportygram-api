@@ -202,30 +202,34 @@ export interface RoomGame {
     updatedAt: Date;
 }
 
-export const MatchEvent = [
-    "kickoff",
-    "goal",
-    "penalty",
-    "substitution",
-    "red_card",
-    "period_complete",
-    "period_started",
-    "completed",
-] as const;
-export type MatchEvent = typeof MatchEvent[number];
+export const MatchEvent = {
+    Kickoff: "kickoff",
+    Goal: "goal",
+    Var: "var",
+    Penalty: "penalty",
+    Substitution: "substitution",
+    YellowCard: "yellow_card",
+    RedCard: "red_card",
+    PeriodComplete: "period_complete",
+    PeriodStarted: "period_started",
+    MatchCompleted: "completed",
+} as const;
+export type MatchEvent = typeof MatchEvent[keyof typeof MatchEvent];
 
 export interface MatchEventData {
     type: MatchEvent;
+    source: DataSource;
     message: string;
     data: any;
 }
 
 export const DataSource = {
     ApiFootball: "apiFootball",
+    Huddle: "huddle",
 } as const;
 export type DataSource = typeof DataSource[keyof typeof DataSource];
 
-export type Sources = Record<Partial<DataSource>, { id: any }>;
+export type Sources = Partial<Record<DataSource, { id: any }>>;
 
 type HomeAway<T> = {
     home: T;

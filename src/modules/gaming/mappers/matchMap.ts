@@ -16,6 +16,7 @@ import {
     Sources,
     MatchSummary,
     TeamMetadata,
+    MatchEventData,
 } from "../domain/types";
 import { groupBy } from "lodash";
 
@@ -46,23 +47,22 @@ export class MatchMap {
         const homeTeam = raw.teams.find((t) => t.code === homeCode) as any;
         const awayTeam = raw.teams.find((t) => t.code === awayCode) as any;
 
-        const posArr = ["GK", "D", "M", "F"];
-        const defaultPlayers = { GK: [], D: [], M: [], F: [] };
+        const defaultPlayers = { GK: [], D: [], M: [], F: [], U: [] };
 
         const getPlayers = (team: any) => {
             return groupBy(
                 team.teamAthletes.map((a: any, idx: number) => ({
                     id: a.athlete.id,
                     name: a.athlete.name,
-                    position: a.position || posArr[idx % 4],
+                    position: a.position || "U",
                     number: a.number || idx + 1,
                 })),
                 "position"
             );
         };
 
-        const homePlayers = getPlayers(homeTeam);
-        const awayPlayers = getPlayers(awayTeam);
+        const homePlayers = { ...defaultPlayers, ...getPlayers(homeTeam) };
+        const awayPlayers = { ...defaultPlayers, ...getPlayers(awayTeam) };
 
         return {
             ...raw,
@@ -77,9 +77,7 @@ export class MatchMap {
                     winner: winner === "home",
                     statistics: summary.statistics[homeCode],
                     score: summary.scores[homeCode],
-                    players: Object.keys(homePlayers).length
-                        ? homePlayers
-                        : defaultPlayers,
+                    players: homePlayers,
                 },
 
                 away: {
@@ -87,11 +85,10 @@ export class MatchMap {
                     winner: winner === "away",
                     statistics: summary.statistics[awayCode],
                     score: summary.scores[awayCode],
-                    players: Object.keys(awayPlayers).length
-                        ? awayPlayers
-                        : defaultPlayers,
+                    players: awayPlayers,
                 } as any,
             },
+            predictionId: raw.predictions?.id,
             predictions,
         };
     }
@@ -123,6 +120,7 @@ export class MatchMap {
                 venue: raw.venue,
                 winner: raw.winner || undefined,
                 summary: raw.summary,
+                events: raw.events as any as MatchEventData[],
                 sources: raw.sources,
                 questions,
                 metadata: raw.metadata,
@@ -152,6 +150,7 @@ export class MatchMap {
             venue: match.venue,
             winner: match.winner || null,
             summary: match.summary,
+            events: match.events as any,
             sources: match.sources,
             questions: match.questions.value as any,
             metadata: match.metadata,

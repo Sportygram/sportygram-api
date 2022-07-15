@@ -1,6 +1,9 @@
-import { booleanArg, extendType, objectType, stringArg } from "nexus";
+import { booleanArg, extendType, nonNull, objectType, stringArg } from "nexus";
 // import { getMatchMock } from "./mocks/Fixtures";
-import { fixturesResolver } from "../../../../modules/gaming/useCases/fetchFixtures/fetchFixturesResolver";
+import {
+    fixturesResolver,
+    predictionResolver,
+} from "../../../../modules/gaming/useCases/fetchFixtures/fetchFixturesResolver";
 import { withUser } from "./utils";
 
 export const Competition = objectType({
@@ -14,8 +17,8 @@ export const Competition = objectType({
         t.string("country");
         t.string("countryCode");
         t.string("season");
-        t.dateTime("startDate")
-        t.dateTime("endDate")
+        t.dateTime("startDate");
+        t.dateTime("endDate");
     },
 });
 
@@ -59,10 +62,11 @@ export const LineUpPlayer = objectType({
 export const PlayerPositions = objectType({
     name: "PlayerPositions",
     definition(t) {
-        t.nonNull.list.field("GK", { type: "LineUpPlayer" });
-        t.nonNull.list.field("D", { type: "LineUpPlayer" });
-        t.nonNull.list.field("M", { type: "LineUpPlayer" });
-        t.nonNull.list.field("F", { type: "LineUpPlayer" });
+        t.list.field("GK", { type: "LineUpPlayer" });
+        t.list.field("D", { type: "LineUpPlayer" });
+        t.list.field("M", { type: "LineUpPlayer" });
+        t.list.field("F", { type: "LineUpPlayer" });
+        t.list.field("U", { type: "LineUpPlayer" });
     },
 });
 
@@ -105,6 +109,7 @@ export const Match = objectType({
         t.string("venue");
         t.string("winner");
         t.int("userPoints");
+        t.string("predictionId");
         t.list.field("predictions", { type: "Prediction" });
         t.json("misc");
     },
@@ -124,6 +129,15 @@ export const FixturesQuery = extendType({
             //     return [getMatchMock()];
             // },
             resolve: withUser(fixturesResolver),
+        });
+        t.nonNull.field("prediction", {
+            type: "Match",
+            args: {
+                matchId: nonNull(stringArg()),
+                predictionId: stringArg(),
+            },
+
+            resolve: withUser(predictionResolver),
         });
     },
 });

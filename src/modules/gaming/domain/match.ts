@@ -20,6 +20,7 @@ import {
     FootballQuestion,
     MatchQuestionsMap,
     MatchQuestionCode,
+    DataSource,
 } from "./types";
 import { MatchQuestions } from "./valueObjects/matchQuestions";
 import { isConstObjectType } from "../../../lib/utils/typeUtils";
@@ -38,6 +39,7 @@ interface MatchProps {
     venue: string;
     winner?: string;
     summary: MatchSummary;
+    events: MatchEventData[];
     sources: Sources;
     questions: MatchQuestions; // store only solutions
     metadata: MatchMetadata; // periodNames(could be in code)
@@ -86,6 +88,9 @@ export class Match extends AggregateRoot<MatchProps> {
     get summary(): MatchSummary {
         return this.props.summary;
     }
+    get events(): MatchEventData[] {
+        return this.props.events;
+    }
     get sources() {
         return this.props.sources;
     }
@@ -117,26 +122,10 @@ export class Match extends AggregateRoot<MatchProps> {
     }
 
     /** Update summary.scores, summary.goals and return goal event */
-    private updateScores(goal: Goal): MatchEventData[] {
-        const events: MatchEventData[] = [];
-
+    private updateScores(goal: Goal) {
         const oldScores = this.props.summary.scores;
-        const homeOrAway =
-            goal.teamCode === this.metadata.teams.home.code ? "home" : "away";
 
         if (goal.goal > oldScores[goal.teamCode]) {
-            events.push({
-                type: "goal",
-                message: `${this.metadata.teams[homeOrAway].name} scored`,
-                data: {
-                    teamCode: goal.teamCode,
-                    homeOrAway,
-                    player: goal.scorer?.name,
-                    score: goal.goal,
-                    minute: goal.minute,
-                },
-            });
-
             // update goals
             if (this.props.summary.goals) {
                 if (!this.props.summary.goals[goal.teamCode])
@@ -150,8 +139,17 @@ export class Match extends AggregateRoot<MatchProps> {
             // set first_to_score question solution
             this.solveQuestion(FootballQuestion.FirstToScore, goal.teamCode);
         }
+    }
 
-        return events;
+    private mergeEvents(
+        source: DataSource,
+        events: MatchEventData[]
+    ): MatchEventData[] {
+        const current = this.props.events.filter((e) => e.source === source);
+        const newEvents = events.slice(current.length);
+
+        this.props.events.concat(newEvents);
+        return newEvents;
     }
 
     /*
@@ -182,7 +180,7 @@ export class Match extends AggregateRoot<MatchProps> {
                 teamCode,
                 goal: newScores[teamCode],
             };
-            events = [...events, ...this.updateScores(goal)];
+            this.updateScores(goal);
 
             // update scores
             this.props.summary.scores = data.summary.scores;
@@ -220,6 +218,7 @@ export class Match extends AggregateRoot<MatchProps> {
                 data.status === MatchStatus.InProgress
             ) {
                 events.push({
+                    source: "huddle",
                     type: "kickoff",
                     message: "Match Started",
                     data: {},
@@ -231,6 +230,7 @@ export class Match extends AggregateRoot<MatchProps> {
                 data.status === MatchStatus.Completed
             ) {
                 events.push({
+                    source: "huddle",
                     type: "completed",
                     message: "Match ended",
                     data: {
@@ -254,7 +254,13 @@ export class Match extends AggregateRoot<MatchProps> {
     }
 
     public updateLiveMatch(data: Partial<MatchProps>): Result<void> {
-        const events = this.updateMatchProps(data);
+        const events = [
+            ...this.updateMatchProps(data),
+            ...(data.events?.length
+                ? this.mergeEvents("apiFootball", data.events)
+                : []),
+        ];
+
         this.addDomainEvent(new LiveMatchUpdated(this, events));
 
         if (this.status === MatchStatus.Completed) {

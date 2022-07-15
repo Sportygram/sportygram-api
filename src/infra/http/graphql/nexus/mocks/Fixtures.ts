@@ -118,6 +118,7 @@ let teamsDefault: TeamData = {
                     number: "6",
                 },
             ],
+            U: [],
         },
     },
     away: {
@@ -198,6 +199,7 @@ let teamsDefault: TeamData = {
             D: [],
             M: [],
             F: [],
+            U: [],
         },
     },
 };

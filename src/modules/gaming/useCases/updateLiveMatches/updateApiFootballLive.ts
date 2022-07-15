@@ -28,8 +28,14 @@ export class UpdateApiFootballLiveMatches
                     try {
                         const matchDto =
                             await this.apiFootballService.getLiveMatch(match);
-                        const { periods, winner, summary, status, metadata } =
-                            matchDto;
+                        const {
+                            periods,
+                            winner,
+                            summary,
+                            status,
+                            metadata,
+                            events,
+                        } = matchDto;
 
                         const updatedOrError = match.updateLiveMatch({
                             periods,
@@ -37,6 +43,7 @@ export class UpdateApiFootballLiveMatches
                             summary,
                             status,
                             metadata,
+                            events,
                         });
 
                         if (updatedOrError.isFailure && updatedOrError.error) {
@@ -75,10 +82,7 @@ export class UpdateApiFootballLiveMatches
                         return {
                             ...prevSummary,
                             failureCount: prevSummary.failureCount + 1,
-                            failed: [
-                                ...prevSummary.failed,
-                                error,
-                            ],
+                            failed: [...prevSummary.failed, error],
                         };
                     }
                 },

@@ -1,3 +1,4 @@
+import { prisma } from "../../../../../infra/database/prisma/client";
 import logger from "../../../../../lib/core/Logger";
 import { apiFootballService } from "../../../services/footballService";
 import { createMatch } from "../../../useCases/createMatch";
@@ -5,16 +6,47 @@ import { competitionSeed } from "./gaming.seed";
 
 export async function seedMatches() {
     // fetch all fixtures
-    const fixturesDTO = (await Promise.all(
-        competitionSeed.map((comp) => {
-            return apiFootballService.getFixtures(comp);
-        })
-    )).flat();
+    const fixturesDTO = (
+        await Promise.all(
+            competitionSeed.map((comp) => {
+                return apiFootballService.getFixtures(comp, true);
+            })
+        )
+    ).flat();
 
     const results = await Promise.all(
         fixturesDTO.map(async (match) => {
             // save to db
             const result = await createMatch.execute(match);
+
+            // update players position and number
+            Object.values(match.lineups).forEach(async (tl: any) => {
+                tl.players.forEach(async (player: any) => {
+                    const athletes = await prisma.athlete.findMany({
+                        where: {
+                            sources: {
+                                path: ["apiFootball", "id"],
+                                equals: player.apiFootballId,
+                            },
+                        },
+                    });
+
+                    if (!athletes.length) return;
+                    await prisma.teamAthlete.update({
+                        where: {
+                            teamId_athleteId: {
+                                teamId: tl.teamId,
+                                athleteId: athletes[0].id,
+                            },
+                        },
+                        data: {
+                            position: player.position,
+                            number: player.number,
+                        },
+                    });
+                });
+            });
+
             if (result.isRight()) {
                 return { success: true };
             } else {
@@ -34,9 +66,7 @@ export async function seedMatches() {
     }>(
         (prevSummary, result) => {
             !result.success &&
-                prevSummary.failed.push(
-                    result.match?.sources.apiFootball.id
-                );
+                prevSummary.failed.push(result.match?.sources.apiFootball?.id);
             return {
                 successCount:
                     prevSummary.successCount + (result.success ? 1 : 0),

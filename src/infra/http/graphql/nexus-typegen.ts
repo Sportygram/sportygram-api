@@ -193,6 +193,7 @@ export interface NexusGenObjects {
     misc?: NexusGenScalars['JSON'] | null; // JSON
     name: string; // String!
     periods: NexusGenRootTypes['MatchPeriod']; // MatchPeriod!
+    predictionId?: string | null; // String
     predictions?: Array<NexusGenRootTypes['Prediction'] | null> | null; // [Prediction]
     season: string; // String!
     status: NexusGenRootTypes['MatchStatus']; // MatchStatus!
@@ -232,10 +233,11 @@ export interface NexusGenObjects {
     total?: number | null; // Int
   }
   PlayerPositions: { // root type
-    D: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
-    F: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
-    GK: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
-    M: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
+    D?: Array<NexusGenRootTypes['LineUpPlayer'] | null> | null; // [LineUpPlayer]
+    F?: Array<NexusGenRootTypes['LineUpPlayer'] | null> | null; // [LineUpPlayer]
+    GK?: Array<NexusGenRootTypes['LineUpPlayer'] | null> | null; // [LineUpPlayer]
+    M?: Array<NexusGenRootTypes['LineUpPlayer'] | null> | null; // [LineUpPlayer]
+    U?: Array<NexusGenRootTypes['LineUpPlayer'] | null> | null; // [LineUpPlayer]
   }
   Prediction: { // root type
     code: string; // String!
@@ -409,6 +411,7 @@ export interface NexusGenFieldTypes {
     misc: NexusGenScalars['JSON'] | null; // JSON
     name: string; // String!
     periods: NexusGenRootTypes['MatchPeriod']; // MatchPeriod!
+    predictionId: string | null; // String
     predictions: Array<NexusGenRootTypes['Prediction'] | null> | null; // [Prediction]
     season: string; // String!
     status: NexusGenRootTypes['MatchStatus']; // MatchStatus!
@@ -470,10 +473,11 @@ export interface NexusGenFieldTypes {
     total: number | null; // Int
   }
   PlayerPositions: { // field return type
-    D: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
-    F: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
-    GK: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
-    M: Array<NexusGenRootTypes['LineUpPlayer'] | null>; // [LineUpPlayer]!
+    D: Array<NexusGenRootTypes['LineUpPlayer'] | null> | null; // [LineUpPlayer]
+    F: Array<NexusGenRootTypes['LineUpPlayer'] | null> | null; // [LineUpPlayer]
+    GK: Array<NexusGenRootTypes['LineUpPlayer'] | null> | null; // [LineUpPlayer]
+    M: Array<NexusGenRootTypes['LineUpPlayer'] | null> | null; // [LineUpPlayer]
+    U: Array<NexusGenRootTypes['LineUpPlayer'] | null> | null; // [LineUpPlayer]
   }
   Prediction: { // field return type
     code: string; // String!
@@ -494,6 +498,7 @@ export interface NexusGenFieldTypes {
     competitions: Array<NexusGenRootTypes['Competition'] | null>; // [Competition]!
     countries: Array<NexusGenRootTypes['Country'] | null>; // [Country]!
     fixtures: NexusGenRootTypes['Match'][]; // [Match!]!
+    prediction: NexusGenRootTypes['Match']; // Match!
     room: NexusGenRootTypes['Room']; // Room!
     teams: Array<NexusGenRootTypes['Team'] | null>; // [Team]!
     viewer: NexusGenRootTypes['User']; // User!
@@ -654,6 +659,7 @@ export interface NexusGenFieldTypeNames {
     misc: 'JSON'
     name: 'String'
     periods: 'MatchPeriod'
+    predictionId: 'String'
     predictions: 'Prediction'
     season: 'String'
     status: 'MatchStatus'
@@ -719,6 +725,7 @@ export interface NexusGenFieldTypeNames {
     F: 'LineUpPlayer'
     GK: 'LineUpPlayer'
     M: 'LineUpPlayer'
+    U: 'LineUpPlayer'
   }
   Prediction: { // field return type name
     code: 'String'
@@ -739,6 +746,7 @@ export interface NexusGenFieldTypeNames {
     competitions: 'Competition'
     countries: 'Country'
     fixtures: 'Match'
+    prediction: 'Match'
     room: 'Room'
     teams: 'Team'
     viewer: 'User'
@@ -912,6 +920,10 @@ export interface NexusGenArgTypes {
       date?: string | null; // String
       live?: boolean | null; // Boolean
       sport?: string | null; // String
+    }
+    prediction: { // args
+      matchId: string; // String!
+      predictionId?: string | null; // String
     }
     room: { // args
       roomId: string; // String!

@@ -5,7 +5,7 @@ export type Paging = {
     total: number;
 };
 
-export type LeagueData = {
+export type LeagueResponseData = {
     league: {
         id: number;
         name: string;
@@ -41,7 +41,7 @@ export type LeagueData = {
     }[];
 };
 
-export type TeamData = {
+export type TeamResponseData = {
     team: {
         id: number;
         name: string;
@@ -62,7 +62,7 @@ export type TeamData = {
     };
 };
 
-export type PlayerData = {
+export type PlayerResponseData = {
     player: {
         id: number;
         name: string;
@@ -105,11 +105,66 @@ const FixtureStatus = {
 } as const;
 
 export const FixtureShortStatus = [
-    "TBD","NS","1H","HT","2H","ET","P","FT","AET","PEN",
-    "BT","SUSP","INT","PST","CANC","ABD","AWD","WO",
+    "TBD",
+    "NS",
+    "1H",
+    "HT",
+    "2H",
+    "ET",
+    "P",
+    "FT",
+    "AET",
+    "PEN",
+    "BT",
+    "SUSP",
+    "INT",
+    "PST",
+    "CANC",
+    "ABD",
+    "AWD",
+    "WO",
 ] as const;
 export type FixtureShortStatus = typeof FixtureShortStatus[number];
 type FixtureLongStatus = typeof FixtureStatus[keyof typeof FixtureStatus];
+
+type FixtureTeamData = {
+    id: number; // 52;
+    name: string; // "Crystal Palace";
+    logo: string; // "https://media.api-sports.io/football/teams/52.png";
+    winner?: boolean | null;
+};
+
+type FixtureTeamColor = {
+    primary: string;
+    number: string;
+    border: string;
+};
+
+type FixtureTeamPlayer = {
+    player: {
+        id: number;
+        name: string;
+        number: number;
+        pos: "G" | "D" | "M" | "F";
+        grid: string | null;
+    };
+};
+
+export type FixtureTeamLineup = {
+    team: FixtureTeamData & {
+        colors: { player: FixtureTeamColor; goalkeeper: FixtureTeamColor };
+    };
+    formation: string;
+    startXI: FixtureTeamPlayer[];
+    substitutes: FixtureTeamPlayer[];
+    coach: {
+        id: number;
+        name: string;
+        photo: string;
+    };
+}
+
+export type FixtureEventType = "Goal" | "Card" | "subst" | "Var";
 
 export type FixtureData = {
     fixture: {
@@ -143,20 +198,8 @@ export type FixtureData = {
         round: string; // "Regular Season - 1";
     };
     teams: {
-        home: {
-            id: number; // 52;
-            name: string; // "Crystal Palace";
-            logo: string; // "https://media.api-sports.io/football/teams/52.png";
-            winner: boolean | null;
-            statistics?: Statistic[]; // seems to only be available at FT
-        };
-        away: {
-            id: number; // 42;
-            name: string; // "Arsenal";
-            logo: string; // "https://media.api-sports.io/football/teams/42.png";
-            winner: boolean | null;
-            statistics?: Statistic[]; // seems to only be available at FT
-        };
+        home: FixtureTeamData;
+        away: FixtureTeamData;
     };
     goals: {
         home: number | null;
@@ -173,11 +216,95 @@ export type FixtureData = {
         };
         extratime: {
             home: number | null;
-            away: null;
+            away: number | null;
         };
         penalty: {
             home: number | null;
-            away: null;
+            away: number | null;
         };
     };
+    events: {
+        time: {
+            elapsed: number;
+            extra: number | null;
+        };
+        team: FixtureTeamData;
+        player: {
+            id: number;
+            name: string;
+        };
+        assist: {
+            id: number;
+            name: string;
+        };
+        type: FixtureEventType;
+        detail: string;
+        comments: string | null;
+    }[];
+    lineups: FixtureTeamLineup[];
+    statistics: {
+        team: FixtureTeamData;
+        statistics: Statistic[];
+    }[];
+    players: {
+        team: FixtureTeamData & { update: string }; // update: "2022-07-09T04:30:08+04:30",
+        players: {
+            player: { id: number; name: string; photo: string };
+            statistics: {
+                games: {
+                    minutes: number;
+                    number: number;
+                    position: string;
+                    rating: string;
+                    captain: boolean;
+                    substitute: boolean;
+                };
+                offsides: number | null;
+                shots: {
+                    total: number | null;
+                    on: number | null;
+                };
+                goals: {
+                    total: number | null;
+                    conceded: number;
+                    assists: number | null;
+                    saves: number | null;
+                };
+                passes: {
+                    total: number | null;
+                    key: number | null;
+                    accuracy: string | null;
+                };
+                tackles: {
+                    total: number | null;
+                    blocks: number | null;
+                    interceptions: number | null;
+                };
+                duels: {
+                    total: number | null;
+                    won: number | null;
+                };
+                dribbles: {
+                    attempts: number | null;
+                    success: number | null;
+                    past: number | null;
+                };
+                fouls: {
+                    drawn: number | null;
+                    committed: number | null;
+                };
+                cards: {
+                    yellow: number;
+                    red: number;
+                };
+                penalty: {
+                    won: number | null;
+                    committed: number | null;
+                    scored: number;
+                    missed: number;
+                    saved: number;
+                };
+            }[];
+        }[];
+    }[];
 };

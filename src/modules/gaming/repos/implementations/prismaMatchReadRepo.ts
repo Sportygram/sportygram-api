@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { get } from "lodash";
 import { prisma } from "../../../../infra/database/prisma/client";
 import {
     MatchMetadata,
@@ -11,9 +12,9 @@ import { MatchMap, RawMatch } from "../../mappers/matchMap";
 import { MatchReadRepo, QueryMatch } from "../interfaces";
 
 export class PrismaMatchReadRepo implements MatchReadRepo {
-    async getMatchById(
+    async getMatchByPredictionId(
         matchId: string,
-        userId: string
+        predictionId?: string
     ): Promise<QueryMatch | undefined> {
         if (!matchId) return undefined;
         const match = await prisma.match.findUnique({
@@ -21,12 +22,39 @@ export class PrismaMatchReadRepo implements MatchReadRepo {
             include: {
                 matchTeams: {
                     select: {
-                        team: true,
+                        team: {
+                            select: {
+                                id: true,
+                                name: true,
+                                code: true,
+                                logo: true,
+                                sport: true,
+                                sources: true,
+                                metadata: true,
+                                createdAt: true,
+                                updatedAt: true,
+                                teamAthletes: {
+                                    select: {
+                                        position: true,
+                                        number: true,
+                                        athlete: {
+                                            select: {
+                                                id: true,
+                                                name: true,
+                                                metadata: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
-                matchPredictions: {
-                    where: { userId },
-                },
+                ...(predictionId && {
+                    matchPredictions: {
+                        where: { id: predictionId },
+                    },
+                }),
             },
         });
         if (!match) return undefined;
@@ -36,9 +64,9 @@ export class PrismaMatchReadRepo implements MatchReadRepo {
             periods: match.periods as Periods,
             summary: match.summary as MatchSummary,
             sources: match.sources as Sources,
-            metadata: match.sources as MatchMetadata,
+            metadata: match.metadata as MatchMetadata,
             teams: match.matchTeams.map((mt) => mt.team),
-            predictions: match.matchPredictions[0] as any,
+            predictions: get(match, 'matchPredictions[0]'),
         };
         return MatchMap.footballRawToQueryMatch(matchWithTeams);
     }

@@ -241,6 +241,7 @@ model Match {
   summary          Json              @default("{}")
   sources          Json              @default("{}")
   questions        Json              @default("[]")
+  events           Json              @default("[]")
   metadata         Json              @default("{}")
   createdAt        DateTime?         @default(now()) @map("created_at")
   updatedAt        DateTime?         @updatedAt @map("updated_at")

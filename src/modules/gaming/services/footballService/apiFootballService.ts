@@ -4,7 +4,9 @@ import { Match } from "../../domain/match";
 import {
     Athlete,
     Competition,
+    DataSource,
     FootballPeriod,
+    MatchEvent,
     MatchMetadata,
     MatchStatus,
     Team,
@@ -16,8 +18,10 @@ import {
 } from "../../externalServices/apiFootball";
 import {
     FixtureData,
+    FixtureEventType,
     FixtureShortStatus,
-    PlayerData,
+    FixtureTeamLineup,
+    PlayerResponseData,
 } from "../../externalServices/apiFootball/apiFootball.types";
 import { MatchDTO } from "../../useCases/createMatch/createMatchDTO";
 import { FootballDataService } from "./footballService.types";
@@ -32,7 +36,7 @@ export class ApiFootballService implements FootballDataService {
 
     async getTeamAthletes(team: Team): Promise<Athlete[]> {
         const afId = team.sources?.apiFootball?.id;
-        let teamPlayers: PlayerData[] = [];
+        let teamPlayers: PlayerResponseData[] = [];
 
         let { response, paging } = await getTeamPlayers(afId, {});
         teamPlayers = [...teamPlayers, ...response];
@@ -50,11 +54,16 @@ export class ApiFootballService implements FootballDataService {
         return teamPlayers.map(playerDataToAthleteMap);
     }
 
-    async getFixtures(competition?: Competition): Promise<MatchDTO[]> {
+    async getFixtures(
+        competition?: Competition,
+        withLineups?: boolean
+    ): Promise<MatchDTO[]> {
         try {
             const afId = competition?.sources?.apiFootball?.id;
             const fixtures = await getFixtures({ league: afId });
-            return await Promise.all(fixtures.map(fixtureDataToMatchDTOMap));
+            return await Promise.all(
+                fixtures.map((f) => fixtureDataToMatchDTOMap(f, withLineups))
+            );
         } catch (error) {
             logger.info(`Error fetching fixtures from apiFootball`, error);
             throw error;
@@ -86,7 +95,7 @@ export class ApiFootballService implements FootballDataService {
     }
 }
 
-function playerDataToAthleteMap(a: PlayerData): Athlete {
+function playerDataToAthleteMap(a: PlayerResponseData): Athlete {
     return {
         name: a.player.name,
         firstname: a.player.firstname,
@@ -97,8 +106,9 @@ function playerDataToAthleteMap(a: PlayerData): Athlete {
     };
 }
 
-async function fixtureDataToMatchDTOMap(
-    fixtureData: FixtureData
+export async function fixtureDataToMatchDTOMap(
+    fixtureData: FixtureData,
+    withLineups?: boolean
 ): Promise<MatchDTO> {
     const teams = (await Promise.all(
         Object.values(fixtureData.teams).map(async (raw) => {
@@ -150,9 +160,37 @@ async function fixtureDataToMatchDTOMap(
     }
 
     const statistics = {
-        [homeTeam.code]: fixtureData.teams.home.statistics,
-        [awayTeam.code]: fixtureData.teams.away.statistics,
+        [homeTeam.code]: fixtureData.statistics.find(
+            (st) => st.team.name === homeTeam.name
+        )?.statistics,
+        [awayTeam.code]: fixtureData.statistics.find(
+            (st) => st.team.name === awayTeam.name
+        )?.statistics,
     };
+
+    let lineups;
+    if (withLineups) {
+        lineups = getLineups(fixtureData, homeTeam, awayTeam);
+    }
+
+    const events = fixtureData.events.map((event) => {
+        const type = MatchEventTypeMap[event.type](event);
+        return {
+            source: DataSource.ApiFootball,
+            type,
+            message: MatchEventTypeMessageMap[type](event),
+            data: {
+                minute: event.time.elapsed,
+                player: event.player.name,
+                assist: event.assist.name,
+                team:
+                    homeTeam.name === event.team.name
+                        ? homeTeam.code
+                        : awayTeam.code,
+                detail: event.detail,
+            },
+        };
+    });
 
     return {
         teams,
@@ -190,6 +228,7 @@ async function fixtureDataToMatchDTOMap(
             },
             statistics,
         },
+        events,
         sources: { apiFootball: { id: fixtureData.fixture.id } },
         metadata: {
             status: fixtureData.fixture.status,
@@ -206,5 +245,76 @@ async function fixtureDataToMatchDTOMap(
                 },
             },
         } as MatchMetadata,
+        lineups,
+    };
+}
+
+const MatchEventTypeMap: Record<FixtureEventType, (event: any) => MatchEvent> =
+    {
+        Goal: () => MatchEvent.Goal,
+        Card: (event) =>
+            event.detail === "Yellow Card"
+                ? MatchEvent.YellowCard
+                : MatchEvent.RedCard,
+        subst: () => MatchEvent.Substitution,
+        Var: () => MatchEvent.Var,
+    };
+
+const MatchEventTypeMessageMap: Record<MatchEvent, (event: any) => string> = {
+    [MatchEvent.Goal]: (event) => `${event.team.name} Scored`,
+    [MatchEvent.YellowCard]: (event) =>
+        `${event.player.name} received a Yellow Card`,
+    [MatchEvent.RedCard]: (event) => `${event.player.name} received a Red Card`,
+    [MatchEvent.Substitution]: (event) =>
+        `${event.player.name} substituted for ${event.assist.name}`,
+    [MatchEvent.Var]: (event) => `${event.team.name} goal var`,
+
+    kickoff: (_event) => "Match Kickoff",
+    penalty: (_event) => "Penalty",
+    period_complete: (_event) => "Period ended",
+    period_started: (_event) => "Period Started",
+    completed: (_event) => "Completed",
+};
+
+function getLineups(fixtureData: FixtureData, homeTeam: Team, awayTeam: Team) {
+    const homeLineUp = fixtureData.lineups.find(
+        (l) => l.team.name === homeTeam.name
+    );
+    const awayLineUp = fixtureData.lineups.find(
+        (l) => l.team.name === awayTeam.name
+    );
+
+    if (!homeLineUp || !awayLineUp) return undefined;
+
+    return {
+        [homeTeam.code]: getTeamLineup(homeLineUp, homeTeam),
+        [awayTeam.code]: getTeamLineup(awayLineUp, awayTeam),
+    };
+}
+
+function getTeamLineup(teamLineUp: FixtureTeamLineup, team: Team) {
+    return {
+        teamId: team.id,
+        apiFootballId: teamLineUp.team.id,
+        colors: teamLineUp.team.colors,
+        formation: teamLineUp.formation,
+        players: [
+            ...teamLineUp.startXI.map((p) => ({
+                apiFootballId: p.player.id,
+                number: p.player.number,
+                position:
+                    p.player.pos === "G" ? "GK" : p.player.pos.toUpperCase(),
+            })),
+            ...teamLineUp.substitutes.map((p) => ({
+                apiFootballId: p.player.id,
+                number: p.player.number,
+                position:
+                    p.player.pos === "G" ? "GK" : p.player.pos.toUpperCase(),
+            })),
+        ],
+        coach: {
+            name: teamLineUp.coach.name,
+            photo: teamLineUp.coach.photo,
+        },
     };
 }

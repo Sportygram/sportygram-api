@@ -28,6 +28,7 @@ export class CreateMatch implements UseCase<MatchDTO, Promise<Response>> {
             winner,
             summary,
             sources,
+            events,
             metadata,
             competitionId,
         } = request;
@@ -57,6 +58,7 @@ export class CreateMatch implements UseCase<MatchDTO, Promise<Response>> {
                 winner,
                 questions: MatchQuestions.create().getValue(),
                 summary,
+                events,
                 sources,
                 metadata,
             });

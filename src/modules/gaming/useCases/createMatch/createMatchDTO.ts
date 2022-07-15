@@ -4,6 +4,7 @@ import {
     Sources,
     MatchSummary,
     Team,
+    MatchEventData,
 } from "../../domain/types";
 
 export interface MatchDTO {
@@ -20,4 +21,6 @@ export interface MatchDTO {
     summary: MatchSummary;
     sources: Sources;
     metadata: MatchMetadata;
+    events: MatchEventData[]
+    lineups?: any;
 }

@@ -131,6 +131,7 @@ type Match {
   misc: JSON
   name: String!
   periods: MatchPeriod!
+  predictionId: String
   predictions: [Prediction]
   season: String!
   status: MatchStatus!
@@ -218,10 +219,11 @@ A field whose value conforms to the standard E.164 format as specified in: https
 scalar PhoneNumber
 
 type PlayerPositions {
-  D: [LineUpPlayer]!
-  F: [LineUpPlayer]!
-  GK: [LineUpPlayer]!
-  M: [LineUpPlayer]!
+  D: [LineUpPlayer]
+  F: [LineUpPlayer]
+  GK: [LineUpPlayer]
+  M: [LineUpPlayer]
+  U: [LineUpPlayer]
 }
 
 type Prediction {
@@ -251,6 +253,7 @@ type Query {
   competitions: [Competition]!
   countries: [Country]!
   fixtures(date: String, live: Boolean, sport: String): [Match!]!
+  prediction(matchId: String!, predictionId: String): Match!
   room(roomId: String!): Room!
   teams(competitionId: String, sport: String): [Team]!
   viewer: User!

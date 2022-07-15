@@ -163,6 +163,7 @@ export class PrismaMatchRepo implements MatchRepo {
             sources: rawMatch.sources,
             metadata: rawMatch.metadata as Prisma.JsonObject,
             questions: rawMatch.questions as Prisma.JsonObject,
+            events: rawMatch.events as Prisma.JsonObject,
         };
 
         const foundMatches = await prisma.match.findMany({

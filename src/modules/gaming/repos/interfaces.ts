@@ -33,9 +33,9 @@ export interface MatchRepo {
 }
 export type QueryMatch = NexusGenObjects["Match"];
 export interface MatchReadRepo {
-    getMatchById(
+    getMatchByPredictionId(
         matchId: string,
-        userId: string
+        predictionId: string
     ): Promise<QueryMatch | undefined>;
     getMatchesByDate(
         userId: string,
