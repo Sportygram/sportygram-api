@@ -47,6 +47,7 @@ export class MatchMap {
         const homeTeam = raw.teams.find((t) => t.code === homeCode) as any;
         const awayTeam = raw.teams.find((t) => t.code === awayCode) as any;
 
+        const posArr = ["GK", "D", "M", "F", "U"];
         const defaultPlayers = { GK: [], D: [], M: [], F: [], U: [] };
 
         const getPlayers = (team: any) => {
@@ -54,7 +55,7 @@ export class MatchMap {
                 team.teamAthletes.map((a: any, idx: number) => ({
                     id: a.athlete.id,
                     name: a.athlete.name,
-                    position: a.position || "U",
+                    position: a.position || posArr[idx % 5],
                     number: a.number || idx + 1,
                 })),
                 "position"
