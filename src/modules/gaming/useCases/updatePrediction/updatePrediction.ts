@@ -41,8 +41,10 @@ export class UpdatePrediction
             if (!prediction) {
                 return left(new PredictionDoesNotExistError(matchId));
             }
-            if (!prediction.unlocked) {
-                return left(new PredictionLockedError(matchId));
+            if (process.env.NODE_ENV === "production") {
+                if (!prediction.unlocked) {
+                    return left(new PredictionLockedError(matchId));
+                }
             }
 
             if (requestUser.userId !== prediction.userId.id.toString()) {
