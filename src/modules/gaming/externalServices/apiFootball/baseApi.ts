@@ -7,6 +7,7 @@ const { baseURL, rapidAPIKey, rapidAPIHost } = config.apiFootball;
 const baseApi = axios.create({
     baseURL,
     headers: { "X-RapidAPI-Host": rapidAPIHost, "X-RapidAPI-Key": rapidAPIKey },
+    // headers: { "x-apisports-key": apiSportsKey },
 });
 
 function errorHandler(error: AxiosError<any>) {

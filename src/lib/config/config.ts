@@ -9,6 +9,9 @@ export const config = {
         competitions: {
             EPL: true,
             MLS: process.env.NODE_ENV !== "production",
+            ESP: true,
+            DEB: true,
+            ITSA: true,
         },
         referralCoinReward: 8,
         predictionEditCoinCost: 5,
@@ -60,6 +63,7 @@ export const config = {
         defaultChannelOwnerId: "e3a2060e-51a4-4852-bbdc-582da830df89",
     },
     apiFootball: {
+        apiSportsKey: process.env.API_SPORTS_KEY || "",
         rapidAPIKey: process.env.API_FOOTBALL_RAPID_API_KEY || "",
         rapidAPIHost: "api-football-v1.p.rapidapi.com",
         baseURL: "https://api-football-v1.p.rapidapi.com/v3/",
