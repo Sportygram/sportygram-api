@@ -10,7 +10,6 @@ import { FirebaseService } from "../../../../lib/services/firebase";
 import { config } from "../../../../lib/config";
 import { ReferralCode } from "../../domain/valueObjects/referralCode";
 import { UserRoles } from "../../domain/userRoles";
-import { EmailAlreadyExistsError } from "../createUser/createUserErrors";
 import { UserState } from "../../../../lib/utils/permissions";
 import { UserTokens } from "../../domain/userTokens";
 
@@ -103,9 +102,7 @@ export class CreateUserWithFirebaseToken
             //#endregion
 
             let user = await this.userRepo.getUserByEmail(email);
-            if (user) {
-                return left(new EmailAlreadyExistsError(email.value));
-            } else {
+            if (!user) {
                 const [firstname, lastname] = (
                     firebaseUserRecord.displayName || ""
                 )

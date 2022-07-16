@@ -32,6 +32,26 @@ export class FirebaseService {
         this.auth = getAuth(this.app);
     }
 
+    async createUser(data: any): Promise<UserRecord | undefined> {
+        try {
+            const user = await this.auth.createUser(data);
+            return user;
+        } catch (error) {
+            logger.error("[Firebase Auth Error]", { error });
+            return undefined;
+        }
+    }
+
+    async getIdToken(uid: string): Promise<string | undefined> {
+        try {
+            const token = await this.auth.createCustomToken(uid);
+            return token;
+        } catch (error) {
+            logger.error("[Firebase Auth Error]", { error });
+            return undefined;
+        }
+    }
+
     async getUserFromIdToken(token: string): Promise<UserRecord | undefined> {
         try {
             const decoded = await this.auth.verifyIdToken(token);
