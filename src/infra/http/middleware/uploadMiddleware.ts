@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import { HttpException } from "../models/HTTPException";
 import S3Storage from "./multerS3";
+import mime from "mime-types";
 
 export class UploadMiddleware {
     private endRequest(
@@ -32,8 +33,8 @@ export class UploadMiddleware {
                     ? `users/${req.requestUser.userId}/avatar`
                     : `rooms/${roomId}/avatar`;
 
-                    // TODO: Compress image and create scaled down version using lambda
-                    // with suffix -thumbnail
+            // TODO: Compress image and create scaled down version using lambda
+            // with suffix -thumbnail
             return multer({
                 storage: S3Storage({ key }),
                 fileFilter: function fileFilter(_req, file, cb) {
@@ -44,14 +45,24 @@ export class UploadMiddleware {
                         "image/webp",
                     ];
 
-                    if (!imageTypes.includes(file.mimetype)) {
+                    const mimeType =
+                        mime.lookup(file.originalname) || file.mimetype;
+                    if (
+                        !(
+                            imageTypes.includes(file.mimetype) ||
+                            imageTypes.includes(mimeType)
+                        )
+                    ) {
                         cb(
                             new HttpException(
                                 400,
                                 "Uploaded picture must be a valid image"
                             )
                         );
-                    } else cb(null, true);
+                    } else {
+                        file.mimetype = mimeType;
+                        cb(null, true);
+                    }
                 },
                 limits: {
                     fileSize: 10000000, // 10mb
