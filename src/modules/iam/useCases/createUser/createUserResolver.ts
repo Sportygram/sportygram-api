@@ -13,14 +13,14 @@ export const createUserResolver: FieldResolver<"Mutation", "signup"> = async (
     args,
     ctx
 ) => {
-    const sgConfig = config.huddle;
+    const huddleConfig = config.huddle;
     const dto = {
         ...args,
         password: args.password || args.email,
         referralCode: args.referralCode || undefined,
-        role: sgConfig.defaultUserRole,
+        role: huddleConfig.defaultUserRole,
         requestUser: defaultRequestUser,
-        sendVerificationMail: false,
+        sendVerificationMail: true,
         sendPasswordResetMail: false,
     };
 

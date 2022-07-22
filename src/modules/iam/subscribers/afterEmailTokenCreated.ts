@@ -43,6 +43,20 @@ export class AfterEmailTokenCreated implements IHandle<EmailTokenCreated> {
                     },
                 });
             }
+            if (newToken.type === TokenType.EmailVerification) {
+                await this.emailService.sendMail({
+                    to: user.email.value,
+                    subject: "Huddle Email Verification",
+                    templateName: EmailTypes.VerifyEmail,
+                    templateData: {
+                        userId: user.userId.id.toString(),
+                        token:
+                            user
+                                .getTokenByType(TokenType.EmailVerification)
+                                ?.id.toString() || "",
+                    },
+                });
+            }
 
             logger.info(
                 `[AfterUserCreated]: Successfully executed SendMail use case Email Token Created`,

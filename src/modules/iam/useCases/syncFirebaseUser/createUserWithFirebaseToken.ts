@@ -59,9 +59,11 @@ export class CreateUserWithFirebaseToken
                 );
 
             //#region Validate DTO
-            const role = await this.roleRepo.getRole(
-                config.huddle.verifiedUserRole
-            );
+            const userRole = firebaseUserRecord.emailVerified
+                ? config.huddle.verifiedUserRole
+                : config.huddle.defaultUserRole;
+
+            const role = await this.roleRepo.getRole(userRole);
             if (!role) {
                 return left(
                     new AppError.InputError(
