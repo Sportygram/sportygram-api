@@ -1,7 +1,7 @@
 import { CompleteMatchDTO } from "./completeMatch.dto";
 import { Either, Result, left, right } from "../../../../lib/core/Result";
 import * as AppError from "../../../../lib/core/AppError";
-import { AthleteRepo, MatchRepo } from "../../repos/interfaces";
+import { MatchRepo } from "../../repos/interfaces";
 import { UseCase } from "../../../../lib/core/UseCase";
 import { Match } from "../../domain/match";
 import { MatchDoesNotExistError } from "../makePrediction/makePredictionErrors";
@@ -20,7 +20,6 @@ export class CompleteFootballMatch
     constructor(
         private matchRepo: MatchRepo,
         private apiFootballService: ApiFootballService,
-        private athleteRepo: AthleteRepo
     ) {}
 
     // This is the catch-all (finally) for a match,
@@ -30,14 +29,9 @@ export class CompleteFootballMatch
         const { matchId } = request;
 
         try {
-            const matchCompletionErrors: Record<FootballQuestion, any[]> = {
+            const matchCompletionErrors = {
                 [FootballQuestion.Winner]: [],
-                [FootballQuestion.FirstToScore]: [],
-                [FootballQuestion.BothTeamsScore]: [],
-                [FootballQuestion.ManOfTheMatch]: [],
-                [FootballQuestion.NoOfGoals]: [],
-                [FootballQuestion.CorrectScore]: [],
-            };
+            } as Record<"winner", any[]>;
             const match = await this.matchRepo.getMatchById(matchId);
             if (!match) {
                 return left(new MatchDoesNotExistError(matchId));
@@ -59,58 +53,6 @@ export class CompleteFootballMatch
             if (!winnerQ.solution) {
                 match.solveQuestion(FootballQuestion.FirstToScore, "DRAW");
             }
-            // check firstToScore matches first goal event; Notify if not
-            const firstToScoreQ = questions.getQuestion(
-                FootballQuestion.FirstToScore
-            );
-            const firstToScoreApiFootball = matchDto.events.find(
-                (e) => e.type === "goal"
-            );
-            if (
-                firstToScoreQ.solution !== firstToScoreApiFootball?.data?.team
-            ) {
-                matchCompletionErrors[FootballQuestion.FirstToScore].push(
-                    `First to score solution is incorrect; ${firstToScoreApiFootball?.data?.team}`
-                );
-            }
-            // check man of the match using player winner rankings
-            const ratings = matchDto.winner
-                ? matchDto.playerRatings[matchDto.winner]
-                : Object.values(matchDto.playerRatings).flatMap((r) => r);
-
-            const manOfTheMatchData = ratings.sort((a: any, b: any) => a.rating - b.rating)[0];
-            const manOfTheMatch =
-                await this.athleteRepo.getAthleteByApiFootballId(
-                    manOfTheMatchData.apiFootballId
-                );
-            if (!manOfTheMatch) {
-                matchCompletionErrors[FootballQuestion.ManOfTheMatch].push(
-                    `Man of the match solution not found; ${manOfTheMatchData.apiFootballId}`
-                );
-            } else {
-                match.solveQuestion(
-                    FootballQuestion.ManOfTheMatch,
-                    manOfTheMatch.id
-                );
-            }
-            // check both teams score
-            const goals = Object.values(matchDto.summary.scores);
-            const bothScore = goals[0] && goals[1];
-            const bothScoreQ = questions.getQuestion(
-                FootballQuestion.BothTeamsScore
-            );
-            if (bothScoreQ.solution !== bothScore) {
-                matchCompletionErrors[FootballQuestion.BothTeamsScore].push(
-                    `Both teams score solution is incorrect; ${bothScore}`
-                );
-            }
-            // save total number of goals matches; Notify if not
-            match.solveQuestion(
-                FootballQuestion.NoOfGoals,
-                goals[0] + goals[1]
-            );
-            // save correct score
-            match.solveQuestion(FootballQuestion.CorrectScore, matchDto.goals);
 
             await this.matchRepo.save(match);
             // confirm all match questions has a solution

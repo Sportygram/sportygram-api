@@ -85,7 +85,7 @@ export class PlayerPredictions extends ValueObject<PlayerPredictionsProps> {
                 );
             if (type === "select") {
                 if (!options)
-                    return Result.fail<PlayerPredictions>(
+                return Result.fail<PlayerPredictions>(
                         `${code} question options missing`
                     );
 

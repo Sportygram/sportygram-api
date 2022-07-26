@@ -279,24 +279,12 @@ export class Match extends AggregateRoot<MatchProps> {
                 { value: "DRAW", display: "DRAW" },
             ];
 
-            const questions = Object.assign({}, MatchQuestionsMap);
+            const questions = {
+                [FootballQuestion.Winner]:
+                    MatchQuestionsMap[FootballQuestion.Winner],
+            };
 
-            questions[FootballQuestion.Winner].options = teamCodes;
-            questions[FootballQuestion.FirstToScore].options = teamCodes;
-            questions[FootballQuestion.ManOfTheMatch].options = this.teams
-                .map((t) => {
-                    if (!t.athletes) throw new Error("Athletes not loaded");
-                    return t.athletes.map((a) => ({
-                        value: `${a.id}`,
-                        display: `${a.id}`,
-                    }));
-                })
-                .flat();
-
-            questions[FootballQuestion.BothTeamsScore].options = [
-                { value: "true", display: "true" },
-                { value: "false", display: "false" },
-            ];
+            questions[FootballQuestion.Winner].options = teamCodes; 
 
             return Result.ok(Object.values(questions));
         } catch (e) {

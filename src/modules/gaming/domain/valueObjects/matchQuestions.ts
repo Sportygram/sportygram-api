@@ -39,9 +39,7 @@ export class MatchQuestions extends ValueObject<MatchQuestionsProps> {
 
     public static create(questions?: MatchQuestion[]): Result<MatchQuestions> {
         if (!questions) {
-            questions = Object.values(FootballQuestion).map((qc) => ({
-                code: qc,
-            }));
+            questions = [{ code: FootballQuestion.Winner }];
         }
 
         return Result.ok<MatchQuestions>(
