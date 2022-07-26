@@ -74,9 +74,11 @@ export class CompleteFootballMatch
                 );
             }
             // check man of the match using player winner rankings
-            const manOfTheMatchData = matchDto.playerRatings.sort(
-                (a: any, b: any) => a.rating - b.rating
-            )[0];
+            const ratings = matchDto.winner
+                ? matchDto.playerRatings[matchDto.winner]
+                : Object.values(matchDto.playerRatings).flatMap((r) => r);
+
+            const manOfTheMatchData = ratings.sort((a: any, b: any) => a.rating - b.rating)[0];
             const manOfTheMatch =
                 await this.athleteRepo.getAthleteByApiFootballId(
                     manOfTheMatchData.apiFootballId
