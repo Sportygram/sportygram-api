@@ -4,7 +4,7 @@ import logger from "../../core/Logger";
 import AWS from "aws-sdk";
 import { verificationTemplate } from "./emailTemplates";
 
-const REGION = "eu-west-1";
+const REGION = "eu-north-1";
 
 const ses = new AWS.SES({ apiVersion: "2012-11-05", region: REGION });
 const { domain } = config.huddle;
@@ -29,14 +29,14 @@ export class SESEmailService implements EmailService {
             sendAt,
         };
         logger.info("SES-SEND", logData);
-        const [tFunction, Source] = templateMap[templateName];
+        const [tFunction] = templateMap[templateName];
 
         const params = {
             Destination: {
                 ...(cc ? { CcAddresses: [cc] } : {}),
                 ToAddresses: [to],
             },
-            Source,
+            Source: "hello@204070.dev",
             Message: {
                 Body: {
                     Html: {
@@ -52,7 +52,9 @@ export class SESEmailService implements EmailService {
         };
 
         try {
-            await ses.sendEmail(params).promise();
+            const response = await ses.sendEmail(params).promise();
+            logger.info("SES-SEND-SUCCESS", logData, response);
+            return;
         } catch (error: any) {
             logger.error("SES-ERROR", {
                 ...logData,
